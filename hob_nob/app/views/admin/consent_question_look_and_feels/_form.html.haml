@@ -1,0 +1,44 @@
+= javascript_include_tag "jquery-1.11.3.min", "pick-a-color-1.2.0.min", "tinycolor", "jquery.fancybox", "theme_color_pick"
+.save_button.mdl-card.feedbackFormPage
+  = form_for [:admin, @event, @mobile_application, @consent_question_look_and_feel], :html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.pollInfo.mdl-shadow--1dp.feedbackFormPage
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information    
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+        .bs-component
+          .form-group
+            .span.col-lg-4
+              = f.label "Background image (960x1600px) png only ",:class =>"control-label", style: "float: right;"
+            .col-lg-7.Closetheme
+              %label.field.file
+                %span.button.btn-primary
+                  Choose File 
+                = f.file_field :background_image,:id => "uploadBtnLogo", :class=>"gui-file"
+                = text_field_tag("text_file_name","", id: "1uploadBtnLogo", class: "gui-input", :value => "#{f.object.background_image_file_name.nil? ? "there is no Attachment Available !" : f.object.background_image_file_name}", :read_only => true)
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = f.object.errors.messages[:background_image].join("") rescue nil
+            - if @consent_question_look_and_feel.present? and f.object.background_image_file_name.present? and params[:action] == "edit"
+              .col-lg-1
+                = link_to admin_event_mobile_application_consent_question_look_and_feel_path(:event_id => @event.id, :mobile_application_id => @mobile_application.id,:consent_question_look_and_feel_id => @consent_question_look_and_feel.id,:remove_image => true,:logo => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                  %span
+                    X
+      = f.custom_text_field :background_color, "Background Color", :value => (f.object.new_record? ? "ffffff" : f.object.background_color), :class => 'pick-a-color',"background" => "false"
+    .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15.feedbackFormPage
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+        %h4.heading-border.displaybolck.p-t-10
+          Button Setting 
+      = f.custom_text_field :button_font_color, "Button Font Color", :value => (f.object.new_record? ? "ffffff" : f.object.button_font_color), :class => 'pick-a-color',"background" => "false"
+      = f.custom_text_field :button_color, "Button Background Color", :value => (f.object.new_record? ? "ffffff" : f.object.button_color), :class => 'pick-a-color',"background" => "false"
+      = f.custom_text_field :button_text, "Button Text ","background" => "false" 
+    .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15.feedbackFormPage
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+        %h4.heading-border.displaybolck.p-t-10
+          Header Section
+      = f.cktext_area :heading_text
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)

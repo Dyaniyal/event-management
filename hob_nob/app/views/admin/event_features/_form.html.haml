@@ -1,0 +1,111 @@
+.save_button
+  = form_for [:admin, @event, @event_feature], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp.agendaHeight
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.m-b-30.p-t-10
+          - if params[:feature] == "my_calender"
+            General Information
+            / - elsif params[:type] == "faq_setting"
+            /   General Setting
+          - elsif params[:type] == "image_setting"
+            General Information
+          - else
+            Application Features
+          / %a{:href => 'javascript:void(0);', :class =>'helpTag testhelp'}
+          /   what's this?
+        - if @event.present? and @event.event_features.pluck(:name).exclude? 'event_highlights' and @event.login_at == 'After Highlight' 
+          .field_with_errors
+            .span{:class => "errorMessage"}
+              = 'Kindly active Event Highlights feature to set login at After highlights'
+      - if params[:feature] == "my_calender"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Allow users to add agenda to calender
+            = hidden_field_tag :calender, :value => 'yes'
+            = f.hidden_field :name, :value => 'my_calendar'
+            = f.hidden_field :page_title, :value => 'My Calendar'
+            = f.hidden_field :status, :value => 'deactive'
+            = f.hidden_field :menu_visibilty, :value => 'deactive'
+            = hidden_field_tag :feature, "my_calender"
+            
+            .col-lg-7.p-h-12
+              = f.custom_radio_button_menu :menu_icon_visibility, "Yes","yes", :id => "option-1",:default_checked => "#{@event.get_event_feature_status == "yes" ? "checked" : "" }"
+              = f.custom_radio_button_menu :menu_icon_visibility, "No", "no", :id => "option-2",:default_checked => "#{@event.get_event_feature_status == "no" ? "checked" : "" }"
+              - if @feature_error.present?
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = @feature_error rescue nil
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Allow adding Individual Sessions to My Agenda
+            .col-lg-7.p-h-12
+              = f.custom_radio_button_menu :session_to_agenda, "Yes","yes", :id => "option-11", :default_checked => "#{@event.get_event_session_to_my_agenda_status == "yes" ? "checked" : "" }"
+              = f.custom_radio_button_menu :session_to_agenda, "No", "no", :id => "option-22", :default_checked => "#{@event.get_event_session_to_my_agenda_status == "no" ? "checked" : "" }"
+              - if @feature_error.present?
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = @feature_error rescue nil
+                    / -elsif params[:type] == "faq_setting"
+                    /   .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+                    /     .mdl-grid.p-v-5
+                    /       .col-lg-4.mdl-typography--text-right
+                    /         %p.displayInlineBlock.multicitytxt You Want to Add Category To FAQ
+                    /       .col-lg-7.p-h-12
+                    /         = hidden_field_tag :faq_setting, :value => 'yes'
+                    /         = f.custom_radio_button_menu :faq_setting, "Yes","yes", :id => "option-3", :default_checked => "#{@event.get_category_faq_setting_status == "yes" ? "checked" : "" }"
+                    /         = f.custom_radio_button_menu :faq_setting, "No", "no", :id => "option-4", :default_checked => "#{@event.get_category_faq_setting_status == "no" ? "checked" : "" }"
+                    /         - if @feature_error.present?
+                    /           .field_with_errors
+                    /             .span{:class => "errorMessage"}
+                    /               = @feature_error rescue nil
+      -elsif params[:type] == "image_setting"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Add Folders to Gallery?
+            .col-lg-7.p-h-12
+              = hidden_field_tag :image_setting, :value => 'yes'
+              = f.custom_radio_button_menu :image_setting, "Yes","yes", :id => "option-3", :default_checked => "#{@event.get_gallery_folder_setting_status == "yes" ? "checked" : "" }"
+              = f.custom_radio_button_menu :image_setting, "No", "no", :id => "option-4", :default_checked => "#{@event.get_gallery_folder_setting_status == "no" ? "checked" : "" }"
+              - if @feature_error.present?
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = @feature_error rescue nil
+      -else
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "event_feature_generalInfo.jpg", :section_id => "event_feature_general_section"} 
+        - hash_of_feature_list = {"abouts" => "About", "agendas" => "Agenda", "speakers" => "Speakers", "faqs" => "FAQ", "galleries" => "Gallery", "feedbacks" => "Feedback", "e_kits" => "e-KIT", "conversations" => "Conversations", "polls" => "Polls", "awards" => "Awards", "invitees" => "Invitees", "qnas" => "Q&A" , "notes" => "Notes", "contacts" => "Contact Us", "venue" => "Venue", "event_highlights" => "Event Highlights", "highlight_images" => "Highlight Images","sponsors" => "Sponsors", "my_profile" => "My Profile", "qr_code" => "QR Code Scanner", "quizzes" => "Quiz", "favourites" => "My Favourites", "networks" => "My Network","exhibitors" => "Exhibitors", 'leaderboard' => 'Leaderboard', "custom_page1s" => "Custom Page 1", "custom_page2s" => "Custom Page 2", "custom_page3s" => "Custom Page 3", "custom_page4s" => "Custom Page 4", "custom_page5s" => "Custom Page 5", "custom_page6s" => "Custom Page 6", "custom_page7s" => "Custom Page 7", "custom_page8s" => "Custom Page 8", "custom_page9s" => "Custom Page 9", "custom_page10s" => "Custom Page 10", "chats" => "One on One Chat","my_travels" => "My Travel","social_sharings" => "Social Sharing", "activity_feeds" => "Activity Feed","all_events" => "Event Listing","maps" => "Map"} 
+        = hidden_field_tag :multiple_create, true
+        - @default_features.each do |event_feature|
+          .mdl-cell--4-col.mdl-cell--2-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.checkbox_list
+            %label.help-tip{:for => "event_user_ids_#{event_feature}"}
+              = check_box_tag "event[features][]", event_feature, @present_feature.include?("#{event_feature}"), :class => "", :id => "event_user_ids_#{event_feature}"
+              %span.checkbox 
+              = hash_of_feature_list[event_feature]
+              %a{:href => '/whats_this/template/fpo.jpg', :class=>"fancybox"} ?
+
+    .fixed-activon-btn-new  
+      - if @event.present? and @event.is_parent?
+        = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+    - if false
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40.coomingsoonCard
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.m-b-30.p-t-10
+            Coming Soon
+            / %a{:href => 'javascript:void(0);', :class =>'helpTag testhelp'}
+            /   what's this?
+          - hash_of_feature_list = {"mycalendar" => "My Calendar", "chat" => "Chat", "travel" => "Travel", "travel" => "Travel", "exhibitionguide" => "Exhibition Guide"} 
+          - @static_features.each do |event_feature|
+            .mdl-cell--4-col.mdl-cell--2-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+              %label{:for => "event_user_ids_#{event_feature}"}
+                = check_box_tag "event[features][]", event_feature, @present_feature.include?("#{event_feature}"), :class => "", :id => "event_user_ids_#{event_feature}"
+                %span.checkbox 
+                = hash_of_feature_list[event_feature]
+- if @event.present? and @event.parent_id.present?
+  :javascript
+    $(document).ready(function(){
+      $(".checkbox_list input:checkbox").attr("disabled", true);
+    });                

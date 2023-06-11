@@ -1,0 +1,11 @@
+<% if @invitee.errors.present? %>
+	<% @invitee.errors.messages.each do |error_message| %>
+    $("#error_field_<%=error_message.first.to_s %>").html("<%=error_message.second.join%>");
+    $("#error_field_<%=error_message.first.to_s %>").css('margin-left','35%');
+    $("#error_field_<%=error_message.first.to_s %>").css('color','red');
+  <% end %>
+<% else %>
+  <% if @invitee.errors.blank? %>
+    window.location.href = "<%= api_v1_mobile_consent_question_answers_path(:status=>'1')%>";
+  <% end %>
+<% end %>

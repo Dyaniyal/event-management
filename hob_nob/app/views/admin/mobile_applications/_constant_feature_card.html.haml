@@ -1,0 +1,64 @@
+.col-sm-3.col-xl-3
+  .panel.panel-tile
+    .panel-body
+      .row.pv5
+        .col-xs-5.ph10
+          - review_status = @event.check_event_content_status if feature[0] == 'percent_completed'
+          = image_tag("coloured_icons/#{feature[1]}")
+          - if false
+            %i.mdl-color-text--blue-grey-400.material-icons.firstimg{:class => "incards"}> 
+              = "#{feature[1]}"
+        .col-xs-7.pl5
+          %h6.text-muted.truncate
+            - if feature[0] == 'percent_completed'
+              = 'Percent Complete'
+            - elsif feature[0] == 'event_features'
+              = 'Event Menu'
+            - else
+              = "#{feature[0].humanize.titleize}"
+          %h2.fs40.mt5.mbn
+            - if feature[0] == 'percent_completed'
+              - feature_count = "#{review_status[2].to_i } %"
+            - elsif feature[0] == "event_highlights"
+              - feature_count = (@event.description.present? or @event.summary.present?) ? 1 : 0
+            - else
+              - if feature[0] == "themes" 
+                - feature_count = @event.association(feature[0].singularize).present? ? 1 : 0
+              - elsif feature[0] == "emergency_exits"
+                - feature_count = @event.emergency_exit.present? ? 1 : 0
+              - else
+                - feature_count = @event.association(feature[0]).count rescue 0
+            - redirect_feature = ["event_highlights", "emergency_exits"]
+            - if feature[0] == "percent_completed"
+              - redirect_url = "javascript:void(0)"
+            - elsif feature[0] == "themes"
+              - redirect_url = "/admin/events/#{@event.id}/#{feature[0]}/#{@event.theme_id}"
+            - elsif feature[0] == "notifications"
+              - redirect_url = "/admin/events/#{@event.id}/#{feature[0]}"
+            - elsif redirect_feature.include?(feature[0]) #and feature_count == 1
+              - id = @event.emergency_exit.id if (feature[0] == "emergency_exits" and @event.emergency_exit.present?)
+              - id = @event.id if (feature[0] == "event_highlights" and @event.present?)
+              - redirect_url = "/admin/events/#{@event.id}/#{feature[0]}/#{id}" if feature_count == 1
+              - redirect_url = "/admin/events/#{@event.id}/#{feature[0]}/new" if feature_count == 0
+            - else
+              - url_new ="/new" if (@event.present? and @event.notifications.count < 1)
+              - redirect_url = "/admin/events/#{@event.id}/#{feature[0]}#{url_new}"
+            = link_to feature_count, redirect_url
+      / - if !(current_user.has_role? :db_manager)
+      - if  (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+        .row.pv5.AddmoreCard{:style => "margin-bottom : #{(feature[0] == 'percent_completed' and review_status[2] == 100) ? "23px" : "0px"}" }
+          .col-xs-12.ph5
+            - manage_feature = ["themes", "event_highlights", "emergency_exits"]
+            - if feature[0] == 'percent_completed'
+              - if review_status[0].present?   
+                - feature[0] = review_status[0].first
+              - else
+                - feature[0] = review_status[0].first
+            - if feature[0] == "event_features"
+              = link_to "Manage Menu", "/admin/events/#{@event.id}/mobile_applications/#{@mobile_application.id}/edit?type=event_edit" 
+            - elsif manage_feature.include?(feature[0])
+              - url_dynamic = "/admin/events/#{@event.id}/#{feature[0]}/new?type=dashboard_new" if feature[0] != "themes"
+              - url_dynamic = "/admin/events/#{@event.id}/#{feature[0]}/#{@event.theme_id}/edit?type=dashboard_edit" if feature[0] == "themes"
+              = link_to "Manage #{Client::display_hsh[feature[0]]}", url_dynamic
+            - elsif feature[0].present?
+              = link_to "Add New",  "/admin/events/#{@event.id}/#{feature[0]}/new?type=dashboard_new"

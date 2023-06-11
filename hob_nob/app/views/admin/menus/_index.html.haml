@@ -1,0 +1,159 @@
+- count = 0
+- feature_length = @event.event_features.length
+= form_for [:admin, @event] ,:url => admin_event_menus_path(:event_id => @event.id), :method => "post", :builder => CustomFormBuilder do |f|
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.p-b-50
+    .form-group.set_highlight_select
+      %label.col-lg-4.control-label.lineHeight15
+        Select Icon Library*
+        %br
+        %a{:href => "/whats_this/menu/library1_screen1.jpg", :class =>'fancybox', :rel=> "Library", :title => "Menu Icons"}
+          (View icon library)
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => {"library1" => "library1_screen2.jpg","library2" => "library2_screen1.jpg","library21" => "library2_screen2.jpg","library3" => "library3_screen1.jpg","library31" => "library3_screen2.jpg" }, :section_id => "Library",:path => "menu"}  
+      .col-lg-8  
+        %i.arrow.single
+        - if f.object.default_feature_icon == "new_menu" or f.object.default_feature_icon == ""
+          - icon_libraries = IconLibrary.where(:licensee_id => current_user.get_licensee).pluck(:icon_library_name,:id)
+          - icon_libraries = icon_libraries.unshift(["select library",""],["Library 1","custom"],["Library 2","blue"],["Library 3", "red"])
+          - icon_libraries << ["Upload your own icon","owns"]
+          = f.select("event", "default_feature_icon", icon_libraries, {selected: f.object.default_feature_icon},{class: 'select2-single form-control', id: "default_feature_icon"})
+
+          / = f.select("event", "default_feature_icon", [["select library",""],["Library 1","custom"],["Library 2","blue"],["Library 3", "red"],["Upload your own icon","owns"]], {selected: f.object.default_feature_icon},{class: 'select2-single form-control', id: "default_feature_icon"})
+
+          .field_with_errors
+            .span{:class => "errorMessage"}
+              = f.object.errors.messages[:default_feature_icon].join("") rescue nil
+        -else
+          - icon_libraries = IconLibrary.where(:licensee_id => current_user.get_licensee).pluck(:icon_library_name,:id)
+          - icon_libraries = icon_libraries.unshift(["Library 1","custom"],["Library 2","blue"],["Library 3", "red"])
+          - icon_libraries << ["Upload your own icon","owns"]
+          = f.select("event", "default_feature_icon", icon_libraries, {selected: f.object.default_feature_icon},{class: 'select2-single form-control', id: "default_feature_icon"})
+          .field_with_errors
+            - if @homepage_error.present?
+              .span{:class => "errorMessage"}
+                = @homepage_error
+        
+
+  = f.fields_for :event_features do |builder|
+    -# if ['chats', 'my_calendar','event_highlights','social_sharings'].exclude? builder.object.name
+    - if ['my_calendar','event_highlights','social_sharings'].exclude? builder.object.name
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-b-10.agendaheight.menuSubCard
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.heading-border.menuEventList
+          %h4.p-t-10.displayInlineBlock
+            - if builder.object.name == "faqs"
+              = "FAQ"
+            - else
+              = Client.display_hsh[builder.object.name] rescue nil
+          %span.floatRight.m-t-10  
+            - if count != 0
+              =# link_to '', 'javascript:void(0);', :class => 'uparrow'
+              = link_to "",admin_event_sequence_path(:event_id => @event.id, :id => builder.object.id, :seq_type => "up", :feature_type => "event_features"),:class => "uparrow", :method => "put", :remote => true
+            - if count != (feature_length - 1)
+              = link_to "",admin_event_sequence_path(:event_id => @event.id, :id => builder.object.id, :type => "down", :feature_type => "event_features"),:class => "downarrow", :method => "put", :remote => true
+            = link_to "show", "javascript:void(0);", :class => "CardClick #{builder.object.name}"
+        
+        .MenuCardHide.mdl-grid{:style => "display: #{builder.object.errors.messages.present? ? "flex": "none"}"}      
+          - count = count + 1
+          = builder.custom_text_field :page_title, "Page Title",:view_popup => {:image_path => "event_menu/#{builder.object.name}_title/Help_Menu_PageTitle.jpg", :rel=> "#{builder.object.name}_title", :title => "Page title"}
+          - if ["event_highlights"].exclude?(builder.object.name)
+            = builder.new_custom_file_browser_field_menu :menu_icon, "Drawer Icon (72x72px png only) ", :id => "drawerIcon_#{count}", :value => (get_menu_icon_display(@event,builder.object) == "yes") ? builder.object.menu_icon_file_name : "", :image_url => @event.default_feature_icon == "owns" ? builder.object.menu_icon_url(:thumb) : "/menu_icons/thumb/missing.png", :menu_class => "menuIconBg",:view_popup => {:image_path => "event_menu/#{builder.object.name}_menu/Help_Menu_DrawerIcon.jpg", :rel=> "#{builder.object.name}_menu", :title => "Page title"}, :display_icon => get_menu_icon_display(@event,builder.object), :add_class => builder.object.name
+            - if ["venue","contacts"].exclude?(builder.object.name)
+              - if builder.object.name == "venue" or builder.object.name == "contacts"
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+                  .mdl-grid.p-v-5.form-group
+                    .col-lg-4.mdl-typography--text-right
+                      %p.displayInlineBlock.multicitytxt Need Menu Icon?
+                    .col-lg-7.p-h-12    
+                      = builder.custom_radio_button_menu :menu_icon_visibility, "yes","Yes", :id => "#{builder.object.name}_yes",:default_checked => (builder.object.menu_icon_visibility == "yes") ? "checked" : ""
+                      = builder.custom_radio_button_menu :menu_icon_visibility, "no", "No", :id => "#{builder.object.name}_no",:default_checked => (builder.object.menu_icon_visibility == "no") ? "checked" : ""
+              = builder.new_custom_file_browser_field_menu :main_icon, "Menu Icons (288x288px png only)", :id => "#{builder.object.name}_main_icon", :value => (get_menu_icon_display(@event,builder.object) == "yes") ? builder.object.main_icon_file_name : "", :image_url => "#{@event.default_feature_icon == "owns" ? builder.object.main_icon_url(:thumb) : "/menu_icons/thumb/missing.png"}",:menu_class => "menuIconBg",:view_popup => {:image_path => "event_menu/#{builder.object.name}_main/Help_Menu_MenuIcon.jpg", :rel=> "#{builder.object.name}_main", :title => "Page title"}, :display_icon => get_menu_icon_display(@event,builder.object), :add_class => builder.object.name
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-t-15
+            .mdl-grid.p-v-5.form-group
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt Status
+              .col-lg-7.p-h-12.m-8
+                = builder.custom_radio_button_menu :status, "active","Active", :id => "option-1#{builder.object.id}", :default_checked => "#{builder.object.status == "active" ? "checked" : ""}",:class => "menu_status_active"
+                = builder.custom_radio_button_menu :status, "deactive", "Deactive", :id => "option-2#{builder.object.id}", :default_checked => "#{builder.object.status == "deactive" ? "checked" : ""}",:class => "menu_status_deactive"
+          = builder.custom_text_area_field :description, "Message",:message_display => "#{custom_message_display(builder.object)}"
+          - if ['event_highlights', 'emergency_exits', "my_calendar"].exclude?(builder.object.name)
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-t-15
+              .mdl-grid.p-v-5.form-group
+                .col-lg-4.mdl-typography--text-right
+                  %p.displayInlineBlock.multicitytxt Hide this Icon
+                .col-lg-7.p-h-12.m-8
+                  = builder.custom_radio_button_menu :menu_visibilty, "inactive", "Yes", :id => "option_2#{builder.object.id}", :default_checked => "#{builder.object.menu_visibilty == "inactive" ? "checked" : ""}",:class => "menu_status_deactive1"
+                  = builder.custom_radio_button_menu :menu_visibilty, "active","No", :id => "option_1#{builder.object.id}", :default_checked => "#{builder.object.menu_visibilty == "active" ? "checked" : ""}",:class => "menu_status_active1"
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-t-15#homepage_feature_menu_index{:style => (builder.object.menu_visibilty == "active" && builder.object.status == "active") ? 'display:block' : 'display:none'}
+              .mdl-grid.p-v-5.form-group
+                .col-lg-4.mdl-typography--text-right
+                  %p.displayInlineBlock.multicitytxt Set as home page
+                .col-lg-7.p-h-12.m-8
+                  / - fields_for :event do |event_builder| 
+                  - @count = @count ||=0 
+                  = builder.custom_radio_button_menu :homepage_feature_name, "active","Yes", :id => "option-1#{@count}", :default_checked => "#{builder.object.name == @event.homepage_feature_name ? "checked" : ""}",:class => "menu_homepage_feature_active"
+                  = builder.custom_radio_button_menu :homepage_feature_name, "deactive", "No", :id => "option-2#{@count}", :default_checked => "#{builder.object.name == @event.homepage_feature_name ? "" : "checked"}",:class => "menu_homepage_feature_deactive"
+                  - @count = @count + 1
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            .mdl-grid.p-v-5
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt Show this feature to
+              .col-lg-3.p-h-12   
+                - er = builder.object.errors.messages[:show_event_feature].join(',') rescue nil
+                - builder.builder.errors.messages[:show_event_feature].clear if builder.object.errors.messages[:show_event_feature].present?
+                = builder.custom_radio_button_menu :show_event_feature, "all","All", :id => "feature_option_1#{builder.object.id}", :default_checked => "#{builder.object.show_event_feature == "all" || builder.object.show_event_feature.blank? ? "checked" : ""}",:class => "show_event_feature"
+                = builder.custom_radio_button_menu :show_event_feature, "group", "Group", :id => "feature_option_2#{builder.object.id}", :default_checked => "#{builder.object.show_event_feature == "group" ? "checked" : ""}",:class => "show_event_feature"
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = er
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8{:style => ((builder.object.show_event_feature == 'all' or builder.object.show_event_feature.blank?)? 'margin-top:30px;display:none;' : 'margin-top:30px'), :id => 'group_check_boxes'}
+            .form-group
+              %label.col-lg-4.control-label.ml-color--shades-white
+                Select Groups *
+                %br
+                / %a{:href => admin_event_invitee_groups_path(:event_id => @event.id), :class =>'', :title => "Invitee Groups", :target => '_blank'}
+                /   (View Available Groups)
+              - er = builder.object.errors.messages[:group_ids].join(',') rescue nil
+              .col-lg-7.notification
+                - default_group_list = [['No Polls taken', 'No Polls taken'], ['No Feedback given', 'No Feedback given'], ['No Quiz taken', 'No Quiz taken'], ['No Q&A', 'No Q&A'], ['NO QR code scanned', 'NO QR code scanned'], ['No Chat', 'No Chat']]
+                - default_group_list = @default_groups.collect{|group| [ group.name, group.id ]}
+                - default_group_list.each_with_index do |group, index|
+                  - if index == 0
+                    .usersep
+                      Default Groups
+                  .md-checkbox
+                    %label
+                      %span.checkbox 
+                      = group[0]
+                - default_group_list = @other_groups.collect{|group| [ group.name, group.id ]}
+                - default_group_list.each_with_index do |group, index|
+                  - if index == 0
+                    .usersep
+                      Groups created by you
+                  .md-checkbox
+                    %label
+                      =# check_box_tag "event_feature[group_ids][]", group[1], (builder.object.group_ids.include?(group[1].to_s)), :class => "", :id => "event_user_ids_#{group[0]}"
+                      = builder.check_box :group_ids, {:multiple => true, :class => "myclass", :style => "mystyle", include_hidden: false}, group[1].to_s
+                      %span.checkbox 
+                      = group[0] 
+              .clear
+              .field_with_errors.marginErrMgs
+                .span{:class => "errorMessage"}
+                  = er                                     
+  .fixed-activon-btn-new  
+    = f.custom_submit_button "SAVE"
+    .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+        = back_button(:back)
+
+= javascript_include_tag "jquery.fancybox"
+
+:javascript
+  $(window).load(function(){
+    $(".show_event_feature").change(function(){
+      selected_value = $(this).val();
+      if (selected_value == "group"){
+        $(this).parent().parent().parent().parent().next().show();
+      }else{
+        $(this).parent().parent().parent().parent().next().hide();
+      }  
+    });
+  })

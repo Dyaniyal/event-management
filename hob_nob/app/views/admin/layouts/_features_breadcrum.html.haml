@@ -1,0 +1,102 @@
+- if params[:controller] != "admin/microsites" and params[:controller] != "admin/microsite_look_and_feels" and params[:controller] != "admin/microsite_features" and params[:controller] != "admin/microsite_menus"
+  - if !(["admin/invitee_structures", 'admin/user_registrations'].include? params[:controller] and ["new","create"].include?(params[:action])) and page != "invitee_datas"
+    - if page == "auto_status_emails"
+      %li.breadcrumb-link
+        = link_to "Import", "javascript:void(0);", :class => "  mdl-color-text--white"             
+    - else
+      %li.breadcrumb-link
+        - if name == "Winner"
+          = link_to "#{@award.title.capitalize}  /  Winner", admin_event_awards_path(:event_id => @event.id), :class => "mdl-color-text--white" if @event.present?
+        - elsif name == "Panel"
+          = link_to "Q&A / ", admin_event_qnas_path(:event_id => @event.id), :class => "mdl-color-text--white" if @event.present?
+        - elsif name == "Qna Setting"
+          = link_to "Q&A /", admin_event_qnas_path(:event_id => @event.id), :class => "mdl-color-text--white" if @event.present?
+        - elsif page == "telecallers"
+          = link_to "User", admin_client_users_path(:client_id => @client.id),:class => "mdl-color-text--white" if @client.present? and params[:from_client].present?
+          = link_to "User", admin_event_users_path(:event_id => @event.id),:class => "mdl-color-text--white" if @event.present? and params[:from_event].present?
+          = link_to "Telecaller", admin_event_telecallers_path(:event_id => @event.id),:class => "mdl-color-text--white" if (params[:from_telecaller].present? or params[:telecaller_index].present?) and (params[:from_event].blank? and params[:from_client].blank?)
+          - if !(current_user.has_role? :moderator) and params[:from_client].blank? and params[:from_event].blank? and params[:from_telecaller].blank? and params[:telecaller_index].blank?
+            = link_to "Telecaller", admin_event_telecallers_path(:event_id => @event.id),:class => "mdl-color-text--white"
+        - elsif page == 'telecaller_accessible_columns'
+          = link_to "Telecaller", admin_event_telecallers_path(:event_id => @event.id,:telecaller_index => "true"),:class => "mdl-color-text--white"
+        - elsif page == "edms"
+          - if params[:next].present? and params[:next] =="NEXT"
+            = link_to "Email Setting /", admin_event_campaigns_path(:event_id => @event.id), :class => "mdl-color-text--white" if @event.present?
+            = link_to "Broadcast", "javascript:void(0);", :class => "mdl-color-text--white"
+          - else
+            - if @event.present?
+              - url = (params["campaign_id"].present? and params["campaign_id"] == "0") ? admin_event_campaign_edms_path(:event_id => @event.id, :campaign_id => 0, :email_setting => true) : admin_event_campaigns_path(:event_id => @event.id)
+              - url1 = admin_event_user_registrations_path(:event_id => @event.id)
+            - if params["campaign_id"].present? and params["campaign_id"] == "0"
+              = link_to "User Registrations /", url1, :class => "mdl-color-text--white"
+            - else
+              = link_to "Campaign /", url, :class => "mdl-color-text--white"
+            = link_to "Email Settings", url, :class => "mdl-color-text--white" 
+            =# link_to "#{@campaign.campaign_name.capitalize} / ", admin_event_campaigns_path(:event_id => @event.id), :class => "mdl-color-text--white" if @event.present?
+        - elsif page == "manage_invitee_fields"
+          = link_to "Invitees / ", admin_event_invitees_path(:event_id => @event.id), :class => "mdl-color-text--white" if @event.present?
+        - elsif page == "feedback_forms"
+          = link_to "Feedback Form", admin_event_feedback_forms_path, :class => "mdl-color-text--white" if @event.present?
+        - elsif name =="Telecaller"
+          = link_to "Telecaller", admin_event_telecaller_dashboards_path(:event_id => @event.id,:from=>"dashboard"), :class => "mdl-color-text--white" if @event.present?
+        - elsif name == "Feedback"
+          = link_to "Feedback Form", admin_event_feedback_forms_path, :class => "mdl-color-text--white" if @event.present?                
+          - if params[:feedback_form_id].present?
+            - feedback = FeedbackForm.find_by_id(params[:feedback_form_id])
+            = link_to "/ #{feedback.title}", admin_event_feedbacks_path(:feedback_form_id=>feedback.id), :class => "mdl-color-text--white" if @event.present? and feedback.present?
+        - elsif name == "Registration look and feel"
+          = link_to "Registration look and feel", new_admin_event_registration_look_and_feel_path(:event_id => @event.id), :class => "mdl-color-text--white" if @event.present?
+        - elsif name == "Registration Setting"
+          = link_to "Registration Setting", admin_event_user_registrations_path(:event_id => @event.id), :class => "mdl-color-text--white" if @event.present?
+        - elsif name == "registration details"
+          - if params[:action] == "show" or params[:type].present?
+            = link_to "Registration Statistics /",admin_event_registration_details_path(:event_id=>@event.id),:class => "mdl-color-text--white"
+          - if params[:type].present? and params[:type] =="mark_person_as_drop_outed"
+            = link_to "Drop out Registrations",url_for(params),:class => "mdl-color-text--white"
+          - elsif params[:type].present? and params[:type] =="put_on_holded"
+            = link_to "On Hold Registrations",url_for(params),:class => "mdl-color-text--white"
+          - elsif params[:type].present?
+            = link_to "#{params[:type].capitalize.humanize} Registrations",url_for(params) ,:class => "mdl-color-text--white"
+          - elsif params[:action] == "index"
+            = link_to "Registration Statistics",url_for(params),:class => "mdl-color-text--white" 
+        - elsif page == "registration_statistics"
+          = link_to "Statistics", "javascript:void(0);", :class => "mdl-color-text--white"
+        - elsif page == "campaign_details"
+          = link_to "Statistics", "javascript:void(0);", :class => "mdl-color-text--white"
+        - elsif page == "track_link_users"
+          - if params[:email_count] == "true"
+            = link_to "Statistics /Total Email Opened",admin_event_campaign_details_path(:event_id => @event.id), :class => "mdl-color-text--white"
+          -else
+            = link_to "Statistics /",admin_event_campaign_details_path(:event_id => @event.id), :class => "mdl-color-text--white"
+            = link_to "Track Links", "javascript:void(0);", :class => "mdl-color-text--white"
+        - elsif page == "auto_status_emails"
+          = link_to "Import", "javascript:void(0);", :class => "mdl-color-text--white"
+        - elsif page == "badge_pdfs"
+          = link_to "Onsite Registrations /", admin_event_onsite_registrations_path(:event_id => @event.id), :class => "mdl-color-text--white"
+          = link_to "Settings", "javascript:void(0);", :class => "mdl-color-text--white"   
+        - elsif page == "unsubscribes"
+          = link_to "Unsubscribe", "javascript:void(0);", :class => "mdl-color-text--white"
+        - elsif page == "onsite_registrations"
+          = link_to "Onsite registrations", "javascript:void(0);", :class => "mdl-color-text--white"
+        - elsif page == "onsite_accessible_columns"
+          = link_to admin_event_onsite_accessible_columns_path(:event_id => @event.id) , :class => "mdl-color-text--white" do 
+            Onsite Accessible Columns
+        - elsif page == "map"
+          = link_to "Maps", "javascript:void(0);", :class => "mdl-color-text--white"
+        - elsif params[:from] == "microsites"
+          = link_to "#{name}", get_microsite_feature_url(page, params), :class => "mdl-color-text--white" if @event.present? and page != "telecallers" and page != " and telecaller_accessible_columns" and name != "Feedback" and name !="Telecaller" and name != "Registration look and feel" and page != "edms" and name != "Registration Setting" and name != "registration details" and  page != "registration_statistics" and page != "badge_pdfs" and page != "unsubscribes"
+        - elsif page == "Excel Imports"
+          = link_to "Excel Imports", "javascript:void(0);", :class => "mdl-color-text--white"
+        = link_to "#{name}", get_feature_url(page, params), :class => "mdl-color-text--white" if @event.present? and page != "telecallers" and page != " and telecaller_accessible_columns" and name != "Feedback" and name !="Telecaller" and name != "Registration look and feel" and page != "edms" and name != "Registration Setting" and name != "registration details" and  page != "registration_statistics" and page != "badge_pdfs" and page != "unsubscribes" and params[:from] != "microsites"
+- if params[:action] == "new" or (params[:controller] == "admin/themes" and params[:step] == "event_theme") and (name != "Look & Feel") and (page != "telecaller_accessible_columns")
+  = render :partial => "admin/layouts/breadcrum_new_record" if params[:controller] != "admin/notifications" and params[:controller] != "admin/telecallers" and params[:controller] != "admin/auto_status_emails"
+  - if params[:action] == "new" and params[:controller] == "admin/telecallers"
+    - if (params[:from_client].present? or params[:from_event].present?)
+      %li.breadcrumb-link
+        = link_to "New User", "javascript:void(0);", :class => "mdl-color-text--white"
+- elsif page =="edms" and params[:controller]=="admin/edms" and (params[:action]=="edit" or params[:action]=="update") and params[:mail_to].present?
+  %li.breadcrumb-link
+    = link_to "#{params[:mail_to].capitalize} Email", "javascript:void(0);", :class => "mdl-color-text--white" rescue nil
+- elsif page == "telecaller_accessible_columns"
+  %li.breadcrumb-link
+    = link_to "Data Access", "javascript:void(0);", :class => "mdl-color-text--white"

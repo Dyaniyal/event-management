@@ -1,0 +1,188 @@
+- if params[:controller] == 'admin/clients' and ['show', 'edit'].include? params[:action] and @client.present? or params[:client_id].present?
+  - @client = Client.get_client_by_id(params[:client_id]) if params[:client_id].present?  
+
+- if params[:controller] == 'admin/events' and ['show', 'edit'].include? params[:action] and @event.present? or params[:event_id].present?
+  - if params[:event_id].present?
+    - @event = Event.get_event_by_id(params[:event_id])
+    - @mobile_application = @event.mobile_application
+    - if params[:event_id].present? and ["admin/event_highlights","admin/abouts", "admin/mobile_applications", "admin/leaderboards","admin/telecallers","admin/registration_details","admin/auto_status_emails","admin/activity_feeds","admin/telecaller_dashboards","admin/campaign_details","admin/qr_scanner_details","admin/registration_statistics","admin/onsite_registrations","admin/microsites","admin/microsite_look_and_feels", "admin/microsite_menus", "admin/microsite_features","admin/telecaller_searchs","admin/telecaller_invitees","admin/import_data_api", "admin/multi_lng_events","admin/track_link_users", "admin/consent_questions"].exclude?(params[:controller])
+      - if params[:controller] !=  "admin/import_data_api"
+        - page = (params[:controller].split("/").second).singularize
+        - page = "event_feature" if page == "menu"
+        - page = "invitee_datum" if page == "invitee_data"
+        - model_name = page.camelcase.constantize
+        - #@feature_obj = model_name.find(params[:id]) if params[:id].present?
+        - @feature_obj = Event.get_associated_module_data(model_name,params[:id]) if params[:id].present?
+    - @client = @event.client
+- if params[:controller] == 'admin/mobile_applications' and ['show', 'edit'].include? params[:action] and @mobile_application.present?
+  - if params[:event_id].present?
+    - @event = Event.get_event_by_id(params[:event_id])
+    - @client = @event.client
+
+- if params[:controller] == 'admin/events' and ['show', 'edit'].include? params[:action] and @event.present? or params[:event_id].present?
+  - if params[:event_id].present?
+    - @event = Event.get_event_by_id(params[:event_id])
+    - @microsite = @event.microsite
+    - if params[:event_id].present? and ["admin/event_highlights","admin/abouts", "admin/mobile_applications", "admin/leaderboards","admin/telecallers","admin/registration_details","admin/auto_status_emails","admin/activity_feeds","admin/telecaller_dashboards","admin/campaign_details","admin/qr_scanner_details","admin/registration_statistics","admin/onsite_registrations","admin/telecaller_invitees", "admin/telecaller_searchs","admin/event_features", "admin/menus", "admin/multi_lng_events","admin/import_data_api", "admin/track_link_users", "admin/consent_questions","admin/onsite_accessible_columns"].exclude?(params[:controller])
+      - page = (params[:controller].split("/").second).singularize
+      - page = "microsite_feature" if page == "microsite_menu"
+      - page = "invitee_datum" if page == "invitee_data"
+      - model_name = page.camelcase.constantize
+      -#@feature_obj = @event.microsite.get_associated_microsite_module_data(model_name,params[:id]) if params[:id].present?
+    - @client = @event.client
+- if params[:controller] == 'admin/microsites' and ['show', 'edit'].include? params[:action] and @microsite.present?
+  - if params[:event_id].present?
+    - @event = Event.get_event_by_id(params[:event_id])
+    - @client = @event.client
+
+.topbar-left.blueheaderFont   
+  - if session[:current_user_role] == "telecaller" #current_user.has_role? :telecaller
+    %ol.breadcrumb
+      - if params[:controller] != 'admin/dashboards'  and current_user.telecaller_groups.count > 1
+        %li.breadcrumb-active
+          = link_to 'Home', admin_dashboards_path, :class => "mdl-color-text--white"
+  - if session[:current_user_role] != "telecaller"#!current_user.has_role? :telecaller
+    - if params[:controller] == "admin/prohibited_accesses"
+      - if request.referer.present? and (request.referer != "#{APP_URL}/admin/prohibited_accesses")
+        = render :partial => "layouts/prohibited_access_breadcrumb",:locals => {:position_value => @event_id}
+      -elsif request.referer.blank?
+        = render :partial => "layouts/prohibited_access_breadcrumb",:locals => {:position_value => params[:event]} if params[:event].present?
+    - else
+      %ol.breadcrumb
+        - if params[:controller] != 'admin/dashboards'
+          %li.breadcrumb-active
+            = link_to 'Home', admin_dashboards_path, :class => "mdl-color-text--white"
+        - if params[:controller] == 'admin/profiles' and @user.present?
+          %li.breadcrumb-active
+            = link_to @user.first_name, edit_admin_profile_path(id: @user.id), :class => "mdl-color-text--white"
+        - if params[:controller] == 'admin/icon_libraries'# and @user.present?
+          %li.breadcrumb-active
+            = link_to "Icon Library", admin_icon_libraries_path, :class => "mdl-color-text--white"
+        - if @client.present?
+          -if !(current_user.has_role_without_event("executive", @client.id,session[:current_user_role]))
+            - if @client.new_record?
+              = render :partial => "admin/layouts/breadcrum_new_record"
+            -else
+              %li.breadcrumb-link
+                - client_name = "#{@client.name}" rescue ""
+                = link_to client_name, admin_client_events_path(:client_id => @client.id), :class => "mdl-color-text--white"
+            - if params[:controller] == "admin/users" and params[:client_id].present?
+              %li.breadcrumb-link.mdl-color-text--white
+                - if params["get_role"] == "all" and params["events_id"].present?
+                  = link_to "User",admin_event_users_path(:event_id => params[:events_id], :role => "all"), :class => "mdl-color-text--white" 
+                - else
+                  = link_to "User",admin_client_users_path(:client_id => params[:client_id]), :class => "mdl-color-text--white" 
+              - if params[:action] != "index" and @user.new_record? 
+                = render :partial => "admin/layouts/breadcrum_new_record"
+        - if @event.present? #and !@event.new_record?
+          - if @event.new_record?
+            = render :partial => "admin/layouts/breadcrum_new_record"       
+          - else 
+            %li.breadcrumb-link
+              - if @event.marketing_app.blank?
+                = link_to "#{@event.event_name}", admin_client_event_path(:client_id => @event.client_id, :id => @event.id), :class => "mdl-color-text--white"
+              -else
+                -if @event.mobile_application_id.present?
+                  =# link_to "Hub Space", admin_event_mobile_application_path(:event_id => @event.id, :id => @event.mobile_application_id), :class => "mdl-color-text--white"
+                  = link_to "#{@event.event_name}",  admin_client_event_path(:client_id => @event.client_id, :id => @event.id), :class => "mdl-color-text--white"
+                -else
+                  =# link_to "Hub Space", new_admin_event_mobile_application_path(:event_id=>@event.id,:old_one => true), :class => "mdl-color-text--white"
+                  = link_to "Hub Space", new_admin_event_mobile_application_path(:event_id=>@event.id,:old_one => true), :class => "mdl-color-text--white"
+        - importable_type = params["importable_type"] if (params["importable_type"].present? and params["importable_type"] == "invitee_data")
+        - if params[:type] == "image_setting" and params[:controller] == "admin/microsite_features"
+          %li.breadcrumb-link
+            = link_to "Image Setting", new_admin_event_microsite_microsite_feature_path(event_id: @event.id, :microsite_id => @microsite.id, :type => "image_setting"), :class => "mdl-color-text--white"
+        - elsif params[:type] == "faq_setting" and params[:controller] == "admin/microsite_features"
+          %li.breadcrumb-link
+            = link_to "FAQ Setting", new_admin_event_microsite_microsite_feature_path(event_id: @event.id, :microsite_id => @microsite.id, :type => "faq_setting"), :class => "mdl-color-text--white"        
+        - if  params[:controller] == "admin/microsites" or params[:controller] == "admin/microsite_look_and_feels" or params[:type] == "from_microsite" or params[:from] == "microsites"
+          - if @microsite.present? and ["admin/registrations","admin/invitee_structures","admin/groupings","admin/users","admin/manage_mobile_apps","admin/registration_settings","admin/telecallers", 'admin/user_registrations','admin/telecaller_accessible_columns','admin/invitee_datas',"admin/campaigns","admin/edms","admin/qna_walls","admin/conversation_walls","admin/poll_walls","admin/quiz_walls","admin/registration_details","admin/telecaller_dashboards","admin/registration_statistics","admin/campaign_details","admin/unsubscribes","admin/badge_pdfs","admin/registration_look_and_feels","admin/auto_status_emails","admin/smtp_settings","admin/onsite_registrations", "admin/mobile_applications", "admin/event_features", "admin/menus", "admin/themes", "admin/track_link_users", "admin/log_changes", "admin/consent_questions","admin/onsite_accessible_columns"].exclude?(params[:controller])
+            - microsite_name = "#{@event.microsite.name}" rescue ""
+            - if @event.present? and @event.microsite.present?
+              %li.breadcrumb-link
+                = link_to microsite_name, admin_event_microsite_path(:event_id => @event.id, :id=> @event.microsite.id), :class => "mdl-color-text--white"
+          - page = "#{(params[:controller].split("/").second)}"
+          - name = Client::display_hsh2[page]
+          - if params[:controller] == "admin/microsite_look_and_feels"
+            %li.breadcrumb-link
+              = link_to "Look and Feel", new_admin_event_microsite_microsite_look_and_feel_path(:event_id => @event.id, :microsite_id => @microsite.id), :class => "mdl-color-text--white" if @event.microsite.present?
+          - elsif params[:controller] == "admin/microsite_features"
+            %li.breadcrumb-link
+              = link_to "Features", new_admin_event_microsite_microsite_feature_path(:event_id => @event.id, :microsite_id => @microsite.id), :class => "mdl-color-text--white"
+          - elsif params[:controller] == "admin/microsite_menus"
+            %li.breadcrumb-link
+              = link_to "Menus", admin_event_microsite_microsite_menus_path(:event_id => @event.id, :microsite_id => @microsite.id), :class => "mdl-color-text--white"
+          - elsif params[:from] == "microsites" and params[:controller] == "admin/folders" and params[:action] == "show"
+            %li.breadcrumb-link
+              = link_to "Gallery ",  "javascript:void(0);", :class => "  mdl-color-text--white"   
+          - elsif params[:folder_id].present? and params[:from] == "microsites" 
+            %li.breadcrumb-link
+              = link_to " New Gallery",  "javascript:void(0);", :class => "  mdl-color-text--white"
+          - if params[:event_id].present? and  ["admin/microsite_look_and_feels", "admin/microsite_menus","admin/microsite_features"].exclude?(params[:controller])  
+            - if ["admin/registrations","admin/invitee_structures","admin/groupings", "admin/notifications","admin/users", "admin/registration_settings","admin/telecallers", 'admin/user_registrations','admin/telecaller_accessible_columns',"admin/invitee_datas","admin/campaigns","admin/edms","admin/qna_walls","admin/conversation_walls","admin/poll_walls","admin/quiz_walls","admin/telecaller_dashboards","admin/registration_details","admin/telecaller_dashboards","admin/campaign_details","admin/unsubscribes", "admin/registration_statistics","admin/badge_pdfs","admin/registration_look_and_feels","admin/auto_status_emails","admin/onsite_registrations", "admin/mobile_applications", "admin/event_features", "admin/menus","admin/import_data_api", "admin/consent_questions","admin/onsite_accessible_columns"].exclude? params[:controller] and @event.microsite.present?
+              - if ["admin/speakers","admin/agendas","admin/abouts","admin/faqs","admin/images","admin/contacts","admin/sponsors", "admin/emergency_exits",'admin/custom_page1s', 'admin/custom_page2s', 'admin/custom_page3s', 'admin/custom_page4s', 'admin/custom_page5s',"admin/custom_page6s","admin/custom_page7s","admin/custom_page8s","admin/custom_page9s","admin/custom_page10s"].include?(params["controller"]) 
+                %li.breadcrumb-link
+                  = link_to "Content", admin_event_microsite_path(:event_id => @event.id, :id=> @event.microsite.id, :type => "show_content"), :class => "mdl-color-text--white"
+          = render :partial => "admin/layouts/features_breadcrum",:locals => {:page => page, :name => name}
+        - else params[:controller] == "admin/mobile_applications" 
+          - if @mobile_application.present? and importable_type.blank? and ["admin/registrations","admin/invitee_structures","admin/groupings","admin/users","admin/manage_mobile_apps","admin/registration_settings","admin/telecallers", 'admin/user_registrations','admin/telecaller_accessible_columns','admin/invitee_datas',"admin/campaigns","admin/edms","admin/qna_walls","admin/conversation_walls","admin/poll_walls","admin/quiz_walls","admin/registration_details","admin/telecaller_dashboards","admin/registration_statistics","admin/campaign_details","admin/unsubscribes","admin/badge_pdfs","admin/registration_look_and_feels","admin/auto_status_emails","admin/smtp_settings","admin/onsite_registrations","admin/microsites","admin/microsite_look_and_feels", "admin/microsite_menus", "admin/microsite_features", "admin/track_link_users", "admin/log_changes","admin/import_data_api", "admin/consent_questions","admin/onsite_accessible_columns","admin/imports"].exclude?(params[:controller]) and (params[:from] != "microsites")
+            - mobile_application_name = "#{@mobile_application.name}" rescue ""
+            - if @event.present? and @mobile_application.present?
+              - if @mobile_application.new_record?
+                = render :partial => "admin/layouts/breadcrum_new_record"
+              -else
+                %li.breadcrumb-link
+                  = link_to mobile_application_name, admin_event_mobile_application_path(:event_id => @event.id, :id=> @mobile_application.id), :class => "mdl-color-text--white"
+            - else
+              - if @mobile_application.new_record?
+                = render :partial => "admin/layouts/breadcrum_new_record"
+              -else
+                %li.breadcrumb-link
+                  = link_to mobile_application_name, admin_client_mobile_applications_path(:client_id => @client.id), :class => "mdl-color-text--white"  
+        - if params[:type] == "faq_setting" and page == "event_feature" 
+          %li.breadcrumb-link 
+            = link_to "FAQ Setting", new_admin_event_event_feature_path(event_id: @event.id, :type => "faq_setting"), :class => "  mdl-color-text--white"
+        - elsif params[:folder_id].present? and page == "image" and params[:from] != "microsites"
+          %li.breadcrumb-link
+            = link_to "Gallery /",  "javascript:void(0);", :class => "  mdl-color-text--white"   
+            = link_to "Folder /", admin_event_folders_path(:event_id => @event.id), :class => "  mdl-color-text--white"
+            = link_to " New Gallery",  "javascript:void(0);", :class => "  mdl-color-text--white"
+        - elsif params[:type] == "image_setting" and page == "event_feature"
+          %li.breadcrumb-link
+            = link_to "Image Setting", new_admin_event_event_feature_path(event_id: @event.id, :type => "image_setting"), :class => "mdl-color-text--white"
+        - elsif params[:feature] == "my_calender" and page == "event_feature" 
+          %li.breadcrumb-link 
+            = link_to "Calender", new_admin_event_event_feature_path(event_id: @event.id, :feature => "my_calender"),:class => "mdl-color-text--white"
+        - elsif params[:action] == "new" and page == "event_feature" 
+          %li.breadcrumb-link 
+            = link_to "Features", new_admin_event_event_feature_path(event_id: @event.id), :class => "mdl-color-text--white"
+        - else
+          - page = "#{(params[:controller].split("/").second)}"
+          - page = "#{params["import"]["importable_type"] + "s" rescue nil}" if page == "imports"
+          - name = Client::display_hsh[page]
+          - name = "Look & Feel" if name == "Theme"
+          - if params[:event_id].present? and page != "invitee_datas" and ["admin/mobile_applications", "admin/menus","admin/event_features", "admin/store_infos","admin/qna_walls","admin/conversation_walls", "admin/poll_walls", "admin/quiz_walls","admin/smtp_settings","admin/microsites","admin/microsite_look_and_feels", "admin/microsite_menus", "admin/microsite_features"].exclude?(params[:controller]) and (params[:from] != "microsites")
+            - if ["admin/registrations","admin/invitee_structures","admin/groupings", "admin/notifications","admin/users", "admin/registration_settings","admin/telecallers", 'admin/user_registrations','admin/telecaller_accessible_columns',"admin/invitee_datas","admin/campaigns","admin/edms","admin/qna_walls","admin/conversation_walls","admin/poll_walls","admin/quiz_walls","admin/telecaller_dashboards","admin/registration_details","admin/telecaller_dashboards","admin/campaign_details","admin/unsubscribes", "admin/registration_statistics","admin/badge_pdfs","admin/registration_look_and_feels","admin/auto_status_emails","admin/onsite_registrations","admin/microsites","admin/microsite_look_and_feels", "admin/microsite_menus", "admin/microsite_features", "admin/track_link_users", "admin/log_changes","admin/import_data_api", "admin/consent_questions", "admin/mobile_consent_questions", "admin/consent_question_look_and_feels","admin/onsite_accessible_columns", "admin/imports"].exclude? params[:controller] and (name != "Look & Feel") and @mobile_application.present? and (params[:from] != "microsites")
+              %li.breadcrumb-link
+                - if ["admin/notifications", "admin/e_kits","admin/feedbacks","admin/feedback_forms","admin/conversations","admin/qnas","admin/quizzes","admin/polls","admin/panels", "admin/leaderboards", "admin/chats", "admin/activity_feeds","admin/qna_settings", "admin/track_link_users"].include?(params["controller"])
+                  = link_to "Engagement", admin_event_mobile_application_path(:event_id => @event.id, :id=> @mobile_application.id, :type => "show_engagement"), :class => "mdl-color-text--white"
+                - else
+                  = link_to "Content", admin_event_mobile_application_path(:event_id => @event.id, :id=> @mobile_application.id, :type => "show_content"), :class => "mdl-color-text--white"
+            = render :partial => "admin/layouts/features_breadcrum",:locals => {:page => page, :name => name}
+          - if (@mobile_application.present? and @event.present?) and (params[:controller] == "admin/mobile_applications" and params[:action] == "edit")
+            %li.breadcrumb-link
+              = link_to "App Info", edit_admin_event_mobile_application_path(event_id: @event.id, id: @mobile_application.id), :class => "mdl-color-text--white"
+          
+          - if @event.present? and (params[:controller] == "admin/event_features" and params[:action] == "new")
+            %li.breadcrumb-link
+              - if params[:feature] == "my_calender"
+                = link_to "Calender", new_admin_event_event_feature_path(event_id: @event.id, :feature => "my_calender"), :class => "mdl-color-text--white"
+              - else
+                = link_to "Features", new_admin_event_event_feature_path(event_id: @event.id), :class => "mdl-color-text--white"
+          
+          - if @event.present? and (params[:controller] == "admin/menus" and params[:action] == "index")
+            %li.breadcrumb-link
+              = link_to "Menu", admin_event_menus_path(event_id: @event.id), :class => "mdl-color-text--white"
+          - if @event.present? and (params[:controller] == "admin/invitee_datas" and params[:action] == "index" and (params[:stats].present? and params[:stats] == "true"))
+            %li.breadcrumb-link
+              = link_to "Statistics", "javascript:void(0);", :class => "mdl-color-text--white"

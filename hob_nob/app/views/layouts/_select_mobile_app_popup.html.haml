@@ -1,0 +1,26 @@
+.popup-overlay
+.ClientPopup
+#register-form.col.s12.ClientPopup-info
+  %p.txtcenter.m-b-30
+    Please select a mobile application to continue
+  %span 
+    - if false
+      = link_to request.referer, :class => 'closeclick' do 
+        X
+    = link_to back_path, :class => 'closeclick' do 
+      X
+  = form_tag  "/admin/clients/#{params[:client_id]}/mobile_applications", :class => "caret",:method => :post do
+    .arrow-down                        
+    = hidden_field_tag :event_id, params[:event_id]
+    = hidden_field_tag :add_existing, true
+    = select_tag :id, options_for_select(objs.map{|c| [c.name, c.id]}), :prompt => "#{prompt_message}"
+    .row.txtcenter.UserSubmit.m-t-40
+      = submit_tag "Submit", :class => "mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-color--light-blue-600 disbtn"
+    .row.txtcenter.m-t-20
+      %p
+        - if prompt_message == 'Select Event' and (!current_user.has_role? :moderator and !current_user.has_role? :event_admin)
+          Want to add a new event? 
+          = link_to "Click here", new_admin_client_event_path(:client_id => params[:client_id])
+        - elsif (!current_user.has_role? :moderator and !current_user.has_role? :event_admin)
+          Want to add a new mobile application? 
+          = link_to "Click here", new_admin_event_mobile_application_path(:event_id => params[:event_id])

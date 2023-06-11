@@ -1,0 +1,10 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope               
+	%section.tables-data
+		.ml-header.relative.clear.mdl-color--light-blue-800
+			.mdl-grid.mdl-grid--no-spacing
+				.mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet
+					%h3.mdl-color-text--white.m-t-15.p-l-40.p-v-20 Api Response
+		- if @response.present?
+			= @response["ResponseData"]
+		- else @response.errors
+			Invalid User Details

@@ -1,0 +1,49 @@
+.col-sm-3.col-xl-3
+  .panel.panel-tile
+    .panel-body
+      .row.pv5
+        .col-xs-5.ph10
+          = image_tag(image_path)
+        .col-xs-7.pl5
+          %h6.text-muted
+            - if feature_count.blank?
+              = link_to card_title, manage_link
+            - else
+              = card_title
+          %h2.fs30.mt5.mbn
+            - if feature_count.present?
+              - if (current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]) or current_user.has_role_for_event?("response_manager",@event.id,session[:current_user_role])) and card_title == "Database"
+                = link_to feature_count, manage_link
+              - elsif !(current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]) or current_user.has_role_for_event?("response_manager",@event.id,session[:current_user_role])) and card_title == "Database"
+                =# feature_count
+                = link_to feature_count, manage_link
+              - elsif card_title == "Onsite Registration Tool"
+                = link_to feature_count, manage_link,:target => "_blank"
+              - else
+                = link_to feature_count, manage_link
+              / = link_to feature_count, manage_link, :target => '_blank' if card_title == "QR Scanner"
+              / = link_to feature_count, manage_link if card_title != "QR Scanner"
+      .row.pv5.AddmoreCard
+        .col-xs-12.ph5
+          - if (!(current_user.has_any_role?(:moderator,:telecaller,:db_manager) and ["db_manager", "telecaller", "moderator"].include? session[:current_user_role])) and @event.marketing_app != true and card_title == 'Telecaller'
+            = link_to new_label, new_link, :class => 'displayBlock' if @event.present? and @event.is_parent?
+            = link_to 'Statistics', admin_event_telecaller_dashboards_path(:event_id => @event.id,:from=>"dashboard")
+          - elsif (current_user.has_any_role?(:moderator,:client_admin,:db_manager,:event_admin,:licensee_admin, :response_manager,:client_response_manager)) and @event.marketing_app != true and card_title == 'Registration'
+            = link_to new_label, new_link, :class => 'displayBlock' if @event.present? and @event.is_parent?
+            = link_to 'Statistics', admin_event_registration_details_path(:event_id => @event.id)
+          - elsif (current_user.has_any_role?(:moderator,:client_admin,:db_manager,:event_admin,:licensee_admin,:response_manager,:client_response_manager)) and @event.marketing_app != true and card_title == 'Onsite Registration Tool'
+            = link_to 'Statistics', admin_event_registration_statistics_path(:event_id => @event.id)
+          - elsif (current_user.has_any_role?(:moderator,:client_admin,:db_manager,:event_admin,:licensee_admin,:response_manager)) and @event.marketing_app != true and card_title == 'Communication'
+            = link_to new_label, new_link, :class => 'displayBlock' if @event.present? and @event.is_parent?
+            = link_to 'Statistics', admin_event_campaign_details_path(:event_id => @event.id)
+          - elsif !(current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]) or current_user.has_role_for_event?("response_manager", @event.id,session[:current_user_role])) and (!current_user.has_role_for_event?("moderator",@event.id,session[:current_user_role])) and (!current_user.has_role_for_event?("client_response_manager",@event.id,session[:current_user_role]))#!(current_user.has_role? :db_manager)
+            = link_to new_label, new_link, :class => 'displayBlock' if @event.present? and @event.is_parent? and defined?(new_label) and defined?(new_link)
+            - if card_title == 'Mobile App' and @multi_mobile_applications.present? and @event.mobile_application.blank?
+              = link_to 'Add To Existing Multi-Event app', admin_client_mobile_applications_path(:client_id => @event.client_id, :feature => 'events', :event_id => @event.id)
+            - if @event.microsite.present? and card_title == "Microsite"
+              = link_to 'Preview', microsite_path(:id => @event.seo_name), :target => "_blank"
+          -elsif (current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])) or (current_user.has_role_for_event?("response_manager", @event.id,session[:current_user_role])) and card_title == "Database"
+            = link_to new_label, new_link, :class => 'displayBlock' if @event.present? and @event.is_parent?
+            - if @event.invitee_structures.present?
+              - if @event.invitee_structures.first.invitee_datum.present?
+                = link_to "Statistics", admin_event_invitee_datas_path(:event_id => @event.id,:stats => true)

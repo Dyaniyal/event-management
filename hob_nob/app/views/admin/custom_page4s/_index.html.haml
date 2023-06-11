@@ -1,0 +1,20 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => 'custom page', :url => "/admin/events/#{params[:event_id]}/custom_page4s/new", :msg => 'test'} 
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt
+    = get_search_data("custom_pages")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+    %tr
+      %th Page Type
+      %th
+      %th  
+        - objs.each do |custom_page|
+          %tr
+            %td.font16= custom_page.page_type rescue nil
+            %td.IconDrp
+              = more_vert_button(custom_page.id)
+              %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{custom_page.id}"}
+                = edit_link(params, custom_page.id)
+                = delete_link(params, custom_page.id)

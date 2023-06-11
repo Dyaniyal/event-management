@@ -1,0 +1,34 @@
+- if name[0].present?
+  .leaderChart
+    %h1
+      -if url == "event_features"
+        = link_to "#{name[0][0].capitalize}","/admin/events/#{@event.id}/#{name[0][0]}"
+      -else
+        - name[0][1] = "new" if url == "abouts" 
+        - name[0][1] = nil if url == "qnas" 
+        = link_to "#{name[0][0].capitalize.gsub(/^(.{15,}?).*$/m,'\1...')}","/admin/events/#{@event.id}/#{url}/#{name[0][1]}"  
+    %span 2.
+- else
+  .leaderChart
+    %h1
+      = "-"
+    %span 2.   
+    
+- if name[1].present?    
+  .leaderChart
+    %h1
+      -if url == "event_features"
+        = link_to "#{name[1][0].capitalize}","/admin/events/#{@event.id}/#{name[1][0]}"
+      -else
+        - name[1][1] = "new" if url == "abouts"
+        - name[1][1] = nil if url == "qnas" 
+        = link_to "#{name[1][0].capitalize.gsub(/^(.{15,}?).*$/m,'\1...')}","/admin/events/#{@event.id}/#{url}/#{name[1][1]}"
+    %span 3.
+-else
+  .leaderChart
+    %h1
+      = "-"
+    %span 3.
+
+- redirect_url = "/new" if url == "abouts"
+= link_to "Complete List »","/admin/events/#{@event.id}/#{url}#{redirect_url}", :class => 'completeList'

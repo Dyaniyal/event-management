@@ -1,0 +1,18 @@
+%li.grid.eventDetialDiv.angular-grid-item
+  .mdl-card.mdl-shadow--0dp
+    .mdl-card__supporting-text
+      %a.displayInlineBlock.mdl-color--light-blue-600.mdl-button--fab.m-r-15
+        %i.mdl-color-text--white.material-icons view_agenda
+      .displayInlineBlock
+        - if obj == "client"
+          %span.font35.displayBlock.p-v-5
+            = @clients.length
+          = "Client"
+        - if obj == "event"
+          %span.font35.displayBlock.p-v-5
+            = @event_count
+          Event
+        - if obj == "licensee"
+          %span.font16.displayBlock.p-v-5
+            = "Package Type"
+          = @licensee.package_type || "Trial"                       

@@ -1,0 +1,15 @@
+%form.ng-pristine.ng-valid{:action => "#"}
+  .mdl-grid
+    = show_field("Exhibitor Type : ", obj.exhibitor_type.capitalize) rescue nil
+    = show_field("URL : ", obj.website_url) rescue nil
+    = show_field("Contact Person Name ", obj.contact_person_name) rescue nil
+    = show_field("Contact No.  ", obj.mobile) rescue nil
+    = show_field("Description : ", obj.description) rescue nil
+    .mdl-cell--4-col.mdl-cell--4-col-tablet.m-8
+      %p.no-m-b
+        %strong Logo :
+        %span
+          = image_tag obj.image_url(:thumb)
+  .m-l-18
+    .mdl-cell--12-col.mdl-cell--12-col-tablet
+      = back_button_detailed_page(:back)

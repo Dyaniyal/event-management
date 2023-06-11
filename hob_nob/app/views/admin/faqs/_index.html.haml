@@ -1,0 +1,45 @@
+- if !objs.present? and !params[:admin_search].present? and params[:from] == "microsites"  
+  .mdl-typography--text-center.BlnkTxt
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => 'faqs', :url => "/admin/events/#{params[:event_id]}/faqs/new?from=microsites", :msg => 'test'}
+- elsif !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => 'faqs', :url => "/admin/events/#{params[:event_id]}/faqs/new", :msg => 'test'} 
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt
+    = get_search_data("faqs")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+    %tr
+      - if @event.is_parent?
+        %th Sequence
+      %th Question 
+      %th Answer
+      %th  
+    - objs.each_with_index do |faq,index|
+      %tr
+        - if @event.is_parent?
+          %td.sortable
+            .sort-indicator.frstsequence
+              =# faq.sequence.to_i rescue nil
+            .orderseq
+              - if index != 0
+                %span= link_to "",admin_event_sequence_path(:event_id => faq.event_id, :id => faq.id, :seq_type => "up", :feature_type => "faqs"),:class => "uparrow", :method => "put", :remote => true
+              - if faq.sequence.to_i != 0 and (@faqs.length - 1) != index
+                %span= link_to "",admin_event_sequence_path(:event_id => faq.event_id, :id => faq.id, :type => "down", :feature_type => "faqs"),:class => "downarrow", :method => "put", :remote => true
+        %td.font16= link_to faq.question, edit_admin_event_faq_path(:event_id => faq.event_id,:id => faq.id)
+        %td.description_adjust.font16
+          = faq.answer.html_safe rescue nil
+        / %td.font16= faq.faq_type
+        %td.IconDrp
+          = more_vert_button(faq.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{faq.id}"}
+            = edit_link(params, faq.id)
+            - if @event.is_parent?
+              = delete_link(params, faq.id)
+  =# will_paginate objs 
+
+:javascript
+
+  $('input[readonly]').dblclick(function() {
+    $(this).removeAttr('readonly');
+  });  

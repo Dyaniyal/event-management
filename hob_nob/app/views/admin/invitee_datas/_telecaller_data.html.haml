@@ -1,0 +1,18 @@
+%table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+  %tr
+    - @invitee_structure.get_database_columns.each_with_index do |column, index| 
+      %th
+        = column
+    %th
+  - database_columns = @invitee_structure.get_selected_column
+  - objs = InviteeDatum.telecaller_data(@event).flatten.uniq
+  - objs.each do |telecaller_data|
+    %tr
+      - database_columns.each do |attrr|
+        %td
+          = telecaller_data[attrr]
+      / %td.IconDrp
+      /   = more_vert_button(faq.id)
+      /   %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{faq.id}"}
+      /     = edit_link(params, faq.id)
+      /     = delete_link(params, faq.id)

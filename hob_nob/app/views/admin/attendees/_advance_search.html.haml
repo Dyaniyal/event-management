@@ -1,0 +1,8 @@
+= form_tag admin_event_attendees_url(:event_id => @event.id), :method => :get do
+  .mdl-grid
+    = custom_text_field_tag "search[attendee_name]", "Search by Name", adv_search_value(params,"attendee_name")
+    = custom_text_field_tag "search[phone_number]", "Search by Phone number", adv_search_value(params,"phone_number")
+    = hidden_field_tag :admin_search, "true"
+    = hidden_field_tag :adv_search, "true"
+    = custom_button_tag "SEARCH", "Basic search"
+    = custom_text_field_tag "search[email]", "Search by Email id", adv_search_value(params,"email")

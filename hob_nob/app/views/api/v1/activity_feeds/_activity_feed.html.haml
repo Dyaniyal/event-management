@@ -1,0 +1,132 @@
+- analytics.each do |selected_analytic|
+  - analytic = Analytic.unscoped.where(:viewable_id => selected_analytic.viewable_id, :viewable_type => selected_analytic.viewable_type).last
+  - logger.warn analytic
+  - if analytic.viewable_type == "Conversation"
+    - conversation = Conversation.get_approved_conversation(analytic.viewable_id)
+    - likes = analytic.get_likes(analytic.viewable_id)
+    - comments = analytic.get_comments(analytic.viewable_id)
+    - shares = analytic.get_shares(analytic.viewable_id)
+  - elsif analytic.viewable_type == "Notification"
+    - find_notification = Notification.find(analytic.viewable_id) rescue nil
+  - elsif analytic.viewable_type == "InviteeNotification"
+    - find_notification = InviteeNotification.find(analytic.viewable_id).notification
+  - logger.warn conversation.inspect
+  -if conversation.present? or find_notification.present?
+    .myFeedDiv.post{:class => ("subBoxAdd" if analytic.action == "like" or analytic.action == "comment")}  
+      -if conversation.present? 
+        - invitee = Invitee.find(conversation.user_id) rescue nil
+        - if (analytic.action == "like" or analytic.action == "comment") or invitee.present? 
+          - action_invitee = Invitee.find(analytic.invitee_id) rescue nil
+          - if action_invitee.present?
+            .feed
+              - if analytic.action == "like"
+                - #action_invitee = Invitee.find(analytic.invitee_id) rescue nil
+                -# if action_invitee.present?
+                / %a{:href => "#{APP_URL}?resource_type=#{analytic.viewable_type}&resource_id=#{analytic.viewable_id}&action=#{analytic.action}&invitee_id=#{analytic.invitee_id}"}
+                %a{:href => "#{APP_URL}?resource_type=invitee&resource_id=#{analytic.invitee_id}"}
+                  .feedHeading
+                    - if action_invitee.profile_pic_file_name.present?
+                      .userPic
+                        %p.userPicImage
+                          %img{:src => action_invitee.profile_pic.url}/
+                    -else
+                      .userPic
+                        %p.userPicImage
+                          %img{:src => "/profile_pics/thumb/missing.png"}/
+                    .userDetail
+                      %p.userName
+                        %span.boldText= action_invitee.name_of_the_invitee
+                        %span.normal liked this
+                      %p= datetime_with_adjusted_offset_and_display_timezone(analytic.created_at , @event_timezone_offset, @event_display_timezone)
+              - if analytic.action == "comment"
+                -# action_invitee = Invitee.find(analytic.invitee_id) rescue nil
+                -# if action_invitee.present? 
+                / %a{:href => "#{APP_URL}?resource_type=#{analytic.viewable_type}&resource_id=#{analytic.viewable_id}&action=#{analytic.action}&invitee_id=#{analytic.invitee_id}"}
+                %a{:href => "#{APP_URL}?resource_type=invitee&resource_id=#{analytic.invitee_id}"}
+                  .feedHeading
+                    / - if action_invitee.profile_pic_file_name.present?
+                    /   .userPic
+                    /     %p.userPicImage
+                    /       %img{:src => action_invitee.profile_pic.url}/
+                    / -else
+                    /   .userPic
+                    /     %p.userPicImage
+                    /       %img{:src => "/profile_pics/thumb/missing.png"}/
+                    .userDetail
+                      %p.userName
+                        %span.boldText= action_invitee.name_of_the_invitee
+                        %span.normal commented on this 
+                      / %p= datetime_with_adjusted_offset_and_display_timezone(analytic.created_at , @event_timezone_offset, @event_display_timezone)
+              - if invitee.present?
+                - share_icon = Event.find_by_id(params[:event_id]).event_features.pluck(:name).include?("social_sharings") rescue nil  
+                .subBoxNone{:class => ("subBox" if analytic.action == "like" or analytic.action == "comment")}
+                  / %a{:href => "#{APP_URL}?resource_type=#{analytic.viewable_type}&resource_id=#{analytic.viewable_id}&action=#{analytic.action}&invitee_id=#{invitee.id}"}
+                  %a{:href => "#{APP_URL}?resource_type=invitee&resource_id=#{invitee.id}"}
+                    .feedHeading
+                      - if invitee.profile_pic_file_name.present?
+                        .userPic
+                          %p.userPicImage
+                            %img{:src => invitee.profile_pic.url}/
+                      -else
+                        .userPic
+                          %p.userPicImage
+                            %img{:src => "/profile_pics/thumb/missing.png"}/
+                      .userDetail
+                        %p.userName= invitee.name_of_the_invitee
+                        %p= datetime_with_adjusted_offset_and_display_timezone(conversation.created_at , @event_timezone_offset, @event_display_timezone)
+                  .feed-post
+                    %a{:href => "#{APP_URL}?resource_type=#{analytic.viewable_type}&resource_id=#{analytic.viewable_id}&action=#{analytic.action}&invitee_id=#{invitee.id}"}
+                      %p= conversation.description
+                      - if conversation.image_file_name.present?
+                        %p
+                          %img{:src => conversation.image.url}/ 
+                  .feed-activiity
+                    %a{:href => "#{APP_URL}?resource_type=#{analytic.viewable_type}&resource_id=#{analytic.viewable_id}&action=#{analytic.action}&invitee_id=#{invitee.id}"}
+                      %p
+                        %span
+                          - if share_icon
+                            %img{:src => "/assets/share.png"}/
+                        %span
+                          - if share_icon
+                            = shares.present? ? shares.count : ""
+                      %p
+                        %span
+                          %img{:src => "/assets/like.png"}/
+                        %span= likes.present? ? likes.count : ""
+                      %p
+                        %span
+                          %img{:src => "/assets/comment.png"}/
+                        / %span= comments.present? ? comments.count : ""
+                        - @comment_count = conversation.comments_count_cache
+                        %span= @comment_count.present? ? @comment_count : ""
+                - if analytic.action == "comment"
+                  -# action_invitee = Invitee.find(analytic.invitee_id) rescue nil
+                  - #if action_invitee.present?
+                  %a{:href => "#{APP_URL}?resource_type=invitee&resource_id=#{action_invitee.id}"}
+                    .feedHeading.comment
+                      - if action_invitee.profile_pic_file_name.present?
+                        .userPic
+                          %p.userPicImage
+                            %img{:src => action_invitee.profile_pic.url}/
+                      -else
+                        .userPic
+                          %p.userPicImage
+                            %img{:src => "/profile_pics/thumb/missing.png"}/
+                      .commentDiv
+                        .userDetail
+                          %p.userName= action_invitee.name_of_the_invitee
+                          %p= datetime_with_adjusted_offset_and_display_timezone(analytic.created_at , @event_timezone_offset, @event_display_timezone)
+                        .commentText
+                          %p= comments.first.description rescue nil
+      - elsif find_notification.present?
+        .feed
+          - if true#find_notification.action.present?
+            %a{:href => "#{APP_URL}?resource_type=#{find_notification.action.present? ? find_notification.action : 'Home Page'}&resource_id=#{find_notification.actionable_id}"}
+              - icon_url = get_notification_icon_by_action(find_notification)
+              - if icon_url.present?
+                .feedIcon
+                  %img{:src => icon_url}/
+              .feedDetail
+                %p= find_notification.description
+                %p= datetime_with_display_timezone(find_notification.push_datetime, @event_display_timezone)
+                / %p= find_notification.push_datetime.strftime('%b %d at %l:%M %P')

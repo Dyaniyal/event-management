@@ -1,0 +1,45 @@
+.save_button.mdl-card.agendaHeight
+  = form_for [:admin, @event, @grouping], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp.p-b-25
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General
+          / %a{:href => 'javascript:void(0);', :class =>'helpTag testhelp'}
+          /   what's this?
+      = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "faq_generalInfo.jpg", :section_id => "faq_general_section"}
+      = f.custom_text_field_name :name, "Group Name *"
+      = f.fields_for :condition do |c|
+        - @fields.each_with_index do |field, index|
+          = c.fields_for field[0] do |a|
+            = a.custom_text_field_grouping field, "#{field[1]}",:value => "#{f.object.condition[field[0]]}" if field[0] != "language_updated"
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.form-group{:style=>"width:32%;"}
+          .md-checkbox
+            %label
+              = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated
+        
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+:javascript
+  $(window).load(function(){
+    BindControls();
+    $(".ui-autocomplete").click(function(){ 
+      $("input.attr_validation").blur();
+    });
+  });
+
+  function BindControls() {
+    var Countries = JSON.parse(#{@validations.to_json.to_json});
+    $('.attr_validation').autocomplete({
+      source: Countries,
+      minLength: 0,
+      scroll: true
+      }).focus(function() {
+        $(this).autocomplete("search", "");
+      });
+  }

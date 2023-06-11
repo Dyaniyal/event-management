@@ -1,0 +1,12 @@
+- if @telecaller_accessible_columns.present?
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16.ng-scope.ng-table.manage-event{"template-pagination" => "custom/pager"}
+    %tr
+      - @telecaller_accessible_columns.each do |p|
+        %th 
+          = p[1].first
+      - if objs.present?
+        - objs.each_with_index do |invitee, index|
+          %tr
+            - @telecaller_accessible_columns.each do |p|
+              %td
+                = link_to invitee.send(p[0]).present? ? invitee.send(p[0]) : '', admin_event_telecaller_path(:event_id => params[:event_id], :id => @telecaller.id, :callback_id => invitee.id)

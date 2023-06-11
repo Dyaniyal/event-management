@@ -1,0 +1,41 @@
+.save_button.mdl-card
+  = form_for [:admin, @event, @onsite_accessible_column], builder: CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.p-b-25.invitee_tell
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          Onsite Information
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+        .mdl-grid.p-v-5
+          .col-lg-12.p-h-12
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone 
+              .col-lg-8.p-h-16
+                %span.p-h-2.telehead Registration Fields 
+              .col-lg-4.p-h-12.textright
+                %span.p-h-5.telehead Visible Onsite
+
+      - @event.onsite_registration_fields.each do |key, value|
+        - if value.present?
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+            .mdl-grid.p-v-5.form-group.mobiappstype
+              .col-lg-12.p-h-12
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                  .col-lg-8.p-h-12
+                    %span
+                    = value
+                  .col-lg-3.p-h-12.chekboxtell
+                    %label.help-tip{for: "onsite_accessible_column_#{key}_1"}
+                      - er = f.object.errors.messages[:accessible_attribute].join(',') rescue nil
+                      - f.object.errors.messages[:accessible_attribute].clear if f.object.errors.messages[:accessible_attribute].present?
+                      = check_box_tag "onsite_accessible_column[accessible_attribute][#{key}][]", value,(@onsite_accessible_column.accessible_attribute.present? and f.object.accessible_attribute.include?(key) ? "checked" : false), id: "onsite_accessible_column_#{key}_1"  
+                      %span.checkbox
+                      .field_with_errors
+                        .span{class: "errorMessage"}
+                          = er
+
+    .fixed-activon-btn-new
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+
+

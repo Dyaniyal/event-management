@@ -1,0 +1,107 @@
+.main-container{:style => "font-size: 20px;color: #333;"}
+  .main-content.about-content
+    .container
+      .text-center
+        - agenda = @microsite.get_active_features.where(:name => "agendas")
+        %h1{:style => "font-size:50px;"} #{agenda.first.page_title}
+        .container
+          .row
+            .col-md-12
+              .tabbable-panel
+                .tabbable-line
+                  %ul.nav.nav-tabs
+                    - @data.keys.each_with_index do |date, index|  
+                      %li{:class => index == 0 ? "active tab_default" : "tab_default"}
+                        %a{"aria-expanded" => "false", "data-toggle" => "tab", :href => "#tab_default_#{index+1}"}
+                          #{date.strftime("%B %d")}
+
+                  .tab-content
+                    - @data.keys.each_with_index do |date, index|
+                      .tab-pane{:id => "tab_default_#{index+1}", :class => index == 0 ? "active" : ""}
+                        %table.table.table-bordered.agendatable
+                          %thead
+                            %tr
+                              %th{:width => "19%"} Time
+                              %th{:width => "36%"} Session Description
+                              %th{:width => "45%"} Speaker
+                          %tbody
+                            - without_track = @data[date].where("agenda_track_id is null")
+                            - with_track = @data[date].unscoped.where('Date(start_agenda_date) = ? and agenda_track_id is not null and agendas.event_id = ?', date,Event.find_by_seo_name(params[:id]).id).order(:agenda_track_id) if params[:id].present?
+                            - with_track = with_track.joins(:agenda_track).sort_by { |obj| obj.agenda_track.sequence}
+                            - with_track = with_track.uniq { |obj| obj.agenda_track} 
+                            - without_track.each_with_index do |agenda, index|
+                              %tr
+                                %td.border-remove #{formatted_time(agenda.start_agenda_time, "%I:%M %p")} - #{agenda.end_agenda_time.present? ? formatted_time(agenda.end_agenda_time, "%I:%M %p") : 'Onwards'}
+                                %td.border-remove 
+                                  = link_to "#myMod#{agenda.id}", "data-toggle" => "modal", "data-target" => "#myMod#{agenda.id}" do
+                                    #{agenda.title}
+                                  %br
+                                  - if agenda.location.present?
+                                    (#{agenda.location})
+                                %td.border-remove 
+                                  - if agenda.speaker_ids.present?
+                                    - agenda.get_speakers.each_with_index do |speaker, i|
+                                      = link_to "#myModal#{speaker.id}", "data-toggle" => "modal", "data-target" => "#myModal#{speaker.id}" do
+                                        - if agenda.speaker_ids.split(",").count > 1
+                                          #{speaker.speaker_name}
+                                          %br
+                                        - else agenda.speaker_ids.split(",").count == 1
+                                          #{speaker.speaker_name}
+                                  #{agenda.speaker_names}
+                            - with_track.each_with_index do |agenda, index|
+                              - if agenda.agenda_track_id.present?
+                                %tr.hob-nob
+                                  %td{:colspan => "4", :style => "padding:0px;"}
+                                    %h1{:style => "font-size: 30px; background-color:grey ; color:white;padding: 3px;"}
+                                      #{agenda.agenda_track.track_name}
+                              - agenda.agenda_track.agendas.each_with_index do |agenda, index|
+                                %tr
+                                  %td.border-remove #{formatted_time(agenda.start_agenda_time, "%I:%M %p")} - #{agenda.end_agenda_time.present? ? formatted_time(agenda.end_agenda_time, "%I:%M %p") : 'Onwards'}
+                                  %td.border-remove 
+                                    = link_to "#myMod#{agenda.id}", "data-toggle" => "modal", "data-target" => "#myMod#{agenda.id}" do
+                                      #{agenda.title}
+                                    %br
+                                    - if agenda.location.present?
+                                      (#{agenda.location})
+                                  %td.border-remove 
+                                    - if agenda.speaker_ids.present?
+                                      - agenda.get_speakers.each_with_index do |speaker, i|
+                                        = link_to "#myModal#{speaker.id}", "data-toggle" => "modal", "data-target" => "#myModal#{speaker.id}" do
+                                          - if agenda.speaker_ids.split(",").count > 1
+                                            #{speaker.speaker_name}
+                                            %br
+                                          - else agenda.speaker_ids.split(",").count == 1
+                                            #{speaker.speaker_name}
+                                    #{agenda.speaker_names}
+                            
+                          .clear
+                        / Main Content End
+                      - @data[date].each_with_index do |agenda, index|
+                        - if agenda.speaker_ids.present?
+                          - agenda.get_speakers.each_with_index do |speaker, i|
+                            = render :partial => 'speaker_popup', :locals => {:speaker => speaker}
+
+                      - @data[date].each_with_index do |agenda, index|
+                        = render :partial => 'agenda_popup', :locals => {:agenda => agenda}
+
+
+
+:javascript
+  // Get the modal
+  var modal = document.getElementById('myModal');
+  var span = document.getElementsByClassName("close")[0];
+  btn.onclick = function() {
+      modal.style.display = "block";
+  }
+  span.onclick = function() {
+      modal.style.display = "none";
+  }
+  var mod = document.getElementById('myMod');
+  var btn = document.getElementById("myAd");
+  var span = document.getElementsByClassName("closen")[0];
+  btn.onclick = function() {
+    mod.style.display = "block";
+  }
+  span.onclick = function() {
+    mod.style.display = "none";
+  }

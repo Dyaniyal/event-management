@@ -1,0 +1,10 @@
+.mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.newsearchlaypout.HideTabularData
+  = form_tag admin_client_events_url(:client_id => params[:client_id]), :method => :get do
+    .mdl-js-textfield.mdl-textfield--floating-label.mdl-grid.f-right.m-r-25.m-t-10 
+      #select-container.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell--6-col.mdl-cell--5-col-tablet.mdl-cell--12-col-phone.search_header
+        =custom_basic_text_field_tag "search""[keyword]", "", basic_search_value(params)
+        =hidden_field_tag :admin_search, "true"
+      =custom_basic_button_tag "Search"
+      = link_to admin_client_events_path(:client_id => params[:client_id]), :class => "back_btn_header" do
+        Back
+      =# custom_advance_search_link_tag "Search"

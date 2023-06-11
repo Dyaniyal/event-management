@@ -1,0 +1,12 @@
+%form.ng-pristine.ng-valid{:action => "#"}
+  .mdl-grid
+    = show_field("Name:", obj.name)
+    = show_field("Tags :", obj.tag_list)
+  .mdl-cell--13-col.mdl-cell--13-col-tablet.mdl-cell--13-col-phone
+    %div
+      .mdl-tabs.mdl-js-tabs.ProfileTabLeft
+        .mdl-tabs__tab-bar
+          %a.mdl-tabs__tab.is-active{:href => "#"} #{(obj.attachment_file_name.gsub(/[^a-zA-Z0-9\-]/," ").split(" ").second).titleize}
+        #starks-panel.mdl-tabs__panel.is-active.ml-color--shades-white.p-v-18.m-20
+          .mdl-cell--13-col.mdl-cell--13-col-tablet.mdl-cell--13-col-phone
+            %iframe{:src => "#{obj.attachment_url}",  :height => "68%", width: "100%", :style => "border: none;"}   

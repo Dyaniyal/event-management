@@ -1,0 +1,12 @@
+= form_tag admin_event_speakers_url(:event_id => @event.id), :method => :get do
+  .mdl-grid
+    = custom_text_field_tag "search[name]", "Search by Name" ,adv_search_value(params,"name")
+    = custom_text_field_tag "search[email_address]", "Search by Email id", adv_search_value(params,"email_address")
+    = hidden_field_tag :admin_search, "true"
+    = hidden_field_tag :adv_search, "true"
+    .mdl-cell--4-col.mdl-cell--4-col-tablet.mdl-cell--4-col-phone.m-8
+      .moreBtn.collapseminus
+        %a.f-right.m-t-5{:href => "javascript:void(0);"}
+          Hide          
+        = submit_tag "SEARCH", :class => "mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-color--light-blue-600 f-right m-r-35"
+    = custom_text_field_tag "search[designation]", "Search by Designation",adv_search_value(params,"designation")

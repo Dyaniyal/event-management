@@ -1,0 +1,37 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => 'telecaller', :url => "/admin/events/#{params[:event_id]}/telecallers/new?telecaller_index=true", :msg => 'test'} 
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt
+    = get_search_data("telecallers")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+    %tr
+      %th First Name
+      %th Last Name 
+      %th Email id
+      %th Status
+      %th Assigned
+      %th Processed
+      %th Remaining
+      %th
+    - objs.each do |telecaller|
+      %tr
+        %td.description_adjust.font16= telecaller.first_name
+        %td.description_adjust.font16= telecaller.last_name
+        %td.description_adjust.font16= telecaller.email
+        %td.description_adjust.font16= telecaller.telecaller_status.titleize
+        %td.description_adjust.font16= telecaller.get_count(telecaller.id,@event.id, "Assigned") rescue nil
+        %td.description_adjust.font16= telecaller.get_count(telecaller.id,@event.id,"Processed") rescue nil
+        %td.description_adjust.font16= telecaller.get_count(telecaller.id,@event.id,"Remaining") rescue nil
+        %td.IconDrp
+          = more_vert_button(telecaller.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{telecaller.id}"}
+            = edit_link(params, telecaller.id)
+            - if telecaller.telecaller_status =="active"
+              = link_to admin_event_telecallers_path(:event_id => params[:event_id],:id=>telecaller.id,:change_status=>"true",:status=>"deactive"), :class => "mdl-menu__item",data: {confirm:'Are you sure, you want change status.'} do
+                Deactive
+            - else
+              = link_to admin_event_telecallers_path(:event_id => params[:event_id],:id=>telecaller.id,:change_status=>"true",:status=>"active"), :class => "mdl-menu__item",data: {confirm:'Are you sure, you want change status.'} do
+                Active                        
+  = will_paginate objs

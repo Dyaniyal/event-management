@@ -1,0 +1,7 @@
+%form.ng-pristine.ng-valid{:action => "#"}
+  .mdl-grid
+    = show_field("Title :", obj.title)
+    = show_field("File Name :", obj.emergency_exit_file_name)
+  .m-l-18
+    .mdl-cell--12-col.mdl-cell--12-col-tablet
+      = back_button_detailed_page(:back)

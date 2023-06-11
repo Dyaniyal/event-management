@@ -1,0 +1,9 @@
+%form.ng-pristine.ng-valid{:action => "#"}
+  .mdl-grid
+    = show_field("Name :", obj.description)
+    = show_field("Email:", obj.push_page)
+    = show_field("Mobile no :", obj.page_id)
+    = show_field("Mobile no :", obj.push_time)
+  .m-l-18
+    .mdl-cell--12-col.mdl-cell--12-col-tablet
+      = back_button_detailed_page(:back)

@@ -1,0 +1,115 @@
+%html
+  %head
+    %title Hobnob
+    = favicon_link_tag 'fevicon.png'
+    %meta{:content => "IE=edge", "http-equiv" => "X-UA-Compatible"}
+    %meta{:content => "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0", :name => "viewport"}
+    %meta{"http-equiv" => "refresh", :content => "60"}
+    %link{:href => "/assets/conversations_wall_style.css", :rel => "stylesheet", :type => "text/css"}
+  - @conversation_wall = ConversationWall.find_by_event_id(@event.id)
+  - if @conversation_wall.present? and @conversation_wall.background_image.present?
+    %body.newcoversationwallImg{:style=>"background-image: url(#{@conversation_wall.background_image.url(:large)});background-size:cover;background-repeat: no-repeat;"}
+      %main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+        %section{:id => "content_wrapper", :class =>"conversations_wrapper"}
+          - if @conversation_wall.logo.present?
+            %p.conv-logo
+              %img.logo{:alt => "LOGO", :src => "#{@conversation_wall.logo.url(:large)}"}
+          %section#content.covesationPage
+            - @conversations.each do |conversation|
+              - event = conversation.event
+              .col
+                #one.card{:style=>"background-color: #{@conversation_wall.box_color};"}
+                  .flip-container
+                    .flipper
+                      .front
+                        .usrDiv
+                          %p.userName{:style=>"color:#{@conversation_wall.font_color};"}
+                            - user = conversation.user
+                            = user.name_of_the_invitee rescue nil
+                          %p.companyName{:style=>"color:#{@conversation_wall.font_color};"}
+                            = user.company_name rescue nil
+                        .qstnDiv
+                          %p{:style=>"color:#{@conversation_wall.sub_text_color};"}
+                            = conversation.description
+                      .back.back-img
+                        - if conversation.image.present?
+                          %img.backImg{:src => conversation.image.url}
+                        - else
+                          .usrDivBack
+                            %p.userNameBack{:style=>"color:#{@conversation_wall.font_color};"}
+                              = user.name_of_the_invitee rescue nil
+                            %p.companyNameBack{:style=>"color:#{@conversation_wall.font_color};"}
+                              = user.company_name rescue nil
+                          .qstnDivBack
+                            %p{:style=>"color:#{@conversation_wall.sub_text_color};"}
+                              = conversation.description    
+  - elsif @conversation_wall.present? and @conversation_wall.background_color.present? 
+    %body.newcoversationwallImg{:style=>"background-color: #{@conversation_wall.background_color};"} 
+      %main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+        %section{:id => "content_wrapper", :class =>"conversations_wrapper"}
+          - if @conversation_wall.logo.present?
+            %p.conv-logo
+              %img.logo{:alt => "LOGO", :src => "#{@conversation_wall.logo.url(:large)}"}            
+          %section#content.covesationPage
+            - @conversations.each do |conversation|
+              - event = conversation.event
+              .col
+                #one.card{:style=>"background-color: #{@conversation_wall.box_color};"}
+                  .flip-container
+                    .flipper
+                      .front
+                        .usrDiv
+                          %p.userName{:style=>"color:#{@conversation_wall.font_color};"}
+                            - user = conversation.user
+                            = user.name_of_the_invitee rescue nil
+                          %p.companyName{:style=>"color:#{@conversation_wall.font_color};"}
+                            = user.company_name rescue nil
+                        .qstnDiv
+                          %p{:style=>"color:#{@conversation_wall.sub_text_color};"}
+                            = conversation.description
+                      .back.back-img
+                        - if conversation.image.present?
+                          %img.backImg{:src => conversation.image.url}
+                        - else
+                          .usrDivBack
+                            %p.userNameBack{:style=>"color:#{@conversation_wall.font_color};"}
+                              = user.name_of_the_invitee rescue nil
+                            %p.companyNameBack{:style=>"color:#{@conversation_wall.font_color};"}
+                              = user.company_name rescue nil
+                          .qstnDivBack
+                            %p{:style=>"color:#{@conversation_wall.sub_text_color};"}
+                              = conversation.description 
+  - else
+    %body.newcoversationwallImg{:style=>"background-color: #808080;"} 
+      %main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+        %section{:id => "content_wrapper", :class =>"conversations_wrapper"}         
+          %section#content.covesationPage
+            - @conversations.each do |conversation|
+              - event = conversation.event
+              .col
+                #one.card{:style=>""}
+                  .flip-container
+                    .flipper
+                      .front
+                        .usrDiv
+                          %p.userName{:style=>""}
+                            - user = conversation.user
+                            = user.name_of_the_invitee rescue nil
+                          %p.companyName{:style=>""}
+                            = user.company_name rescue nil
+                        .qstnDiv
+                          %p{:style=>""}
+                            = conversation.description
+                      .back.back-img
+                        - if conversation.image.present?
+                          %img.backImg{:src => conversation.image.url}
+                        - else
+                          .usrDivBack
+                            %p.userNameBack{:style=>""}
+                              = user.name_of_the_invitee rescue nil
+                            %p.companyNameBack{:style=>""}
+                              = user.company_name rescue nil
+                          .qstnDivBack
+                            %p{:style=>""}
+                              = conversation.description                                                                
+                       

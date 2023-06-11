@@ -1,0 +1,315 @@
+.newresitration.agendaHeight.user_reg_form
+  = form_for [:admin, @event, @user_registration], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp.m-b-5
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        - if @registration_look_and_feel.present? and  @registration_look_and_feel.registration_form_header.present?
+          %h4.heading-border1.p-t-10.m-b-15{ style: "font-weight:bold;font-family: #{@font_hash[0][:font_name]}" }
+            = @registration_look_and_feel.registration_form_header.html_safe
+      - @registration.attributes.except('id', 'created_at', 'updated_at', 'event_id', 'custom_css','custom_js', 'custom_source_code','email_field','parent_id','multi_lng_parent_id','language_updated').map{|key, value| (value.present? and value['label'].present? and value['option_type'].present?) ? [key,value] : nil}.compact.each do |key,hsh|
+        - if hsh['option_type'] == 'Single Check Box'
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+            .mdl-grid.p-v-5.mobiappstype
+              .col-lg-4.mdl-typography--text-right
+              .col-lg-7.p-h-12
+                -if hsh['option_type'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                    %label.help-tip.pull-left{:for => "user_registration_#{key}_1"}
+                      - er = f.object.errors.messages[key.to_sym].join(',') rescue nil
+                      - f.object.errors.messages[key.to_sym].clear if f.object.errors.messages[key.to_sym].present?
+                      = check_box_tag "user_registration[#{key}][]","True", (hsh[:single_check_box_default] == "yes" || f.object.send(key).present?) ? "checked" : false, :id => "user_registration_#{key}_1"
+                      %span.checkbox{style: "margin-top:12px;"}
+                      %span.top6
+                        = "#{hsh['option']}"
+                      %p.displayInlineBlock.multicitytxt{ style: "position:relative;top:6px; font-family: #{@font_hash[0][:font_name]}" }
+                        = hsh['label']
+                        = (hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? '*' : ''
+                  - if (hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes")
+                    .field_with_errors
+                      .span.m-t-5{:class => "errorMessage1", style: 'display: contents;'}
+                        = er
+          .mdl-grid.col-lg-4.bet-text-link{style: "white-space:normal;font-family: #{@registration_look_and_feel.page_font.present? ? @registration_look_and_feel.page_font : ""}"}
+            = hsh['between_text']
+        - if hsh['label'].present? and hsh['option_type'] == 'Radio Button'
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+            .mdl-grid.p-v-5.mobiappstype.m-t-15
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                  = hsh['label']
+                  = (hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? '*' : ''
+              .col-lg-7.p-h-12.userregis
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                  - er = f.object.errors.messages[key.to_sym].join(',') rescue nil
+                  - f.object.errors.messages[key.to_sym].clear if f.object.errors.messages[key.to_sym].present?
+                  = f.custom_radio_button_for_user_registration key, "#{hsh['option_1']}", "#{hsh['option_1']}", :id => "#{key}_1" if hsh['option_1'].present?
+                  - if hsh["option_1"].present? and hsh["option_2"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                  = f.custom_radio_button_for_user_registration key, "#{hsh['option_2']}", "#{hsh['option_2']}", :id => "#{key}_2" if hsh['option_2'].present?
+                  - if hsh["option_2"].present? and hsh["option_3"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                  = f.custom_radio_button_for_user_registration key, "#{hsh['option_3']}", "#{hsh['option_3']}", :id => "#{key}_3" if hsh['option_3'].present?
+                  - if hsh["option_3"].present? and hsh["option_4"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                  = f.custom_radio_button_for_user_registration key, "#{hsh['option_4']}", "#{hsh['option_4']}", :id => "#{key}_4" if hsh['option_4'].present?
+                  - if hsh["option_4"].present? and hsh["option_5"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                  = f.custom_radio_button_for_user_registration key, "#{hsh['option_5']}", "#{hsh['option_5']}", :id => "#{key}_5" if hsh['option_5'].present?
+                  - if hsh["option_5"].present? and hsh["option_6"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                  = f.custom_radio_button_for_user_registration key, "#{hsh['option_6']}", "#{hsh['option_6']}", :id => "#{key}_6" if hsh['option_6'].present?
+                  - if hsh["option_6"].present? and hsh["option_7"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                  = f.custom_radio_button_for_user_registration key, "#{hsh['option_7']}", "#{hsh['option_7']}", :id => "#{key}_7" if hsh['option_7'].present?
+                  - if hsh["option_7"].present? and hsh["option_8"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                  = f.custom_radio_button_for_user_registration key, "#{hsh['option_8']}", "#{hsh['option_8']}", :id => "#{key}_8" if hsh['option_8'].present?
+                  - if hsh["option_8"].present? and hsh["option_9"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                  = f.custom_radio_button_for_user_registration key, "#{hsh['option_9']}", "#{hsh['option_9']}", :id => "#{key}_9" if hsh['option_9'].present?
+                  - if hsh["option_9"].present? and hsh["option_10"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                  = f.custom_radio_button_for_user_registration key, "#{hsh['option_10']}", "#{hsh['option_10']}", :id => "#{key}_10" if hsh['option_10'].present?
+                  - if hsh["option_10"].present?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+          .mdl-grid.col-lg-4{style: "white-space:normal;font-family: #{@font_hash[0][:font_name]}"}
+            = hsh['between_text']
+          -if hsh[:text_box_required_after_options].present? and hsh[:text_box_required_after_options] == "yes"
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+              .bs-component
+                .form-group
+                  .col-lg-4.control-label
+                  .col-lg-7.col-xs-12
+                    = text_field_tag "user_registration[text_box_for_checkbox_or_radiobutton][#{key}][]", f.object.text_box_for_checkbox_or_radiobutton.present? ? f.object.text_box_for_checkbox_or_radiobutton[key] : '',:class => "form-control"
+        - if hsh['label'].present? and hsh['option_type'] == 'Check Box'
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+            .mdl-grid.p-v-5.mobiappstype
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt.m12t{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                  = hsh['label']
+                  = (hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? '*' : ''
+              .col-lg-7.p-h-12
+                -if hsh['option_1'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                    %label.help-tip{:for => "user_registration_#{key}_1"}
+                      - er = f.object.errors.messages[key.to_sym].join(',') rescue nil
+                      - f.object.errors.messages[key.to_sym].clear if f.object.errors.messages[key.to_sym].present?
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_1']}", check_box_conditions(key, "#{hsh['option_1']}"), :id => "user_registration_#{key}_1"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_1']}"
+                  - if hsh["option_1"].present? and hsh["option_2"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                -if hsh['option_2'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                    %label.help-tip{:for => "user_registration_#{key}_2"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_2']}", check_box_conditions(key, "#{hsh['option_2']}"), :id => "user_registration_#{key}_2"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_2']}"
+                  - if hsh["option_2"].present? and hsh["option_3"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                -if hsh['option_3'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                    %label.help-tip{:for => "user_registration_#{key}_3"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_3']}", check_box_conditions(key, "#{hsh['option_3']}"), :id => "user_registration_#{key}_3"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_3']}"
+                  - if hsh["option_3"].present? and hsh["option_4"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                -if hsh['option_4'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                    %label.help-tip{:for => "user_registration_#{key}_4"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_4']}", check_box_conditions(key, "#{hsh['option_4']}"), :id => "user_registration_#{key}_4"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_4']}"
+                  - if hsh["option_4"].present? and hsh["option_5"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                -if hsh['option_5'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                    %label.help-tip{:for => "user_registration_#{key}_5"}
+                      / - er = f.object.errors.messages[key.to_sym].join(',') rescue nil
+                      / - f.object.errors.messages[key.to_sym].clear if f.object.errors.messages[key.to_sym].present?
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_5']}", check_box_conditions(key, "#{hsh['option_5']}"), :id => "user_registration_#{key}_5"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_5']}"
+                  - if hsh["option_5"].present? and hsh["option_6"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                -if hsh['option_6'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                    %label.help-tip{:for => "user_registration_#{key}_6"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_6']}", check_box_conditions(key, "#{hsh['option_6']}"), :id => "user_registration_#{key}_6"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_6']}"
+                  - if hsh["option_6"].present? and hsh["option_7"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                -if hsh['option_7'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                    %label.help-tip{:for => "user_registration_#{key}_7"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_7']}", check_box_conditions(key, "#{hsh['option_7']}"), :id => "user_registration_#{key}_7"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_7']}"
+                  - if hsh["option_7"].present? and hsh["option_8"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                -if hsh['option_8'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                    %label.help-tip{:for => "user_registration_#{key}_8"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_8']}", check_box_conditions(key, "#{hsh['option_8']}"), :id => "user_registration_#{key}_8"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_8']}"
+                  - if hsh["option_8"].present? and hsh["option_9"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                -if hsh['option_9'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                    %label.help-tip{:for => "user_registration_#{key}_9"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_9']}", check_box_conditions(key, "#{hsh['option_9']}"), :id => "user_registration_#{key}_9"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_9']}"
+                  - if hsh["option_9"].present? and hsh["option_10"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                -if hsh['option_10'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+                    %label.help-tip{:for => "user_registration_#{key}_10"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_10']}", check_box_conditions(key, "#{hsh['option_10']}"), :id => "user_registration_#{key}_10"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_10']}"
+                  - if hsh["option_10"].present?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+          .mdl-grid.col-lg-4{style: "word-wrap: break-word;font-family: #{@font_hash[0][:font_name]}"}
+            = hsh['between_text']
+          -if hsh[:text_box_required_after_options].present? and hsh[:text_box_required_after_options] == "yes"
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+              .bs-component
+                .form-group
+                  .col-lg-4.control-label
+                  .col-lg-7
+                    =# text_field_tag "user_registration[text_box_for_checkbox_or_radiobutton][#{key}][]",f.object.text_box_for_checkbox_or_radiobutton.present? ? eval(f.object.text_box_for_checkbox_or_radiobutton)[key] : '',:class => "form-control"
+                    = text_field_tag "user_registration[text_box_for_checkbox_or_radiobutton][#{key}][]",f.object.text_box_for_checkbox_or_radiobutton.present? ? f.object.text_box_for_checkbox_or_radiobutton[key] : '',:class => "form-control"
+        - if hsh['label'].present? and hsh['option_type'] == 'Text Box'
+          = f.custom_text_field_for_registration key, "#{hsh['label']} #{(hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? '*' : ''}","font_style" => @font_hash[0][:font_name]
+          .mdl-grid.col-lg-4{style: "word-wrap: break-word;font-family: #{@font_hash[0][:font_name]}"}
+            = hsh['between_text']
+        - if hsh['label'].present? and hsh['option_type'] == 'Text Area'
+          = f.custom_text_area_field_for_registration key, "#{hsh['label']} #{(hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? '*' : ''}","font_style" => @font_hash[0][:font_name]
+          .mdl-grid.col-lg-4{style: "word-wrap: break-word;font-family: #{@font_hash[0][:font_name]}"}
+            = hsh['between_text']
+        - if hsh['label'].present? and hsh['option_type'] == 'Date Picker'
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8{ style: "font-family: #{@font_hash[0][:font_name]}" }
+            .bs-component
+              .form-group
+                %label.col-lg-4.control-label{:for => "_Event Start Date"}
+                  = hsh['label']
+                  = (hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? '*' : ''
+                = f.custom_text_field_date key, hsh['label'], :col =>"7", :id => "date-start", :value => f.object["#{key}"].present? ? f.object["#{key}"] : ''
+          .mdl-grid.col-lg-4{:style =>"white-space: normal;font-family: #{@font_hash[0][:font_name]}"}
+            = hsh['between_text']
+        - if hsh['label'].present? and hsh['option_type'] == 'Drop-Down list'
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.dropdown{ style: "margin-top: 15px; font-family: #{@font_hash[0][:font_name]}" }
+            .form-group
+              %label.col-lg-4.control-label.ml-color--shades-white
+                = hsh['label']
+                = (hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? '*' : ''
+              .col-lg-7
+                - drop_down_items = []
+                - ['option_1', 'option_2', 'option_3', 'option_4', 'option_5', 'option_6', 'option_7', 'option_8', 'option_9', 'option_10'].each do |op|
+                  - drop_down_items << hsh[op] if hsh[op].present?
+                %i.arrow.single
+                = f.select("user_registration",key, drop_down_items, {:selected => f.object["#{key}"].present? ? f.object["#{key}"] : '' , :prompt => 'Select Option Type'}, {include_blank: 'None', :class=> 'select2-single form-control'})
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = f.object.errors.messages[key.to_sym].join("") rescue nil
+          .mdl-grid.col-lg-4{ style: "word-wrap: break-word;font-family: #{@font_hash[0][:font_name]}" }
+            = hsh['between_text']
+          -if hsh[:text_box_required_after_options].present? and hsh[:text_box_required_after_options] == "yes"
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+              .bs-component
+                .form-group
+                  .col-lg-4.control-label
+                  .col-lg-7
+                    =# text_field_tag "user_registration[text_box_for_checkbox_or_radiobutton][#{key}][]",f.object.text_box_for_checkbox_or_radiobutton.present? ? eval(f.object.text_box_for_checkbox_or_radiobutton)[key] : '',:class => "form-control"
+                    = text_field_tag "user_registration[text_box_for_checkbox_or_radiobutton][#{key}][]",f.object.text_box_for_checkbox_or_radiobutton.present? ? f.object.text_box_for_checkbox_or_radiobutton[key] : '',:class => "form-control"
+
+    = f.hidden_field :set_status_on_new_create, :value => "true"
+
+    - if params[:show_buttons]== "true"
+      = f.hidden_field_tag :show_buttons, "true"
+    - elsif params[:from] == 'all_listing'
+      = f.hidden_field_tag :from, 'all_listing'
+
+
+    .mdl-grid{:style =>"padding-right: 300px;margin-left: 434px;white-space: pre-line;"}  
+      = @registration.disclaimer_text
+    .submit-btn-bottom{style: "padding-right: 50px;"}
+      - font_text = (params[:from] == 'all_listing') ? 'UPDATE' : (@registration_look_and_feel.present? and @registration_look_and_feel.button_text.present?) ? @registration_look_and_feel.button_text : "REGISTER"
+      - if @registration_look_and_feel.button_color.present?
+        = f.submit "#{font_text}",:style=>"background: ##{@registration_look_and_feel.button_color}; color: ##{@registration_look_and_feel.button_font_color}"
+      - else
+        = f.submit "#{font_text}",:style=>"background: #00b1bb!important; color: ##{@registration_look_and_feel.button_font_color}" 
+      - if params[:from] != 'all_listing'
+        = submit_tag("Reset", { :name => 'reset', :id => 'reset', :type => 'reset', :style => "background:#4d4e4f;color:#fff;line-weight:1.2;"}) 
+:javascript  
+  $(document).ready(function() {
+    $('#reset').on('click', function() {
+      location.reload();
+    });
+  });
+:css 
+  .bet-text-link {
+    margin-top: 8px;
+    clear: both;
+  }

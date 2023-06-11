@@ -1,0 +1,26 @@
+.main-container{:style => "font-size: 20px;color: #333;"}
+  .main-content.about-content
+    / Venue Start
+    .venue-wrap
+      .container
+        .text-center
+          - @microsite.get_active_features.each do |feature|
+            - if feature.name == "emergency_exits"
+              %h1{:style => "font-size:50px;"} #{feature.page_title}
+        .col-md-12
+          .row
+            .col-md-6
+              .addrss
+                %h2 VENUE
+                %p
+                  #{@event.venues}
+            .col-md-6
+              - if @event.emergency_exit.present?
+                = image_tag(@event.emergency_exit.emergency_exit.url(:thumb), :width => 400, :heigth => 400, :class => "img-responsive.pull-right")
+        .col-md-12
+          .row
+            .map
+              %iframe{:allowfullscreen => "", :frameborder => "0", :src => "#{@event.microsite_map}", :style => "border:0"}
+      / Venue End
+    / Main Container End
+

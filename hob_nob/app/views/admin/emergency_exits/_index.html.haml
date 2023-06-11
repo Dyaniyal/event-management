@@ -1,0 +1,25 @@
+- if !objs.present? and !params[:admin_search].present? and params[:from] == "microsites"
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "emergency_exits", :url => "/admin/events/#{params[:event_id]}/emergency_exits/new?from=microsites", :msg => 'test'}
+- elsif !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "emergency_exits", :url => "/admin/events/#{params[:event_id]}/emergency_exits/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("emergency_exits", :url => "/admin/events/#{params[:event_id]}/emergency_exits/new", :msg => 'test')
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      %th Title
+      %th Event Name
+      %th  
+      %tr
+        %td.font16= objs.title.capitalize rescue nil 
+        %td.font16= objs.event_name.capitalize rescue nil 
+        %td.IconDrp
+          = more_vert_button(objs.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{objs.id}"}
+            = edit_link(params, objs.id)
+            - if @event.is_parent?
+              = delete_link(params, objs.id)
+          

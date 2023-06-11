@@ -1,0 +1,42 @@
+%link{:href => "/assets/bootstrap.min.css", :rel => "stylesheet"}/
+%link{:href => "/assets/rwd-table.min.css", :rel => "stylesheet"}/
+
+-if !obj.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("registration staticstics")
+- else
+  - if @registration.present?
+    .table-responsive{"data-pattern" => "priority-columns"}
+      %table.table.table-small-font.table-bordered.table-striped.mdl-data-table{"template-pagination" => "custom/pager"}
+        %thead
+          %tr
+            - @registration.selected_column_values.each_with_index do |column, index|
+              %th{"data-priority" => "1"}
+                = column
+            %th{"data-priority" => "1"}
+              = 'Status'
+        %tbody
+          - database_columns = @registration.selected_columns
+          - if obj.present?
+            - obj.each_with_index do |user_registration,index|
+              %tr
+                - user_registration_attrs = user_registration.attributes
+                - database_columns.each_with_index do |attrr, index|
+                  %td
+                    = user_registration_attrs[attrr]
+                %td
+                  - if user_registration_attrs['status'] == "mark_person_as_drop_outed"
+                    = "Mark person as Drop-out"
+                  - elsif user_registration_attrs['status'] == "put_on_holded"
+                    = "Put on Hold"
+                  - else
+                    = user_registration_attrs['status']
+
+  - if obj.present?
+    = will_paginate obj
+:javascript
+  $(function() {
+    $('.table-responsive').responsiveTable({
+      addFocusBtn : false
+    });
+   });

@@ -1,0 +1,83 @@
+- if false
+  -if @user_qna.blank?
+  -else
+    .save_button.mdl-card.agendaheight
+      = form_for [:admin,@event,@user_qna],:url => admin_event_qna_user_qnas_path(:event_id => @event.id,:qna_id => qna.id),:method => :POST, :builder => CustomFormBuilder do |f|
+        .mdl-grid.mdl-shadow--1dpp
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            %h4.heading-border.p-t-10
+              General Information
+          = f.custom_text_field :answer, qna.question,"background" => "false"
+          = f.hidden_field :qna_id ,:value => qna.id
+          = f.hidden_field :user_id ,:value => qna.receiver_id
+          = f.hidden_field :ids, :value => params["ids"] if params["ids"].present?
+        .fixed-activon-btn-new  
+          = f.custom_submit_button "SAVE"
+          .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+              = back_button(:back)
+
+= stylesheet_link_tag "signup.css"
+%div.qnaTabs.clearfix
+  %a.unAnswered{:href => "#"}
+    Un-Answered
+  %a.answered{:href => "#"}
+    Answered
+#unAnswered
+  -if @qnas.present?
+    - @qnas.each do |qna|
+      .signupBg
+        .mdl-grid.mdl-card.mdl-shadow--1dp.signupDiv
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          = form_for [:admin, @event,qna], :url =>  admin_event_user_qnas_path(:event_id => @event.id),:method => :POST, :remote => true,:html => {:class =>'form-horizontal signup-form'}, :builder => CustomFormBuilder do |f|
+            = f.custom_text_field_for_user_qna :answer, qna.question,"background" => "false"
+            %span.error_section.error_msg_{:id=>"error_div_#{qna.id}"}
+            = f.hidden_field :user_answered,:value => 'yes'
+            = f.hidden_field :id,:value => qna.id
+            - rid = params[:rid].present? ? params[:rid] : params[:qna][:rid]
+            = f.hidden_field :rid,:value => rid if rid.present?
+            - sid = params[:sid].present? ? params[:sid] : params[:qna][:sid]
+            = f.hidden_field :sid,:value => sid if sid.present?
+            .submit-btn
+              = f.custom_submit_button "SUBMIT" 
+#answered{:style => "display:none",:class =>'form-horizontal signup-form'}
+  -if @receiver_answered_qnas.present?
+    .signupBg
+      .mdl-grid.mdl-card.mdl-shadow--1dp.signupDiv
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %table
+          - @receiver_answered_qnas.each do |recei_answer|
+            %tr
+              %td.font16
+                Question :
+                %b
+                  = recei_answer.question
+            %tr
+              %td.font16
+                Answer :
+                %b
+                  = recei_answer.answer
+            %tr
+              %td
+                &nbsp; 
+:javascript
+  $('.unAnswered').click(function(){
+    $('#unAnswered').show();
+    $('#answered').hide();
+    $('.answered').css({
+        'background' : '#00b1bb'
+    });
+    $('.unAnswered').css({
+        'background' : '#516161'
+    });
+  });
+  $('.answered').click(function(){
+    $('#answered').show();
+    $('#unAnswered').hide();
+    $('.answered').css({
+        'background' : '#516161'
+    });
+    $('.unAnswered').css({
+        'background' : '#00b1bb'
+    });
+  });

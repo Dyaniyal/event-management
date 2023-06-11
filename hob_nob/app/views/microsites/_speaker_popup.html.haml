@@ -1,0 +1,22 @@
+.modal.fade{:role => "dialog", :style => "display: none;", :id => "myModal#{speaker.id}"}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{"data-dismiss" => "modal", :type => "button"} &#xD7;
+      .modal-body
+        %table{:border => "0", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+          %tbody
+            %tr
+              %td{:style => "text-align:left", :valign => "top"}
+                - if speaker.profile_pic_file_name.present?
+                  = image_tag(speaker.profile_pic_url(:original), :width => 150, :heigth => 150, :style => "float:left; padding:10px;")
+                - else
+                  = image_tag(speaker.profile_pic_url(:thumb), :width => 150, :heigth => 150, :style => "float:left; padding:10px;")
+                %p
+                  %span{:style => "font-weight:bold;"} #{speaker.speaker_name}
+                  %br
+                    #{speaker.designation}, #{speaker.company}
+                  .clear
+                  %p{:style => "white-space:pre-line;"} #{speaker.speaker_info}
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", :type => "button"} Close

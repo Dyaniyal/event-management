@@ -1,0 +1,8 @@
+%form.ng-pristine.ng-valid{:action => "#"}
+  .mdl-grid
+    = show_field("EventFeature Name :", obj.name)
+    .mdl-cell--5-col.mdl-cell--4-col-tablet.ml-color--shades-white.m-8
+      %p.no-m-b
+        %strong EventFeature main_icon:
+        %span
+        = image_tag obj.main_icon.url(:medium)

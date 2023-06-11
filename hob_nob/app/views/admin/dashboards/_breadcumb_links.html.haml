@@ -1,0 +1,112 @@
+- name = name.split("/").second
+- breadcrum_image = MobileApplication::BREADCRUM_IMAGES
+%header#topbar.alt
+  .topbar-left
+    - if (params[:controller] == "admin/telecallers" and params[:action] == "show") or (params[:controller] == "admin/telecaller_dashboards" and params[:action] == "index") or (params[:controller] == "admin/invitee_datas" and params[:action] == "update")and (current_user.has_any_role? :telecaller)
+      = render :partial => 'admin/telecaller_dashboards/search'
+    - if params[:controller] == "admin/mobile_applications" and params[:action] == "show" and !(current_user.has_any_role? :moderator, :db_manager)
+      %ul.publishTab
+        - if @event.present? and @event.marketing_app == true
+          %li.mdl-color--light-blue-600.borderradius.analytic_btn
+            = link_to "/admin/clients/#{@event.client_id}/events/#{@event.id}?analytics=true", :class => 'appsize progress-bar progress-bar-info' do
+              %span.publishBtn
+                = "Analytics"
+        - calc_percentage = @event.present? ? "#{@event.avg_review.to_i}" : ''
+        %li.progress.mdl-color--grey-500
+          = link_to new_admin_event_mobile_application_store_info_path(:event_id => @event.id, :mobile_application_id => @mobile_application.id), :class => 'appsize progress-bar progress-bar-info', "aria-valuemax" => "100", "aria-valuemin" => "0", "aria-valuenow" => "#{calc_percentage}",:role => "progressbar", :style => "width:  #{calc_percentage}%" do
+            %span.reviewBtn
+              = "Review (#{calc_percentage}% complete)"
+        - if @event.status == 'approved'
+          %li.mdl-color--light-blue-600.borderradius
+            = link_to new_admin_event_mobile_application_store_info_path(:event_id => @event.id, :mobile_application_id => @mobile_application.id, :event => 'publish'), :data => { confirm: get_publish_event_message}, :class => 'appsize progress-bar progress-bar-info' do
+              %span.publishBtn
+                = "Publish"
+        - elsif @event.status == 'published'
+          %li.mdl-color--light-blue-600.borderradius
+            = link_to new_admin_event_mobile_application_store_info_path(:event_id => @event.id, :mobile_application_id => @mobile_application.id, :event => 'unpublish'), :data => { confirm: 'Are you sure, you want to Unpublish this.'}, :class => 'appsize progress-bar progress-bar-info' do
+              %span.publishBtn
+                = "Unpublish"
+        - elsif false
+          %li.mdl-color--light-blue-600.borderradius
+            = link_to 'javascript:void(0)', :class => 'appsize progress-bar progress-bar-info' do
+              %span.publishBtn
+                = "Publish"
+
+    %ol.breadcrumb
+      %li.breadcrumb-icon
+        = image_tag("coloured_icons/#{breadcrum_image[name]}")
+      %li.breadcrumb-active.editshowlink
+        - if params[:controller] != "admin/dashboards"
+          - if page == 'New E-kit'
+            = 'New e-KIT'
+          -elsif page == "abouts"
+            About
+          - elsif params["step"] == "event_theme"
+            Look & Feel
+          - elsif page == "Edit Profile"
+            Edit Profile
+          - elsif params[:controller] == "admin/mobile_applications"
+            = "#{page}"
+          - elsif params[:controller] == "admin/microsites"
+            = "#{page}"
+          - elsif params[:controller] == "admin/microsite_look_and_feels"
+            Look And Feel
+          - elsif params[:controller] == "admin/microsite_menus"
+            Menus       
+          - elsif page == "polls"
+            Poll
+          - elsif page == "Import conversation"
+            Import conversations
+          - elsif page == "Features" and params[:feature] == "my_calender"
+            = params[:feature] == "my_calender" ? "Calender" : page
+          - elsif page == "registration_details"
+            Manage Registrations  
+          - elsif page == "Features" and params[:type] == "faq_setting"
+            = params[:type] == "faq_setting" ? "FAQ Setting" : page
+          - elsif page == "registration_details"
+            Manage Registrations    
+          - elsif page == "Features" and params[:type] == "image_setting"
+            = params[:type] == "image_setting" ? "Image Setting" : page
+          - elsif @registration_statistic.present?
+            = "#{@registration_statistic} Registration Statistics"
+          - else
+            = "#{page.humanize.titleize}" if params[:controller] != "admin/events" and "#{page}" != "e-KIT" and params[:controller] != "admin/faqs" and params[:controller] != "admin/edms"
+            = "e-KIT" if "#{page}" == "e-KIT"
+            = "#{page}" if params[:controller] == "admin/edms"
+            = "#{page}" if params[:controller] == "admin/faqs"
+            = "#{page}" if params[:controller] == "admin/events"
+          - if params[:action] == "show" and params[:controller] != "admin/mobile_applications" and params[:controller] != "admin/manage_mobile_apps" and params[:controller] != "admin/telecallers" and params[:controller] != "admin/microsites"
+            - if !(current_user.has_role? :db_manager)
+              - if params["controller"] == "admin/feedbacks"
+                - feedback = Feedback.find_by_id(params[:id])
+                = link_to edit_admin_event_feedback_path(:id => params["id"],:feedback_form_id=>feedback.feedback_form_id) do
+                  %i.material-icons.feedbackEditColor
+                    edit
+              - else
+                - unless @event.marketing_app == true
+                  = show_edit_link(params)
+                -if (current_user.has_role_for_event?("licensee_admin",@event.id,session[:current_user_role]) or current_user.has_role_for_event?("client_admin",@event.id,session[:current_user_role]) or current_user.has_role_for_event?("event_admin",@event.id,session[:current_user_role]) or current_user.has_role_for_event?("response_manager",@event.id,session[:current_user_role])) 
+                  - if current_user.get_licensee_admin.smtp_setting.present?
+                    - if @event.smtp_setting.blank? and (@event.campaigns.where('id !=?',0).present? or @event.registration_settings.present? or @event.mobile_application.present?)
+                      = "Please confirm the SMTP settings for your event."
+                      = link_to "SMTP Settings",new_admin_smtp_setting_path(:event_id => @event.id)
+                  -else
+                    - if @event.smtp_setting.blank? and (@event.campaigns.where('id !=?',0).present? or @event.registration_settings.present? or @event.mobile_application.present?)
+                      = "Your event requires SMTP settings for sending e-mails to users."
+                      = link_to "SMTP Settings",new_admin_smtp_setting_path
+          - if (params[:controller] == "admin/mobile_applications" and ["show","edit"].include?(params[:action])) or (params[:controller] == "admin/themes" and params[:step] == "event_theme") or (params[:controller] == "admin/event_features" and params[:action] == "new") or (params[:controller] == "admin/menus" and params[:action] == "index")
+            .previewTxt
+              -  if @mobile_application.present?
+                = "Preview ID: #{@mobile_application.preview_code}"
+              - else
+                = "Preview ID: #{@event.mobile_application.preview_code}"
+              = link_to "?" ,"/whats_this/event_feature/breadcumb/AppPreview.jpg", rel: "event_preview_image", title: "Preview Code", :class =>'fancybox PreviewwhtsImg'
+        - else
+          Dashboard
+          -if false
+            %a{:href => "javascript:void();"} Dashboard
+      -if false
+        %li.breadcrumb-link
+          %a{:href => "admin_dashboards_path"} Home
+        %li.breadcrumb-current-item
+          = "#{name.humanize.titleize}"

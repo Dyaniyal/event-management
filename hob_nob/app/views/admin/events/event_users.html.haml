@@ -1,0 +1,36 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope               
+  %section.tables-data
+    .ml-header.relative.clear.mdl-color--light-blue-800
+      .mdl-grid.mdl-grid--no-spacing
+        .mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet
+          %h3.mdl-color-text--white.m-t-15.p-l-40.p-v-20 Event Users
+        / = render :partial => 'search_users', :locals => {:@url => manage_users_admin_client_path(:id => @client.present? ? @client.id : params[:id])}
+    .mdl-grid.HideSearchBlog
+      .p-h-25.ml-card-holder
+        / = render :partial => 'users_advance_search', :locals => {:@url => manage_users_admin_client_path(:id => @client.present? ? @client.id : params[:id])}
+    .mdl-grid.mdl-grid--no-spacing
+      .mdl-cell.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+        .p-35.ml-card-holder.ml-card-holder-first.HeaderHeight
+          .mdl-card.mdl-shadow--1dp.m-b-30.clients
+            .mdl-card__title.mdl-color--light-blue-600.mdl-typography--text-right.displayBlock
+              %h2.mdl-card__title-text.mdl-color-text--white.displayBlock.mdl-typography--text-right.displayBlock.mdl-typography--text-right
+                = @users.count rescue nil
+                User 
+            %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16{"template-pagination" => "custom/pager"}
+              %tr
+                %th
+                  Name
+                %th 
+                  Email
+                %th 
+                  Status
+                - if @users.present?
+                  - @users.each do |user|         
+                    %tr
+                      %td.font16
+                        = user.first_name.capitalize rescue nil
+                      %td.font16
+                        = user.email rescue nil
+                      %td.font16
+                        = user.status.capitalize rescue nil
+        = render :partial => 'admin/events/add_and_export', :locals => {:page => 'event_user'}                

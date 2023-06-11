@@ -1,0 +1,35 @@
+%table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+  %tr
+    - if @event.is_parent?
+      %th Sequence
+    %th Folder Name 
+    %th Number of Pics 
+    %th  
+  - objs.each_with_index do |folder,index|
+    %tr
+      - if @event.is_parent?
+        %td.sortable
+          .sort-indicator.frstsequence
+          .orderseq
+            - if index != 0
+              %span= link_to "",admin_event_sequence_path(:event_id => folder.event_id, :id => folder.id, :seq_type => "up", :feature_type => "folders"),:class => "uparrow", :method => "put", :remote => true
+            - if folder.sequence.to_i != 0 and (@folders.length - 1) != index
+              %span= link_to "",admin_event_sequence_path(:event_id => folder.event_id, :id => folder.id, :type => "down", :feature_type => "folders"),:class => "downarrow", :method => "put", :remote => true
+      - if params[:from] == "microsites"
+        %td.font16
+          = link_to folder.name, admin_event_folder_path(:event_id => @event.id, :id => folder.id, :from => "microsites")
+      - else 
+        %td.font16
+          = link_to folder.name, admin_event_folder_path(:event_id => @event.id, :id => folder.id)  
+      - if params[:from] == "microsites"      
+        %td.font16
+          = link_to folder.images.count, admin_event_folder_path(:event_id => @event.id, :id => folder.id, :from => "microsites")
+      - else
+        %td.font16
+          = link_to folder.images.count, admin_event_folder_path(:event_id => @event.id, :id => folder.id)
+      %td.IconDrp
+        = more_vert_button(folder.id)
+        %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{folder.id}"}
+          = edit_link(params, folder.id)
+          - if @event.is_parent?
+            = delete_link(params, folder.id)

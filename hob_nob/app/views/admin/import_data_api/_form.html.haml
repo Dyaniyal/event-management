@@ -1,0 +1,49 @@
+.save_button.mdl-card
+  = form_for [:admin, @event ,@import_data_api],:url => admin_event_import_data_api_index_path(:event_id => @event.id), :method => :post, :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp.p-b-15
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information
+
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "database.png", :section_id => "speaker_general_section"}
+        .col-lg-12.p-h-12
+          = f.custom_text_field :username, "Username *"
+        .col-lg-12.p-h-12
+          = f.custom_text_field_for_sign_up :password, "Password *"
+        .col-lg-12.p-h-12
+          = f.custom_text_field :tablename, "Tablename *"
+        .col-lg-12.p-h-12
+          = f.custom_text_field :pagenumber, "Pagenumber *"
+        
+      - if @error_import.present? or flash[:notice].present?
+        .field_with_errors{:style => "padding-left:35%"}
+          .span{:class => "errorMessage"}
+            = @error_import || flash[:notice] rescue nil
+
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)
+
+- if false
+  .save_button.mdl-card
+    = form_tag admin_event_import_data_api_index_path(:event_id => @event.id) ,:method => :post , :builder => CustomFormBuilder do ||
+      .mdl-grid.mdl-card.mdl-shadow--1dp.p-b-2
+        .mdl-cell--12-col.mdl-cell--12
+          %h4.heading-border.p-t-2.m-b-2
+            General 
+        %label_tag username
+        = custom_text_field_tag_import 'username'
+        %br
+        %label_tag password
+        = custom_text_field_tag_import 'password'
+        %br
+        %label_tag tablename
+        = custom_text_field_tag_import 'tablename'
+        %br
+        %label_tag pagenumber
+        = custom_text_field_tag_import 'pagenumber'
+      .fixed-activon-btn-new  
+        = custom_basic_button_tag "SAVE"
+

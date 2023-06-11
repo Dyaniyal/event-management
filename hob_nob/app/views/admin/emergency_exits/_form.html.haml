@@ -1,0 +1,53 @@
+.save_button.mdl-card.mdl-shadow--1dp.agendaheight
+  = form_for [:admin, @event, @emergency_exit], :builder => CustomFormBuilder do |f|
+    .mdl-grid.emegencyUpload.p-b-35
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information
+          %span.titleQuestion
+            = link_to("?" ,"/whats_this/emergency-exit/general_information/Venue.png", rel: "login_background_popup", title: "Image", :class =>"fancybox whatsImg") 
+      = f.custom_text_field :title, "Title *","background" => "false"
+      = hidden_field_tag :event_id, params[:event_id]
+      =# f.new_custom_file_browser_field :emergency_exit, "Emergency Exit File *( pdf/jpg/png/gif) only", :id => "uploadBtn", :value => f.object.emergency_exit_file_name, :action=> params[:action], "background" => "false"
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8
+        .bs-component
+          .form-group
+            .span.col-lg-4
+              = f.label "Emergency Exit File *( pdf/jpg/png/gif) only",:class =>"control-label", style: "float: right;"
+            .col-lg-7
+              %label.field.file
+                %span.button.btn-primary
+                  Choose File 
+                = f.file_field :emergency_exit,:id => "uploadBtn", :class=>"gui-file"
+                = text_field_tag("text_file_name","", id: "1uploadBtn", class: "gui-input", :value => "#{f.object.emergency_exit_file_name.nil? ? "there is no Attachment Available !" : f.object.emergency_exit_file_name}")
+            .span.col-lg-1
+              = link_to("?" ,"/whats_this/emergency-exit/general_information/emergency_exit_map.png", rel: "emergency_exit_map", title: "Emergency Exit", :class =>"fancybox whatsImg")
+      =# f.custom_text_field :uber_link, "Uber Link"
+
+      =# f.new_custom_file_browser_field :icon, "Icon (288x288px)(png) only", :id => "uploadBtn1", :value => f.object.icon_file_name, :action=> params[:action], "background" => "false"
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8
+        .bs-component
+          .form-group
+            .span.col-lg-4
+              = f.label "Icon (288x288px)(png) only",:class =>"control-label", style: "float: right;"
+            .col-lg-7
+              %label.field.file
+                %span.button.btn-primary
+                  Choose File 
+                = f.file_field :icon,:id => "uploadBtn1", :class=>"gui-file"
+                = text_field_tag("text_file_name","", id: "1uploadBtn1", class: "gui-input", :value => "#{f.object.icon_file_name.nil? ? "there is no Attachment Available !" : f.object.icon_file_name}")
+            .span.col-lg-1
+              = link_to("?" ,"/whats_this/emergency-exit/general_information/emergency_exit_icon.png", rel: "emergency_exit_icon", title: "Emergency Exit Icon", :class =>"fancybox whatsImg")
+    - if @event.present? and @event.parent_id.present?
+      .mdl-grid.p-v-5.form-group{:style=>"width:32%;"}
+        .md-checkbox
+          %label
+            = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+            %span.checkbox 
+            Is language updated
+      = hidden_field_tag "from","#{params[:from]}" if params[:from].present?
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)

@@ -1,0 +1,34 @@
+.save_button.mdl-card.agendaHeight
+  = form_for [:admin, @event, @campaign], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp.p-b-25
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information
+      = f.custom_text_field :campaign_name, "Campaign Name *","background" => "false"
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.invite_camp
+        .mdl-grid.p-v-5
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Is this an Invite Campaign?
+          .col-lg-3.p-h-12   
+            = f.custom_radio_button :invitee_campaign, "yes","Yes", :id => "option-1"
+            = f.custom_radio_button :invitee_campaign, "no", "No", :id => "option-2"
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.form-group{:style=>"width:32%;"}
+          .md-checkbox
+            %label
+              = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+
+
+
+
+
+
+
+

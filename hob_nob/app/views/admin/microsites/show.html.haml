@@ -1,0 +1,29 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section.menus
+    .relative.clear
+      - page =  @event.microsite.name rescue nil
+      = render :partial => "/admin/dashboards/breadcumb_links",:locals => {:name => params[:controller],:page => page}
+    %section
+      %section#content.table-layout.animated.fadeIn
+        .chute.chute-center
+          - if ["show_content"].exclude?(params[:type])
+            = render :partial => 'microsite_cards'
+          - else
+            = render :partial => 'microsite_cards'
+          - if params[:type] == "show_content"
+            .enable_card
+              = render :partial => 'admin/microsites/microsite_dashboard'
+          - if params[:type] == "show_content"
+            .disable_card
+              = render :partial => 'admin/microsites/microsite_dashboard_except_selected_microsite_features'
+
+
+:javascript
+  $(window).load(function(){
+    if ("#{params[:type]}" == "show_content"){
+      $('#active_card4').find('.panel').addClass('mdl-color--grey-200')
+    }
+    else{
+      $('#active_card4').find('.panel').removeClass('mdl-color--grey-200')
+    }
+  })

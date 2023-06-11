@@ -1,0 +1,7 @@
+<%- if (@user.blank? and params[:email].present? )%>
+$("#user_password").parent().parent().show();
+<%- else%>
+$("#user_password").parent().parent().hide();
+<%- end%>
+
+

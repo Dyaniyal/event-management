@@ -1,0 +1,76 @@
+.save_button.mdl-card.mdl-shadow--1dp
+  = form_for @event, url: admin_event_event_highlights_path(@event), html: { method: :post } , :builder => CustomFormBuilder do |f|
+    .mdl-grid
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.displaybolck.p-t-10
+          Summary & Highlight
+          / %a{:href => '/whats_this/event_highlights/summary_highlight/event_summary_highlight.jpg', :class =>'helpTag testhelp fancybox'}
+          /   what's this?
+        = #render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "event_highlight_generalInfo.jpg", :section_id => "event_highlight_general_section"}
+        = f.custom_text_area_field :description,"description", :value => "#{@event.description.present? ? @event.description : ""}", "background" => "false"
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Countdown Ticker
+          .col-lg-7.p-h-12   
+            = f.custom_radio_button :countdown_ticker, "Yes","Yes", :id => "option-3"
+            = f.custom_radio_button :countdown_ticker, "No", "No", :id => "option-4"
+      - if f.object.login_at != "Before Interaction" and f.object.login_at != "After Highlight"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt RSVP required?
+            .col-lg-7.p-h-12
+              = f.custom_radio_button :rsvp, "Yes","Yes", :id => "rsvp_option_1"
+              = f.custom_radio_button :rsvp, "No", "No", :id => "rsvp_option_2"
+        = f.custom_text_area_field :rsvp_message,"RSVP text *", :value => "#{@event.rsvp_message.present? ? @event.rsvp_message : ""}" , :message_display => "#{(@event.rsvp == "Yes") ? "" : "none" }", "background" => "false"  
+        .clear
+        / = f.custom_text_area_field :summary,"summary", :value => "#{@event.summary.present? ? @event.summary : ""}"
+        - if f.object.errors.messages[:start_event_date].present? or f.object.errors.messages[:end_event_date].present?
+          .field_with_errors.adjust_error_message
+            .span{:class => "errorMessage"}
+              = "start event date or end event date not given, update it for futher process."
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.col-md-4{:style=>"width:35%;"}
+          .md-checkbox
+            %label
+              = f.check_box :highlight_language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated
+    .fixed-activon-btn-new
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = link_to admin_event_mobile_application_path(:event_id => @event.id, :id => @event.mobile_application.id,:type => "show_content") do
+            %span.waves-effect.waves-light.btn
+              CANCEL
+.mdl-shadow--1dp.save_button
+  .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40
+    .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+      %h4.heading-border.displaybolck.p-t-10
+        Highlight Images
+        / %a{:href => '/whats_this/event_highlights/highlight_images/highlight_image.jpg', :class =>'helpTag testhelp fancybox'}
+        /   what's this?
+      = #render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "highlight_image.jpg", :section_id => "highlight_images_general_section"}
+    - @highlight_images.each do |image|
+      - if image.id.present?
+        .mdl-cell.mdl-cell--3-col.mdl-cell--4-col-tablet
+          - if @event.is_parent?
+            = link_to admin_event_highlight_image_path(:event_id => image.event_id, :id => image.id), :method => 'delete', :class => "galleryImg" do
+              %span.galleryclose
+                X
+              = image_tag(image.highlight_image_url(:thumb))
+          - else
+            = image_tag(image.highlight_image_url(:thumb))      
+    - if @event.is_parent?
+      = render :partial => '/admin/highlight_images/form'
+
+:javascript
+  
+  $("#rsvp_option_1").click(function(){
+    $("#rsvp_message_sample5").parent().parent().parent().parent().show();
+  });
+
+  $("#rsvp_option_2").click(function(){
+    $("#rsvp_message_sample5").parent().parent().parent().parent().hide();
+  });

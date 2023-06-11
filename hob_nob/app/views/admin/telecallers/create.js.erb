@@ -1,0 +1,6 @@
+<%- if @telecaller.present?%>
+  $("#userform").html('<%= escape_javascript(render :partial => "admin/users/role_form", :locals => {:objs => @user, :@source => @source}) %>');
+  $("#userform").show();
+<%- else @email.blank?%>
+  $("#userform").hide();
+<%- end%>

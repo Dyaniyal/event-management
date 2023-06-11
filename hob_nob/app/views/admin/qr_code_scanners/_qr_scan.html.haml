@@ -1,0 +1,47 @@
+%body{:class => (params[:qr_code_preview].present? ? "" : "qr-scanner-page")}
+  - if params[:page] == 'scanning'
+    .container
+      #header
+        %div{:style => "position:relative;top:+20px;left:0px;"}
+          %g:plusone{:size => "medium"}
+        %ul
+      #mainbody
+        %table.tsel{:border => "0", :width => "100%"}
+          %tr.camera
+            %td{:align => "center", :valign => "top"}
+              %table.tsel{:border => "0"}
+                %tr
+                  %td{:align => "center", :colspan => "2"}
+                    #outdiv
+          %tr
+            %td{:align => "center", :colspan => "3"}
+          %tr
+            %td{:align => "center", :colspan => "3"}
+              #result
+              %a{:id => 'btnPrint', :style => 'float:center;display:none', :href => 'javascript:void(0)'} Print
+      / .searchManuallyDiv.searchManuallyBtn
+      /   %a{:href => admin_event_invitee_searches_path(:event_id => @event.id, :page => 'manual_search', :qr_code_preview => params[:qr_code_preview])} Search Manually
+      %canvas#qr-canvas{:height => "600", :width => "800"}
+    :javascript
+      load();
+      var APP_URL = "#{SAPP_URL}"
+      var EVENT_ID = "#{@event.id}"
+      $("#btnPrint").on("click", function () {
+        var divContents = $("#result").html();
+        var printWindow = window.open('', '', 'height=400,width=800');
+        printWindow.document.write('<html><head><title>Invitee Profile</title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+      });
+  - else
+    .container
+      .title
+      .description
+        %p.welcomeText
+          = "Welcome to #{@event.event_name}."
+        / %p.subText Please scan your QR Code from the My Profile feature in the App to continue.
+      .scanbtn
+        %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/invitee_searches?page=scanning&qr_code_preview=#{params[:qr_code_preview]}"} Scan

@@ -1,0 +1,45 @@
+!!!
+%html
+  %body{:bgcolor => "#f5f5f5", :leftmargin => "0", :marginheight => "0", :marginwidth => "0", :offset => "0", :topmargin => "0"}
+    %table#bgtable{:align => "center", :bgcolor => "#f5f5f5", :border => "0", :cellpadding => "0", :cellspacing => "20", :height => "100%", :width => "100%"}
+      %tr
+        %td{:align => "center", :valign => "top"}
+          %table{:align => "center", :bgcolor => "#fff", :cellpadding => "0", :cellspacing => "0", :style => " font-family:Arial,Helvetica,sans-serif;border-collapse:collapse;font-size:14px; color: #3f3f3f;", :width => "600"}
+            %tr{:style => "text-align:center;"}
+              %td{:height => "105", :width => "600"}
+                %p{:style => "width:300px;margin:0 auto;"}
+                  %a{:href => "javascript:void(0);"}
+                    = image_tag(@edm.header_image.url, :alt => "Event Logo",:style => "width:100%;") rescue nil
+                    / %img{:src => "assets/event-logo2.jpg", :style => "width:100%;"}/
+                / <p style="font-size:20px;">Logo</p>
+            %tr
+              %td{:height => "20", :width => "600"}
+            %tr
+              %td
+                %table{:border => "0", :cellpadding => "0", :cellspacing => "0", :width => "600"}
+                  %tr
+                    %td{:width => "50"}
+                    %td{:style => "background-color: #fff;text-align:center;", :width => "500"}
+                      %table{:border => "0", :cellpadding => "0", :cellspacing => "0", :width => "500"}
+                        %tr
+                          %td
+                            %p{:style => "font-size:13px;margin-top:0;margin-bottom:0px;"}
+                            = @edm.body rescue nil
+                    %td{:width => "50"}
+            %tr
+              %td{:height => "20", :width => "600"}
+            %tr{:style => "text-align:center;background-color:#F15B47;color:#fff;font-size:10px;"}
+              %td{:height => "105", :width => "600"}
+                %p
+                  %a{:href => "javascript:void(0);", :style => "margin-right:10px;"}
+                    %img{:src => "http://shobiz.ascratech.com/assets/fb-icon.png"}
+                  %a{:href => "javascript:void(0);", :style => "margin-right:10px;"}
+                    %img{:src => "http://shobiz.ascratech.com/assets/twitter-icon.png"}
+                  %a{:href => "javascript:void(0);", :style => "margin-right:10px;"}
+                    %img{:src => "http://shobiz.ascratech.com/assets/google-plus-icon.png"}
+                  %a{:href => "javascript:void(0);", :style => "margin-right:10px;"}
+                    %img{:src => "http://shobiz.ascratech.com/assets/instagram-icon.png"}
+                  %a{:href => "javascript:void(0);", :style => "margin-right:10px;"}
+                    %img{:src => "http://shobiz.ascratech.com/assets/pinterest-icon.png"}
+                %p{:style => "margin:2px;"} Call us: +91 9892 381682
+                %p{:style => "margin:0 0 12px;"} Copyright &copy; 2015. All rights reserved.

@@ -1,0 +1,11 @@
+.mdl-cell.mdl-cell--3-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.mdl-color--grey-100
+  .p-40.p-20--small
+    = form_tag admin_agendas_url, :method => :get do
+      .table-search
+      .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+        = text_field_tag "name", params[:name], :class => "mdl-textfield__input", :id => "select1", :autofocus => "",  :type => "text"
+        %label.mdl-textfield__label{:for => "select1"} Search Agenda
+        = hidden_field_tag :admin_search, "true"
+        = hidden_field_tag :client_id, params[:client_id]
+      .mdl-cell--13-col.mdl-cell--12-col-tablet.p-t-20
+        = submit_tag "Search", :class => "mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-color--light-blue-800"

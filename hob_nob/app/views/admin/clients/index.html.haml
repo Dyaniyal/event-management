@@ -1,0 +1,8 @@
+- if @select.present? and @clients.present?
+  - if  params[:feature].present? and params[:feature] =="multi_lng_events"
+    - @clients = @clients.joins(:events).where("events.mult_lng_events=?",true).uniq
+    = render :partial => '/layouts/select_popup', :locals => {:url => admin_clients_path, :objs => @clients, :prompt_message => 'Select Client'}
+  - else
+    = render :partial => '/layouts/select_popup', :locals => {:url => admin_clients_path, :objs => @clients, :prompt_message => 'Select Client'}
+- else
+  = render :partial => 'admin/layouts/index_header', :locals => {:objs => @clients}

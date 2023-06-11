@@ -1,0 +1,481 @@
+= stylesheet_link_tag "css/edm_time"
+.save_button.mdl-card.agendaheight.feedbackFormPage
+  /  mdl-shadow--1dp@campaign = @campaign.present? ? @campaign : 
+  = form_for [:admin, @event, @campaign, @edm],:html => {:class =>'form-horizontal.checkboxclass',:autocomplete => "off"}, :builder => CustomFormBuilder do |f|
+    - if params[:next].present? or (f.object.next.present? and f.object.next == "NEXT")
+      = render :partial => 'broadcast_form', :locals => {:f => f}
+    - else
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10
+            General Information
+        = f.custom_text_field :subject_line, "Subject Line","background" => "false" 
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.error_space
+          .mdl-grid.p-v-5.m-b-10.m-t-10
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Template Type *
+            .col-lg-7.p-h-12   
+              = f.custom_radio_button_menu :template_type, "default_template","Default Template", :id => "default_template_for_edm", :default_checked => (f.object.template_type == 'default_template' or f.object.template_type.blank?) ? 'checked' : ''
+              = f.custom_radio_button_menu :template_type, "custom_template","Custom Template", :id => "custom_template_for_edm", :default_checked => (f.object.template_type == 'custom_template') ? 'checked' : ''
+
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .mdl-grid.p-v-5.m-b-10
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt  Do you want show unsubscribe link?
+            .col-lg-7.p-h-12
+              = f.custom_radio_button_edm :opt_for_unsubscribe, "true", "Yes", :id => "opt_for_unsubscribe_yes_option"
+              = f.custom_radio_button_edm :opt_for_unsubscribe, "false", "No", :id => "opt_for_unsubscribe_no_option"
+
+        - if false#params[:campaign_id].present? and params[:campaign_id] != "0"
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.error_space
+            .form-group
+              %label.col-lg-4.control-label.ml-color--shades-white
+                Select template
+                %br
+                %a{:href => '/whats_this/edm/template1.jpg', :class =>'fancybox', :rel=> "edm_view_template", :title => "Template"}
+                  (View Available Templates)
+              / = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => {"Template2" => "template2.jpg","Template3" => "template3.jpg"}, :section_id => "edm_view_template",:path => "edm"}
+              .col-lg-7  
+                %i.arrow.single
+                = f.select("edm", "default_template", ['Template 1'], {:selected => f.object.default_template,:prompt => 'Select template Type'},{:class=> 'select2-single form-control',:id=> "edm_templ_select"})
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = f.object.errors.messages[:default_template].join("") rescue nil
+        -else
+          = f.hidden_field :default_template,:value => "Template 1"
+        / = f.new_custom_file_browser_field :header_image, "Header Image", :id => "header_image_uploadBtn", :value => f.object.header_image_file_name, :action=> params[:action], "background" => "false"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.error_space
+          .bs-component
+            .form-group
+              .span.col-lg-4
+                = f.label "Header Image (600x105px) jpg/png only",:class =>"control-label", style: "float: right;"
+              .col-lg-7
+                %label.field.file
+                  %span.button.btn-primary
+                    Choose File 
+                  = f.file_field :header_image,:id => "header_image_uploadBtn", :class=>"gui-file"
+                  = text_field_tag("text_file_name","", id: "1header_image_uploadBtn", class: "gui-input", :value => "#{f.object.header_image_file_name.nil? ? "there is no Attachment Available !" : f.object.header_image_file_name}", :read_only => true)
+              - if @event.present? and f.object.header_image.present? 
+                .col-lg-1
+                  = link_to("?" ,"/whats_this/app_info/master_screens/AppInfo_LoginScreenBackgroundddd.png", rel: "", title: "Header Image", :class =>"fancybox whatsImg")
+                  - if @edm.id.present? and @edm.header_image_file_name.present?
+                    = link_to admin_event_campaign_edm_path(:event_id =>@edm.event_id, :campaign_id => @edm.campaign_id,:id => @edm.id,:remove_image => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                      %span
+                        X
+        =# f.custom_text_field :header_color, "Header Color", :value => @edm.header_color, :class => 'pick-a-color custome_hide',"background" => "false"
+        - #if params[:campaign_id].present? and params[:campaign_id] != "0"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+          .form-group.mobiappstype
+            .col-lg-3.mdl-typography--text-center
+              %p.displayInlineBlock.multicitytxt
+                Mark as Consent link
+        - track_link_1 = f.object.track_link_1_id.present? ? TrackLink.find_by_id(f.object.track_link_1_id) : ""
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+              .col-lg-1.socialchk{style: "margin-left:7rem"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                  = f.fields_for :track_links, track_link_1 do |track_link|
+                    %label.help-tip
+                      = check_box_tag "edm[consent_links][]", "track_link_1",(f.object.consent_links.present? and f.object.consent_links.include?("track_link_1") ? "checked" : false)
+                      %span.checkbox
+              .col-lg-2.control-label
+                = label_tag "track link 1"
+              .col-lg-3
+                .redirectLink.test1{style: "width: 97%;"}
+                  = text_field_tag 'redirect_link_1', "#{track_link_1.present? ? track_link_1.redirect_link : ''}", class: "get_text form-control"
+                %span.col-lg-1
+              %span{style: "float: left;width: 9%;padding: 0 0%;"}
+                %a{class: 'get_redirect_link', href: "javascript:void(0)", for: "text_field1", set_hidden_field: "hidden_text_1",set_track_link: "track_link_1"}
+                  Generate Link
+              .col-lg-3
+                .regenrateLink{style: "width: 97%;"}
+                  = text_field_tag 'regenrate_link_1', "#{track_link_1.present? ? track_link_1.regenerate_link : ''}", id: "text_field1", class: "form-control"
+              = f.hidden_field :track_link_1_id, value: track_link_1.try(:id), id: "hidden_text_1"
+        
+        - track_link_2 = f.object.track_link_2_id.present? ? TrackLink.find_by_id(f.object.track_link_2_id) : ""
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+              .col-lg-1.socialchk{style: "margin-left:7rem"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                  = f.fields_for :track_links, track_link_2 do |track_link|
+                    %label.help-tip
+                      = check_box_tag "edm[consent_links][]", "track_link_2",(f.object.consent_links.present? and f.object.consent_links.include?("track_link_2") ? "checked" : false)
+                      %span.checkbox
+              .col-lg-2.control-label
+                = label_tag "track link 2"
+              .col-lg-3
+                .redirectLink.test1{style: "width: 97%;"}
+                  = text_field_tag 'redirect_link_2', "#{track_link_2.present? ? track_link_2.redirect_link : ''}", class: "get_text form-control"
+                %span.col-lg-1
+              %span{style: "float: left;width: 9%;padding: 0 0%;"}
+                %a{class: 'get_redirect_link', href: "javascript:void(0)", for: "text_field2", set_hidden_field: "hidden_text_2",set_track_link: "track_link_2"}
+                  Generate Link
+              .col-lg-3
+                .regenrateLink{style: "width: 97%;"}
+                  = text_field_tag 'regenrate_link_2', "#{track_link_2.present? ? track_link_2.regenerate_link : ''}", id: "text_field2", class: "form-control"
+              = f.hidden_field :track_link_2_id, value: track_link_2.try(:id), id: "hidden_text_2"
+
+        - track_link_3 = f.object.track_link_3_id.present? ? TrackLink.find_by_id(f.object.track_link_3_id) : ""
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+              .col-lg-1.socialchk{style: "margin-left:7rem"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                  = f.fields_for :track_links, track_link_3 do |track_link|
+                    %label.help-tip
+                      = check_box_tag "edm[consent_links][]", "track_link_3",(f.object.consent_links.present? and f.object.consent_links.include?("track_link_3") ? "checked" : false)
+                      %span.checkbox
+              .col-lg-2.control-label
+                = label_tag "track link 3"
+              .col-lg-3
+                .redirectLink.test1{style: "width: 97%;"}
+                  = text_field_tag 'redirect_link_3', "#{track_link_3.present? ? track_link_3.redirect_link : ''}", class: "get_text form-control"
+                %span.col-lg-1
+              %span{style: "float: left;width: 9%;padding: 0 0%;"}
+                %a{class: 'get_redirect_link', href: "javascript:void(0)", for: "text_field3", set_hidden_field: "hidden_text_3",set_track_link: "track_link_3"}
+                  Generate Link
+              .col-lg-3
+                .regenrateLink{style: "width: 97%;"}
+                  = text_field_tag 'regenrate_link_3', "#{track_link_3.present? ? track_link_3.regenerate_link : ''}", id: "text_field3", class: "form-control"
+              = f.hidden_field :track_link_3_id, value: track_link_3.try(:id), id: "hidden_text_3"
+
+        - track_link_4 = f.object.track_link_4_id.present? ? TrackLink.find_by_id(f.object.track_link_4_id) : ""
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+              .col-lg-1.socialchk{style: "margin-left:7rem"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                  = f.fields_for :track_links, track_link_4 do |track_link|
+                    %label.help-tip
+                      = check_box_tag "edm[consent_links][]", "track_link_4",(f.object.consent_links.present? and f.object.consent_links.include?("track_link_4") ? "checked" : false)
+                      %span.checkbox
+              .col-lg-2.control-label
+                = label_tag "track link 4"
+              .col-lg-3
+                .redirectLink.test1{style: "width: 97%;"}
+                  = text_field_tag 'redirect_link_4', "#{track_link_4.present? ? track_link_4.redirect_link : ''}", class: "get_text form-control"
+                %span.col-lg-1
+              %span{style: "float: left;width: 9%;padding: 0 0%;"}
+                %a{class: 'get_redirect_link', href: "javascript:void(0)", for: "text_field4", set_hidden_field: "hidden_text_4",set_track_link: "track_link_4"}
+                  Generate Link
+              .col-lg-3
+                .regenrateLink{style: "width: 97%;"}
+                  = text_field_tag 'regenrate_link_4', "#{track_link_4.present? ? track_link_4.regenerate_link : ''}", id: "text_field4", class: "form-control"
+              = f.hidden_field :track_link_4_id, value: track_link_4.try(:id), id: "hidden_text_4"
+
+        - track_link_5 = f.object.track_link_5_id.present? ? TrackLink.find_by_id(f.object.track_link_5_id) : ""
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+              .col-lg-1.socialchk{style: "margin-left:7rem"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                  = f.fields_for :track_links, track_link_5 do |track_link|
+                    %label.help-tip
+                      = check_box_tag "edm[consent_links][]", "track_link_5",(f.object.consent_links.present? and f.object.consent_links.include?("track_link_5") ? "checked" : false)
+                      %span.checkbox
+              .col-lg-2.control-label
+                = label_tag "track link 5"
+              .col-lg-3
+                .redirectLink.test1{style: "width: 97%;"}
+                  = text_field_tag 'redirect_link_5', "#{track_link_5.present? ? track_link_5.redirect_link : ''}", class: "get_text form-control"
+                %span.col-lg-1
+              %span{style: "float: left;width: 9%;padding: 0 0%;"}
+                %a{class: 'get_redirect_link', href: "javascript:void(0)", for: "text_field5", set_hidden_field: "hidden_text_5",set_track_link: "track_link_5"}
+                  Generate Link
+              .col-lg-3
+                .regenrateLink{style: "width: 97%;"}
+                  = text_field_tag 'regenrate_link_5', "#{track_link_5.present? ? track_link_5.regenerate_link : ''}", id: "text_field5", class: "form-control"
+              = f.hidden_field :track_link_5_id, value: track_link_5.try(:id), id: "hidden_text_5"
+
+        - track_link_6 = f.object.track_link_6_id.present? ? TrackLink.find_by_id(f.object.track_link_6_id) : ""
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+              .col-lg-1.socialchk{style: "margin-left:7rem"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                  = f.fields_for :track_links, track_link_6 do |track_link|
+                    %label.help-tip
+                      = check_box_tag "edm[consent_links][]", "track_link_6",(f.object.consent_links.present? and f.object.consent_links.include?("track_link_6") ? "checked" : false)
+                      %span.checkbox
+              .col-lg-2.control-label
+                = label_tag "track link 6"
+              .col-lg-3
+                .redirectLink.test1{style: "width: 97%;"}
+                  = text_field_tag 'redirect_link_6', "#{track_link_6.present? ? track_link_6.redirect_link : ''}", class: "get_text form-control"
+                %span.col-lg-1
+              %span{style: "float: left;width: 9%;padding: 0 0%;"}
+                %a{class: 'get_redirect_link', href: "javascript:void(0)", for: "text_field6", set_hidden_field: "hidden_text_6",set_track_link: "track_link_6"}
+                  Generate Link
+              .col-lg-3
+                .regenrateLink{style: "width: 97%;"}
+                  = text_field_tag 'regenrate_link_6', "#{track_link_6.present? ? track_link_6.regenerate_link : ''}", id: "text_field6", class: "form-control"
+              = f.hidden_field :track_link_6_id, value: track_link_6.try(:id), id: "hidden_text_6"
+
+        - track_link_7 = f.object.track_link_7_id.present? ? TrackLink.find_by_id(f.object.track_link_7_id) : ""
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+              .col-lg-1.socialchk{style: "margin-left:7rem"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                  = f.fields_for :track_links, track_link_7 do |track_link|
+                    %label.help-tip
+                      = check_box_tag "edm[consent_links][]", "track_link_7",(f.object.consent_links.present? and f.object.consent_links.include?("track_link_7") ? "checked" : false)
+                      %span.checkbox
+              .col-lg-2.control-label
+                = label_tag "track link 7"
+              .col-lg-3
+                .redirectLink.test1{style: "width: 97%;"}
+                  = text_field_tag 'redirect_link_7', "#{track_link_7.present? ? track_link_7.redirect_link : ''}", class: "get_text form-control"
+                %span.col-lg-1
+              %span{style: "float: left;width: 9%;padding: 0 0%;"}
+                %a{class: 'get_redirect_link', href: "javascript:void(0)", for: "text_field7", set_hidden_field: "hidden_text_7",set_track_link: "track_link_7"}
+                  Generate Link
+              .col-lg-3
+                .regenrateLink{style: "width: 97%;"}
+                  = text_field_tag 'regenrate_link_7', "#{track_link_7.present? ? track_link_7.regenerate_link : ''}", id: "text_field7", class: "form-control"
+              = f.hidden_field :track_link_7_id, value: track_link_7.try(:id), id: "hidden_text_7"
+
+        - track_link_8 = f.object.track_link_8_id.present? ? TrackLink.find_by_id(f.object.track_link_8_id) : ""
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+              .col-lg-1.socialchk{style: "margin-left:7rem"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                  = f.fields_for :track_links, track_link_8 do |track_link|
+                    %label.help-tip
+                      = check_box_tag "edm[consent_links][]", "track_link_8",(f.object.consent_links.present? and f.object.consent_links.include?("track_link_8") ? "checked" : false)
+                      %span.checkbox
+              .col-lg-2.control-label
+                = label_tag "track link 8"
+              .col-lg-3
+                .redirectLink.test1{style: "width: 97%;"}
+                  = text_field_tag 'redirect_link_8', "#{track_link_8.present? ? track_link_8.redirect_link : ''}", class: "get_text form-control"
+                %span.col-lg-1
+              %span{style: "float: left;width: 9%;padding: 0 0%;"}
+                %a{class: 'get_redirect_link', href: "javascript:void(0)", for: "text_field8", set_hidden_field: "hidden_text_8",set_track_link: "track_link_8"}
+                  Generate Link
+              .col-lg-3
+                .regenrateLink{style: "width: 97%;"}
+                  = text_field_tag 'regenrate_link_8', "#{track_link_8.present? ? track_link_8.regenerate_link : ''}", id: "text_field8", class: "form-control"
+              = f.hidden_field :track_link_8_id, value: track_link_8.try(:id), id: "hidden_text_8"
+
+        - track_link_9 = f.object.track_link_9_id.present? ? TrackLink.find_by_id(f.object.track_link_9_id) : ""
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+              .col-lg-1.socialchk{style: "margin-left:7rem"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                  = f.fields_for :track_links, track_link_9 do |track_link|
+                    %label.help-tip
+                      = check_box_tag "edm[consent_links][]", "track_link_9",(f.object.consent_links.present? and f.object.consent_links.include?("track_link_9") ? "checked" : false)
+                      %span.checkbox
+              .col-lg-2.control-label
+                = label_tag "track link 9"
+              .col-lg-3
+                .redirectLink.test1{style: "width: 97%;"}
+                  = text_field_tag 'redirect_link_9', "#{track_link_9.present? ? track_link_9.redirect_link : ''}", class: "get_text form-control"
+                %span.col-lg-1
+              %span{style: "float: left;width: 9%;padding: 0 0%;"}
+                %a{class: 'get_redirect_link', href: "javascript:void(0)", for: "text_field9", set_hidden_field: "hidden_text_9",set_track_link: "track_link_9"}
+                  Generate Link
+              .col-lg-3
+                .regenrateLink{style: "width: 97%;"}
+                  = text_field_tag 'regenrate_link_9', "#{track_link_9.present? ? track_link_9.regenerate_link : ''}", id: "text_field9", class: "form-control"
+              = f.hidden_field :track_link_9_id, value: track_link_9.try(:id), id: "hidden_text_9"
+
+        - track_link_10 = f.object.track_link_10_id.present? ? TrackLink.find_by_id(f.object.track_link_10_id) : ""
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+              .col-lg-1.socialchk{style: "margin-left:7rem"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                  %label.help-tip
+                    = check_box_tag "edm[consent_links][]", "track_link_10",(f.object.consent_links.present? and f.object.consent_links.include?("track_link_10") ? "checked" : false)
+                    %span.checkbox
+              .col-lg-2.control-label
+                = label_tag "track link 10"
+              .col-lg-3
+                .redirectLink.test1{style: "width: 97%;"}
+                  = text_field_tag 'redirect_link_10', "#{track_link_10.present? ? track_link_10.redirect_link : ''}", class: "get_text form-control"
+                %span.col-lg-1
+              %span{style: "float: left;width: 9%;padding: 0 0%;"}
+                %a{class: 'get_redirect_link', href: "javascript:void(0)", for: "text_field10", set_hidden_field: "hidden_text_10",set_track_link: "track_link_10"}
+                  Generate Link
+              .col-lg-3
+                .regenrateLink{style: "width: 97%;"}
+                  = text_field_tag 'regenrate_link_10', "#{track_link_10.present? ? track_link_10.regenerate_link : ''}", id: "text_field10", class: "form-control"
+              = f.hidden_field :track_link_10_id, value: track_link_10.try(:id), id: "hidden_text_10"
+                                                                  
+        / = f.custom_text_area_field :body,"Body text", "background" => "false"
+        .edm_ckeditor
+          .ckeditor_custom.ckeditor_custome_hide
+            = f.label "Body text"
+            = f.cktext_area :body
+        
+        = f.custom_text_field :footer_color, "Footer Color", :value => @edm.footer_color, :class => 'pick-a-color custome_hide',"background" => "false"
+
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-l-8.m-r-8.without_social_icons.error_space_h57
+          .mdl-grid.p-v-10
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Add Social Icons
+            .col-lg-7.p-h-12   
+              = f.custom_radio_button_menu :need_social_icon, "yes","Yes", :id => "need_social_icon_yes_for_edm", :default_checked => (f.object.need_social_icon == 'yes') ? 'checked' : ''
+              = f.custom_radio_button_menu :need_social_icon, "no","No", :id => "need_social_icon_no_for_edm", :default_checked => (f.object.need_social_icon == 'no' or f.object.need_social_icon.blank?) ? 'checked' : ''
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess.md-checkboxsocialcheck.socialIconChkbox
+          .form-group.mobiappstype
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt
+                Social Icons
+            .col-lg-7.p-h-12.socialchk
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                %label.help-tip{:for => "edm_1"}
+                  = check_box_tag "edm[social_icons][]","facebook",(f.object.social_icons.present? and f.object.social_icons.include?("facebook") ? "checked" : false), :id => "edm_1"
+                  %span.checkbox
+                  %span.top3
+                    Facebook
+                = f.custom_text_field_for_edm_social_icon :facebook_link, "URL", "edm_1", "background" => "false"
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                %label.help-tip{:for => "edm_2"}
+                  = check_box_tag "edm[social_icons][]","google_plus",(f.object.social_icons.present? and f.object.social_icons.include?("google_plus") ? "checked" : false), :id => "edm_2"
+                  %span.checkbox
+                  %span.top3
+                    Google +
+                = f.custom_text_field_for_edm_social_icon :google_plus_link, "URL", "edm_2","background" => "false"
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                %label.help-tip{:for => "edm_3"}
+                  = check_box_tag "edm[social_icons][]","linked_in",(f.object.social_icons.present? and f.object.social_icons.include?("linked_in") ? "checked" : false), :id => "edm_3" 
+                  %span.checkbox
+                  %span.top3
+                    LinkedIn
+                = f.custom_text_field_for_edm_social_icon :linkedin_link, "URL", "edm_3", "background" => "false"
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                %label.help-tip{:for => "edm_4"}
+                  = check_box_tag "edm[social_icons][]","twitter",(f.object.social_icons.present? and f.object.social_icons.include?("twitter") ? "checked" : false), :id => "edm_4" 
+                  %span.checkbox
+                  %span.top3
+                    Twitter
+                = f.custom_text_field_for_edm_social_icon :twitter_link, "URL", "edm_4", "background" => "false"
+        .edm_ckeditor
+          .ckeditor_custom{:style => "display: #{(f.object.template_type == 'custom_template') ? "" : "none"}"}
+            = f.label "Custom Template *"
+            = f.cktext_area :custom_code
+            = f.hidden_field :mail_to, :value => params["mail_to"] if params["mail_to"].present?
+            = f.hidden_field :update_mail, :value => params["update_mail"] if params["update_mail"].present?
+            = f.hidden_field :step, :value => params["step"] if params["step"].present?
+        = f.hidden_field :event_id, :value => params[:event_id]
+        = f.hidden_field :mail_to, :value => params[:mail_to] if params[:mail_to].present?
+      -# if (params[:campaign_id].present? and params[:campaign_id] != "0" and @columns.present?)
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            Email personalized fields
+          %span{:style=>"margin-left: 10%;"}
+            To use the personalized fields, please use the Database field equivalent of the Value to be used
+          = render :partial => "personalise_fields", :locals => {:columns => @columns}
+          / %a{:class => 'get_personalization_box col-lg-3 text-right', :href => "javascript:void(0)"}
+          /   Get Personalise fields
+          / #get_database_fields
+      - if (@edm.present? and @edm.new_record?) ? (params.present? and params[:mail_to].present? ? (["approved","confirmed"].include?(params[:mail_to])) : (@edm.mail_to.present? and ["approved","confirmed"].include?(@edm.mail_to))) : (@edm.mail_to.present? and ["approved","confirmed"].include?(@edm.mail_to))
+        .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            %h4.heading-border.p-t-10.m-b-15
+              Show QR-Code
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            .mdl-grid.p-v-5
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt Show QR-Code
+              .col-lg-3.p-h-12
+                = f.custom_radio_button_menu :show_qr_code, "yes","Yes", :id => "show_qr_code_yes_for_edm", :default_checked => (f.object.show_qr_code == 'yes') ? 'checked' : ''
+                = f.custom_radio_button_menu :show_qr_code, "no","No", :id => "show_qr_code_no_for_edm", :default_checked => (f.object.show_qr_code == 'no' or f.object.show_qr_code.blank?) ? 'checked' : ''
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            Edm Reply to
+        = f.custom_text_field :reply_to_email, "Reply to email ID *","background" => "false"
+      - if params[:campaign_id].present?  and params[:campaign_id] =="0"
+        .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            %h4.heading-border.p-t-10.m-b-15
+              Sender name
+          = f.custom_text_field :sender_name, "Sender name ","background" => "false"  
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40 
+          .mdl-grid.p-v-5.form-group{:style=>"width:32%;"}
+            .md-checkbox
+              %label
+                = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+                %span.checkbox 
+                Is language updated   
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            / = link_to admin_event_campaign_edms_path(:event_id => @event.id,:campaign_id => @edm.campaign_id),:class => "waves-effect waves-light btn" do
+            /   Cancel
+            = back_button(:back)
+        / = f.custom_submit_button "NEXT"
+
+= javascript_include_tag "edm_header_footer_color_display_hash"
+= javascript_include_tag "pick-a-color-1.2.0.min", "tinycolor", "jquery.fancybox", "theme_color_pick"
+
+- if @edm.group_type.present? and @edm.group_type == "apply filter"
+  :javascript
+    $(".apply_filterCls").show();
+- if @edm.template_type.present? and @edm.template_type == "custom_template"
+  :javascript
+    $(document).ready(function(){
+      $("#header_image_uploadBtn").parent().parent().parent().parent().parent().hide();
+      $("#footer_image_uploadBtn").parent().parent().parent().parent().hide();
+      $("#edm_templ_select").parent().parent().parent().hide();
+      $(".without_social_icons").hide();
+      $(".md-checkboxsocialcheck").hide();
+      $(".custome_hide").parent().parent().parent().parent().hide();
+      $(".ckeditor_custome_hide").hide();
+    })
+- if @edm.edm_broadcast_value.present? and @edm.edm_broadcast_value == "scheduled"
+  :javascript
+    $("#date-start").parent().parent().parent().parent().show();
+- if @edm.need_social_icon.present? and @edm.need_social_icon == "no"
+  :javascript
+    $(".md-checkboxsocialcheck").hide();
+- if @edm.new_record? and @edm.need_social_icon.blank?
+  :javascript
+    $(".md-checkboxsocialcheck").hide();
+- if @edm.social_icons.present?
+  :javascript
+    checked = document.getElementById("edm_1").checked;
+    if (checked == true){
+      $("div#edm_check_edm_1").css('display','inline-block');
+      $("div#edm_check_edm_1").show();    
+    }
+    checked = document.getElementById("edm_2").checked;
+    if (checked == true){
+      $("div#edm_check_edm_2").css('display','inline-block');
+      $("div#edm_check_edm_2").show();    
+      }
+    checked = document.getElementById("edm_3").checked;
+    if (checked == true){
+        $("div#edm_check_edm_3").css('display','inline-block');
+      $("div#edm_check_edm_3").show();     
+      }
+    checked = document.getElementById("edm_4").checked;
+    if (checked == true){
+        $("div#edm_check_edm_4").css('display','inline-block');
+      $("div#edm_check_edm_4").show();     
+      }
+
+:javascript
+  $(document).on('click', '.get_redirect_link', function(){
+    var url = $(this).parent().siblings().eq(2).children().eq(0).children().val()
+    var forr = $(this).attr('for')
+    var hidden_field = $(this).attr('set_hidden_field')
+    var event_id = "#{@event.id}"
+    var track_link = $(this).attr('set_track_link')
+    $.ajax({
+      url: "/admin/events/#{@event.id}/track_links",
+      method: 'POST',
+      data: {event_id: event_id, value: url, forr: forr, hidden_field: hidden_field, track_link: track_link}
+    });
+  })

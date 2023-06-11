@@ -1,0 +1,70 @@
+body{margin:0; padding:0; font-size:14px; /*background:#7ac669; */
+	  font-family: 'helveticaregular';}
+body{height: auto;}
+ul,li,p{margin:0; padding:0;}
+.wrapper{width:100%; padding:0 12px;}
+.wrapper h1{margin-left:30px;}
+.container{width:100%;}
+.tabs li{list-style:none; display:inline-block;}
+.tab-content{display:none;}
+.tab-content.current{display:block;}
+.tabs{background:#808080; padding:10px 0; text-align:center;
+	border-bottom: 5px solid #202020;}
+.tabs li{color:#373435; width:48%;cursor:pointer; font-size:18px;}
+.tabs li.current{color:#ffffff;}
+.feed {background:#ffffff; border-radius:5px; margin:20px auto 15px auto;
+    padding:20px 5%; width:80%;}
+.feedIcon{display:inline-block; vertical-align:top;}
+.feedDetail {display:inline-block; margin-left: 2%; vertical-align: top;
+    width: 75%;}
+.feedDetail p{margin:0;}
+.feedDetail p:last-child	{color:#8e8f91; font-size:12px; margin-top:8px;}
+.feedDetail .red{color:#ff0000;}
+
+.feedHeading{border-bottom:1px solid #96989a; padding:10px 3%;}
+.userPic{display:inline-block; vertical-align:middle;}
+.userDetail{display:inline-block; vertical-align:middle; margin-left:2%;}
+.userDetail .userName{font-size:15px; color:#373435; text-transform:capitalize; margin-bottom:5px;}
+.feed-post{}
+.feed-activiity{}
+.myFeedDiv.post .feed{border-radius:0px; border:1px solid #999999; padding:0;}
+.userDetail p{color:#848688; font-size:12px;}
+.feed-post img {max-width:100%; width:100%;}
+.feed-post{margin:10px 0 0 0;}
+.feed-post p:first-child{margin-left:20px; margin-bottom:10px;}
+.feed-activiity p{display:inline-block; width:32%; cursor:pointer;}
+.feed-activiity p span:first-child {display: inline-block; width:10%; vertical-align:middle;}
+.feed-activiity p img{width:100%; max-width:100%;}
+.feed-activiity p{border-right:1px solid #b0b1b3; text-align:center; padding:3px 0;}
+.feed-activiity p:last-child{border-right:0 none;}
+.feed-activiity{ border-top: 1px solid #999;}
+.userName .italic{font-style:italic;}
+.userName .italic{text-transform:lowercase;}
+.userPicImage{width:53px; height:53px; border-radius:50%;}
+.userPicImage img{width:53px; height:53px; border-radius:50%;}
+.feedHeading.comment{border-top:1px solid #96989a;}
+
+.commentDiv {
+    display: inline-block;
+    vertical-align: top;
+    width:75%;
+}
+.commentText{margin:0;}
+.commentText p{margin-top:10px; margin-left:2%;}
+
+.noData {
+    color: #fff;
+    font-size:25px;
+    margin: 0;
+    padding: 22% 0 0;
+    text-align: center;
+}
+
+.userDetail .userName.commentUser{margin-bottom:0px;}
+.boldText{font-weight:bold;}
+@media screen and (max-width:480px){
+	.feed-activiity p span:first-child{width:20%;}
+	.feed-activiity p{width:31%;}
+	.userDetail{margin-left:1%; width:73%;}
+	.noData {font-size: 25px;}
+}

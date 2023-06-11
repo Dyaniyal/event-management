@@ -1,0 +1,10 @@
+.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+  %h4.heading-border.p-t-10
+    Options in Percentile(%)
+  .mdl-grid
+    - 10.times do |index|
+      - index += 1
+      - if obj.attribute_present? "option#{index}"
+        .mdl-cell--2-col.no-p-l.no-p-t.no-p-r.no-p-b
+          = "option#{index}" + ':' 
+          = find_option_percentage(obj,"option#{index}")

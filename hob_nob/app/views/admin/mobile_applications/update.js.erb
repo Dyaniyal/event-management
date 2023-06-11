@@ -1,0 +1,7 @@
+<% if params[:type] == "show_content" %>
+  $(".enable_card").html('<%= escape_javascript(render :partial => "admin/events/mobile_application_dashboard") %>');
+  $(".disable_card").html('<%= escape_javascript(render :partial => "admin/events/mobile_application_dashboard_except_selected_event_features") %>');
+<% elsif params[:type] == "show_engagement" %>	
+  $(".enable_card_eng").html('<%= escape_javascript(render :partial => "admin/events/mobile_application_engagementcard") %>');
+  $(".disable_card_eng").html('<%= escape_javascript(render :partial => "admin/events/mobile_application_engagement_unselected_feature") %>');
+<% end %>

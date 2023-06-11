@@ -1,0 +1,38 @@
+%section.tables-data
+  .ml-header.relative.clear.mdl-color--light-blue-800
+    .mdl-grid.mdl-grid--no-spacing
+      .mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet
+        %h3.mdl-color-text--white.m-t-15.p-l-40.p-v-20 Changes History
+  .mdl-grid.HideSearchBlog
+    .p-h-25.ml-card-holder
+  .mdl-grid.mdl-grid--no-spacing
+    .mdl-cell.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+      .p-35.ml-card-holder.ml-card-holder-first.HeaderHeight
+        .mdl-card.mdl-shadow--1dp.m-b-30.clients
+          .mdl-card__title.mdl-color--light-blue-600.mdl-typography--text-right.displayBlock
+            %h2.mdl-card__title-text.mdl-color-text--white.displayBlock.mdl-typography--text-right.displayBlock.mdl-typography--text-right
+              = @log_changes.count rescue nil
+              Changes
+                         
+          %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16{"template-pagination" => "custom/pager"}
+            %tr
+              %th
+                Date
+              %th
+                User Name
+              %th
+                Changed Type
+              %th
+                Changed Data
+              - if @log_changes.present?
+                - @log_changes.each do |log_change|         
+                  %tr
+                    %td.font16
+                      = get_datetime(log_change.created_at)
+                    %td.font16
+                      - user = log_change.user
+                      = user.first_name rescue nil
+                    %td.font16
+                      = log_change.action
+                    %td.font16
+                      = log_change.changed_data

@@ -1,0 +1,1 @@
+= render :partial => 'layouts/layout_form', :locals => {:page => "#{(@event.marketing_app.blank? and @mobile_application.marketing_app_event_id.blank?) ? 'New Mobile Application' : 'New Hub Space'}"}

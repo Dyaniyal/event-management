@@ -1,0 +1,119 @@
+body, html {
+    font-family: "Roboto",sans-serif;
+    /*height: 100%;*/
+   
+		}
+.conv-bg .conv-logo{visibility: hidden;}
+.newcoversationwallImg{ background-color: #8b8b8b;}        
+.conv-bg{
+    background: url('/assets/bg2.jpg') no-repeat;
+  background-size: cover;
+  background-size: 100% 100%;
+}
+.backImg{width:100%;  max-height:201px; height:100%; display:block;  margin:0 auto; overflow:visible; border-radius:6px;object-fit:cover;object-position:center center;}
+.conv-logo{text-align: center;margin-top: 35px;}
+.flipper{position: relative;}
+.back.back-img{position: absolute;left:0;right:0;height: 201px;}
+#content.covesationPage{margin:0 auto; width:100%; text-align:center;}
+#content_wrapper.conversations_wrapper{left:0;}
+#content.covesationPage .col {width: 24%; display: inline-block; height: auto;}
+.usrDiv { display: block; float: left; height: auto; width: 100%;}
+.userName {color: #fff; display: block; float: left; font-size: 18px; font-weight: bold; margin: 12px 0 0 15px; width: 66%; text-align:left;}
+.companyName {color: #fff; text-align:left; display: block; float: left; font-size: 16px; margin: 0 0 5px 15px; width: 66%;}
+.qstnDiv {display: block; float: left; height: 108px; text-align: justify; width: 100%; word-wrap: break-word;}
+.userNameBack {color: #fff; display: block; float: left; font-size: 18px; font-weight: bold; margin: 12px 0 0 15px; width: 66%; text-align:left;}
+.companyNameBack {color: #fff; text-align:left; display: block; float: left; font-size: 16px; margin: 0 0 5px 15px; width: 66%;}
+.qstnDivBack {display: block; float: left; height: 100px; overflow: visible; text-align: justify; width: 322px; word-wrap: break-word;}
+.qstnDivBack p {color: #fff; display: block;  font-size: 18px; font-weight: bold;  height: auto; margin: 10px auto 0; text-align: left; width: 90%; word-wrap: break-word;}
+.card {background: none repeat scroll 0 0 rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 6px;  display: block; float: left; height: 200px; margin: 20px 2% 0; overflow: hidden; width: 95%;}
+.qstnDiv p { color: #fff; display: block; font-size: 18px;  font-weight: bold; height: auto; margin: 20px auto 0; text-align: left; width: 90%; word-wrap: break-word;}
+.tataL {float: left; margin: 10px 0 0 10px; padding: 0; width: 84px;}
+.flip-container { -webkit-perspective: 1000; -moz-perspective: 1000; -ms-perspective: 1000; perspective: 1000;}
+/* Set animation variables */
+.front, .back {
+    -webkit-animation-duration: 20s /*50s*/;
+    -moz-animation-duration: 25s /*50s*/;
+    -ms-animation-duration:20s /*50s*/;
+    animation-duration:20s /*50s*/;
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    -ms-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    -ms-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-timing-function: ease;
+    -moz-animation-timing-function: ease;
+    -ms-animation-timing-function: ease;
+    animation-timing-function: ease;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+/* Call the animations for each side of the card */
+.front {
+  -webkit-animation-name: cardFlipFront;
+    -moz-animation-name: cardFlipFront;
+    -ms-animation-name: cardFlipFront;
+    animation-name: cardFlipFront;
+}
+.back {
+    -webkit-animation-name: cardFlipBack;
+    -moz-animation-name: cardFlipBack;
+    -ms-animation-name: cardFlipBack;
+    animation-name: cardFlipBack;
+}
+
+
+#conversations_wrapper .panel-body{padding:0px;}
+/* We have two seperate @keyframe animations for each side of the card so we can get this working in IE */
+
+/* This one animates the front card */
+@keyframes cardFlipFront {
+ 0% {-webkit-transform: rotateX(0deg);-moz-transform: rotateX(0deg);-ms-transform: rotateX(0deg);transform: rotateX(0deg);}
+ 22.5% {-webkit-transform: rotateX(0deg); -moz-transform: rotateX(0deg); -ms-transform: rotateX(0deg); transform: rotateX(0deg);}
+ 27.5% {-webkit-transform: rotateX(0deg); -moz-transform: rotateX(180deg); -ms-transform: rotateX(180deg); transform: rotateX(180deg);}
+ 72.5% {-webkit-transform: rotateX(0deg); -moz-transform: rotateX(180deg); -ms-transform: rotateX(180deg); transform: rotateX(180deg);}
+ 77.5% {-webkit-transform: rotateX(0deg); -moz-transform: rotateX(0deg); -o-transform: rotateX(0deg); -ms-transform: rotateX(0deg); transform: rotateY(0deg);}
+ 100% {-webkit-transform: rotateX(0deg); -moz-transform: rotateX(0deg); -ms-transform: rotateX(0deg); transform: rotateX(0deg);}
+}
+
+/* This one animates the front card in webkit */
+@-webkit-keyframes cardFlipFront {
+ 0% {-webkit-transform: rotateX(0deg); transform: rotateX(0deg);}
+ 22.5% {-webkit-transform: rotateX(0deg); transform: rotateX(0deg);}
+ 27.5% {-webkit-transform: rotateX(180deg); transform: rotateX(180deg);}
+ 72.5% {-webkit-transform: rotateX(180deg); transform: rotateX(180deg);}
+ 77.5% {-webkit-transform: rotateX(0deg); transform: rotateX(0deg);}
+ 100% {-webkit-transform: rotateX(0deg); transform: rotateX(0deg);}
+}
+
+/* This one animates the back card */
+@keyframes cardFlipBack {
+ 0% {-webkit-transform: rotateX(-180deg); -moz-transform: rotateX(-180deg); -ms-transform: rotateX(-180deg); transform: rotateX(-180deg);}
+ 22.5% {-webkit-transform: rotateX(-180deg); -moz-transform: rotateX(-180deg); -ms-transform: rotateX(-180deg); transform: rotateX(-180deg);}
+ 27.5% {-webkit-transform: rotateX(-180deg); -moz-transform: rotateX(0deg); -ms-transform: rotateX(0deg); transform: rotateX(0deg);}
+ 72.5% {-webkit-transform: rotateX(-180deg); -moz-transform: rotateX(0deg); -ms-transform: rotateX(0deg); transform: rotateX(0deg);}
+ 77.5% {-webkit-transform: rotateX(-180deg); -moz-transform: rotateX(-180deg); -ms-transform: rotateX(-180deg); transform: rotateX(-180deg);}
+ 100% {-webkit-transform: rotateX(-180deg); -moz-transform: rotateX(-180deg); -ms-transform: rotateX(-180deg); transform: rotateX(-180deg);}
+}
+
+/* This one animates the back card in webkit */
+@-webkit-keyframes cardFlipBack {
+ 0% {-webkit-transform: rotateX(-180deg); transform: rotateX(-180deg);}
+ 22.5% {-webkit-transform: rotateX(-180deg); transform: rotateX(-180deg);}
+ 27.5% {-webkit-transform: rotateX(0deg); transform: rotateX(0deg);}
+ 72.5% {-webkit-transform: rotateX(0deg); transform: rotateX(0deg);}
+ 77.5% {-webkit-transform: rotateX(-180deg); transform: rotateX(-180deg);}
+ 100% {-webkit-transform: rotateX(-180deg); transform: rotateX(-180deg);}
+}
+
+/* Hide back of card during swap */
+.front {-webkit-backface-visibility: hidden; -moz-backface-visibility: hidden; -ms-backface-visibility: hidden; backface-visibility: hidden; position: relative; display:block; }
+.back {-webkit-backface-visibility: hidden; -moz-backface-visibility: hidden; -ms-backface-visibility: hidden; backface-visibility: hidden; position: absolute; display:block; max-width:100%; height:auto; overflow: visible;}
+/* Front card stacked above the back card */
+.front { z-index: 2;}
+/* The back, initially hidden, card */
+.back {-webkit-transform: rotateX(-180deg); -moz-transform: rotateX(-180deg); -ms-transform: rotateX(-180deg); transform: rotateX(-180deg);}

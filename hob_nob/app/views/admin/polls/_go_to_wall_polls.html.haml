@@ -1,0 +1,17 @@
+.popup-overlay
+.ClientPopup
+#register-form.pollWallForm.col.s12.ClientPopup-info
+  %p.txtcenter.m-b-30
+    Please select wall to continue
+  %span
+    = link_to back_path, :class => 'closeclick' do  
+      X
+  = form_tag admin_event_polls_path, :method => 'get' do
+    - if @event.polls.pluck(:wall_type).uniq.compact.present?
+      %i.arrow.single
+      = select_tag :wall_type , options_for_select(@event.polls.pluck(:wall_type).compact.uniq.sort)
+      = hidden_field_tag :type, "public_wall"
+      .row.txtcenter.UserSubmit.m-t-40
+        = submit_tag "Submit", :class => "mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-color--light-blue-600 disbtn"
+    - else
+      No data available. Please check your wall settings.

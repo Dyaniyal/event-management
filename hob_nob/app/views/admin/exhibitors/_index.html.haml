@@ -1,0 +1,41 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "exhibitors", :url => "/admin/events/#{params[:event_id]}/exhibitors/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("exhibitors")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16.ng-scope.ng-table{"template-pagination" => "custom/pager"}
+    %tr
+      - if @event.is_parent?
+        %th Sequence
+      %th Name
+      %th Logo
+      %th Url
+      %th Contact Person Name
+      %th Email id
+      %th Contact Number
+      %th 
+    - objs.each_with_index do |exhibitor,index|
+      %tr 
+        - if @event.is_parent?
+          %td.sortable
+            .orderseq
+              - if index != 0
+                %span= link_to "",admin_event_sequence_path(:event_id => exhibitor.event_id, :id => exhibitor.id, :seq_type => "up", :feature_type => "exhibitors"),:class => "uparrow", :method => "put", :remote => true
+              - if exhibitor.sequence.to_i != 0 and (@exhibitors.length - 1) != index
+                %span= link_to "",admin_event_sequence_path(:event_id => exhibitor.event_id, :id => exhibitor.id, :type => "down", :feature_type => "exhibitors"),:class => "downarrow", :method => "put", :remote => true
+        %td.font16= show_link(params, exhibitor.id, exhibitor.name) rescue nil
+        %td.font16= image_tag(exhibitor.image_url(:thumb), :width => 60, :heigth => 60 ) rescue nil 
+        %td.font16= exhibitor.website_url rescue ""
+        %td.font16= exhibitor.contact_person_name
+        %td.font16= exhibitor.email
+        %td.font16= exhibitor.mobile
+        %td.IconDrp
+          = more_vert_button(exhibitor.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{exhibitor.id}"}
+            = edit_link(params, exhibitor.id)
+            - if @event.is_parent?
+              = delete_link(params, exhibitor.id)
+
+  =# will_paginate objs        

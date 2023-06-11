@@ -1,0 +1,19 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "analytics", :url => "/admin/events/#{params[:event_id]}/analytics/new", :msg => 'test'}
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16.ng-scope.ng-table{"template-pagination" => "custom/pager"}
+    %tr
+      %th Viewable Type
+      %th Viewable Id 
+      %th Action
+      %th Platform
+      %th Create At
+      - objs.each_with_index do |analytic, index|
+        %tr
+          %td.font16= analytic.viewable_type
+          %td.font16= analytic.viewable_id
+          %td.font16= analytic.action
+          %td.font16= analytic.platform
+          %td.font16= analytic.created_at
+  = will_paginate objs

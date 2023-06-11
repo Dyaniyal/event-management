@@ -1,0 +1,298 @@
+- if params[:import].present?
+  = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+- else
+  .save_button.mdl-card
+    = form_for [:admin, @event ,@invitee_structure], :builder => CustomFormBuilder do |f|
+      .mdl-grid.mdl-card.mdl-shadow--1dp.p-b-15
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            General Information
+            / %a{:href => 'javascript:void(0);', :class =>'helpTag testhelp'}
+            /   what's this?
+        - data_present = @invitee_structure.check_invitee_data_present?
+        - if false#true#(@invitee_structure.new_record? or @invitee_structure.invitee_datum.blank?)
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+            .form-group
+              %label.col-lg-4.control-label.ml-color--shades-white
+                Which One Is Email Field?
+              .col-lg-7
+                %i.arrow.single
+                = f.select("invitee_structure", "email_field", [["Column 1", 'attr1'], ["Column 2", 'attr2'], ["Column 3", 'attr3'], ["Column 4", 'attr4'], ["Column 5", 'attr5'], ["Column 6", 'attr6'], ["Column 7", 'attr7'], ["Column 8", 'attr8'], ["Column 9", 'attr9'], ["Column 10", 'attr10'], ["Column 11", 'attr11'], ["Column 12", 'attr12'], ["Column 13", 'attr13'], ["Column 14", 'attr14'], ["Column 15", 'attr15'], ["Column 16", 'attr16'], ["Column 17", 'attr17'], ["Column 18", 'attr18'], ["Column 19", 'attr19'], ["Column 20", 'attr20'], ["Column 21", 'attr21'], ["Column 22", 'attr22'], ["Column 23", 'attr23'], ["Column 24", 'attr24'], ["Column 25", 'attr25'], ["Column 26", 'attr26'], ["Column 27", 'attr27'], ["Column 28", 'attr28'], ["Column 29", 'attr29'], ["Column 30", 'attr30'], ["Column 31", 'attr31'], ["Column 32", 'attr32'], ["Column 33", 'attr33'], ["Column 34", 'attr34'], ["Column 35", 'attr35'], ["Column 36", 'attr36'], ["Column 37", 'attr37'], ["Column 38", 'attr38'], ["Column 39", 'attr39'], ["Column 40", 'attr40']], {:selected => @invitee_structure.email_field}, {include_blank: 'None',:class=> 'select2-single form-control' })
+        = f.hidden_field :email_field, :value => "attr1"
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "database.png", :section_id => "speaker_general_section"}
+        = f.custom_text_field :attr1, "Column 1(Unique Identifier)", :value => f.object.attr1.present? ? f.object.attr1 : (["edit","update"].include?(params[:action]) ? "" : "Email ID"),:readonly => true #:readonly => data_present ? true : false
+        = f.custom_text_field :attr2, "Column 2", :value => f.object.attr2.present? ? f.object.attr2 : (["edit","update"].include?(params[:action]) ? "" : "First Name"),:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr2, "yes","Yes", :id => "option-37"
+              = f.custom_radio_button :mandate_attr2, "no", "No", :id => "option-38" 
+        / = f.hidden_field :mandate_attr2, :value => "yes"
+        = f.custom_text_field :attr3, "Column 3", :value => f.object.attr3.present? ? f.object.attr3 : (["edit","update"].include?(params[:action]) ? "" : "Last Name"),:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr3, "yes","Yes", :id => "option-1"
+              = f.custom_radio_button :mandate_attr3, "no", "No", :id => "option-2"    
+        = f.custom_text_field :attr4, "Column 4", :value => f.object.attr4.present? ? f.object.attr4 : (["edit","update"].include?(params[:action]) ? "" : "Contact Number"),:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr4, "yes","Yes", :id => "option-3"
+              = f.custom_radio_button :mandate_attr4, "no", "No", :id => "option-4"
+        = f.custom_text_field :attr5, "Column 5", :value => f.object.attr5.present? ? f.object.attr5 : "",:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr5, "yes","Yes", :id => "option-5"
+              = f.custom_radio_button :mandate_attr5, "no", "No", :id => "option-6"
+        = f.custom_text_field :attr6, "Column 6", :value => f.object.attr6.present? ? f.object.attr6 : "",:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr6, "yes","Yes", :id => "option-7"
+              = f.custom_radio_button :mandate_attr6, "no", "No", :id => "option-8"
+        = f.custom_text_field :attr7, "Column 7", :value => f.object.attr7.present? ? f.object.attr7 : "",:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr7, "yes","Yes", :id => "option-9"
+              = f.custom_radio_button :mandate_attr7, "no", "No", :id => "option-10"
+        = f.custom_text_field :attr8, "Column 8", :value => f.object.attr8.present? ? f.object.attr8 : "",:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr8, "yes","Yes", :id => "option-11"
+              = f.custom_radio_button :mandate_attr8, "no", "No", :id => "option-12"
+        = f.custom_text_field :attr9, "Column 9", :value => f.object.attr9.present? ? f.object.attr9 : "",:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr9, "yes","Yes", :id => "option-13"
+              = f.custom_radio_button :mandate_attr9, "no", "No", :id => "option-14"
+        = f.custom_text_field :attr10, "Column 10", :value => f.object.attr10.present? ? f.object.attr10 : "",:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr10, "yes","Yes", :id => "option-15"
+              = f.custom_radio_button :mandate_attr10, "no", "No", :id => "option-16"
+        = f.custom_text_field :attr11, "Column 11", :value => f.object.attr11.present? ? f.object.attr11 : "",:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr11, "yes","Yes", :id => "option-17"
+              = f.custom_radio_button :mandate_attr11, "no", "No", :id => "option-18"
+        = f.custom_text_field :attr12, "Column 12", :value => f.object.attr12.present? ? f.object.attr12 : "",:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr12, "yes","Yes", :id => "option-19"
+              = f.custom_radio_button :mandate_attr12, "no", "No", :id => "option-20"
+        = f.custom_text_field :attr13, "Column 13", :value => f.object.attr13.present? ? f.object.attr13 : "",:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr13, "yes","Yes", :id => "option-21"
+              = f.custom_radio_button :mandate_attr13, "no", "No", :id => "option-22"
+        = f.custom_text_field :attr14, "Column 14", :value => f.object.attr14.present? ? f.object.attr14 : "",:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr14, "yes","Yes", :id => "option-23"
+              = f.custom_radio_button :mandate_attr14, "no", "No", :id => "option-24"
+        = f.custom_text_field :attr15, "Column 15", :value => f.object.attr15.present? ? f.object.attr15 : "",:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr15, "yes","Yes", :id => "option-25"
+              = f.custom_radio_button :mandate_attr15, "no", "No", :id => "option-26"
+        = f.custom_text_field :attr16, "Column 16", :value => f.object.attr16.present? ? f.object.attr16 : "",:readonly => data_present ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr16, "yes","Yes", :id => "option-27"
+              = f.custom_radio_button :mandate_attr16, "no", "No", :id => "option-28"
+        = f.custom_text_field :attr17, "Column 17", :value => f.object.attr17.present? ? f.object.attr17 : '', :disabled => (f.object.attr17.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr17, "yes","Yes", :id => "option-29"
+              = f.custom_radio_button :mandate_attr17, "no", "No", :id => "option-30"
+        = f.custom_text_field :attr18, "Column 18", :value => f.object.attr18.present? ? f.object.attr18 : '', :disabled => (f.object.attr18.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr18, "yes","Yes", :id => "option-31"
+              = f.custom_radio_button :mandate_attr18, "no", "No", :id => "option-32"
+        = f.custom_text_field :attr19, "Column 19", :value => f.object.attr19.present? ? f.object.attr19 : '', :disabled => (f.object.attr19.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr19, "yes","Yes", :id => "option-33"
+              = f.custom_radio_button :mandate_attr19, "no", "No", :id => "option-34"
+        = f.custom_text_field :attr20, "Column 20", :value => f.object.attr20.present? ? f.object.attr20 : '', :disabled => (f.object.attr20.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr20, "yes","Yes", :id => "option-35"
+              = f.custom_radio_button :mandate_attr20, "no", "No", :id => "option-36"
+        = f.custom_text_field :attr21, "Column 21", :value => f.object.attr21.present? ? f.object.attr21 : '', :disabled => (f.object.attr21.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr21, "yes","Yes", :id => "option-39"
+              = f.custom_radio_button :mandate_attr21, "no", "No", :id => "option-40"
+        = f.custom_text_field :attr22, "Column 22", :value => f.object.attr22.present? ? f.object.attr22 : '', :disabled => (f.object.attr22.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr22, "yes","Yes", :id => "option-41"
+              = f.custom_radio_button :mandate_attr22, "no", "No", :id => "option-42"
+        = f.custom_text_field :attr23, "Column 23", :value => f.object.attr23.present? ? f.object.attr23 : '', :disabled => (f.object.attr23.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr23, "yes","Yes", :id => "option-43"
+              = f.custom_radio_button :mandate_attr23, "no", "No", :id => "option-44"
+        = f.custom_text_field :attr24, "Column 24", :value => f.object.attr24.present? ? f.object.attr24 : '', :disabled => (f.object.attr24.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr24, "yes","Yes", :id => "option-45"
+              = f.custom_radio_button :mandate_attr24, "no", "No", :id => "option-46"
+        = f.custom_text_field :attr25, "Column 25", :value => f.object.attr25.present? ? f.object.attr25 : '', :disabled => (f.object.attr25.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr25, "yes","Yes", :id => "option-47"
+              = f.custom_radio_button :mandate_attr25, "no", "No", :id => "option-48"
+        = f.custom_text_field :attr26, "Column 26", :value => f.object.attr26.present? ? f.object.attr26 : '', :disabled => (f.object.attr26.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr26, "yes","Yes", :id => "option-49"
+              = f.custom_radio_button :mandate_attr26, "no", "No", :id => "option-50"
+        = f.custom_text_field :attr27, "Column 27", :value => f.object.attr27.present? ? f.object.attr27 : '', :disabled => (f.object.attr27.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr27, "yes","Yes", :id => "option-51"
+              = f.custom_radio_button :mandate_attr27, "no", "No", :id => "option-52"
+        = f.custom_text_field :attr28, "Column 28", :value => f.object.attr28.present? ? f.object.attr28 : '', :disabled => (f.object.attr28.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr28, "yes","Yes", :id => "option-53"
+              = f.custom_radio_button :mandate_attr28, "no", "No", :id => "option-54"
+        = f.custom_text_field :attr29, "Column 29", :value => f.object.attr29.present? ? f.object.attr29 : '', :disabled => (f.object.attr29.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr29, "yes","Yes", :id => "option-55"
+              = f.custom_radio_button :mandate_attr29, "no", "No", :id => "option-56"
+        = f.custom_text_field :attr30, "Column 30", :value => f.object.attr30.present? ? f.object.attr30 : '', :disabled => (f.object.attr30.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        %label.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Field?
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :mandate_attr30, "yes","Yes", :id => "option-57"
+              = f.custom_radio_button :mandate_attr30, "no", "No", :id => "option-58"
+        = f.custom_text_field :attr31, "Column 31", :value => f.object.attr31.present? ? f.object.attr31 : '', :disabled => (f.object.attr31.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr32, "Column 32", :value => f.object.attr32.present? ? f.object.attr32 : '', :disabled => (f.object.attr32.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr33, "Column 33", :value => f.object.attr33.present? ? f.object.attr33 : '', :disabled => (f.object.attr33.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr34, "Column 34", :value => f.object.attr34.present? ? f.object.attr34 : '', :disabled => (f.object.attr34.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr35, "Column 35", :value => f.object.attr35.present? ? f.object.attr35 : '', :disabled => (f.object.attr35.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr36, "Column 36", :value => f.object.attr36.present? ? f.object.attr36 : '', :disabled => (f.object.attr36.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr37, "Column 37", :value => f.object.attr37.present? ? f.object.attr37 : '', :disabled => (f.object.attr37.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr38, "Column 38", :value => f.object.attr38.present? ? f.object.attr38 : '', :disabled => (f.object.attr38.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr39, "Column 39", :value => f.object.attr39.present? ? f.object.attr39 : '', :disabled => (f.object.attr39.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr40, "Column 40", :value => f.object.attr40.present? ? f.object.attr40 : '', :disabled => (f.object.attr40.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr41, "Column 41", :value => f.object.attr41.present? ? f.object.attr41 : '', :disabled => (f.object.attr41.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr42, "Column 42", :value => f.object.attr42.present? ? f.object.attr42 : '', :disabled => (f.object.attr42.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr43, "Column 43", :value => f.object.attr43.present? ? f.object.attr43 : '', :disabled => (f.object.attr40.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr44, "Column 44", :value => f.object.attr44.present? ? f.object.attr44 : '', :disabled => (f.object.attr44.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr45, "Column 45", :value => f.object.attr45.present? ? f.object.attr45 : '', :disabled => (f.object.attr45.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr46, "Column 46", :value => f.object.attr46.present? ? f.object.attr46 : '', :disabled => (f.object.attr46.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr47, "Column 47", :value => f.object.attr47.present? ? f.object.attr47 : '', :disabled => (f.object.attr47.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr48, "Column 48", :value => f.object.attr48.present? ? f.object.attr48 : '', :disabled => (f.object.attr48.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr49, "Column 49", :value => f.object.attr49.present? ? f.object.attr49 : '', :disabled => (f.object.attr49.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.custom_text_field :attr50, "Column 50", :value => f.object.attr50.present? ? f.object.attr50 : '', :disabled => (f.object.attr50.present? and f.object.invitee_datum.length != 0 and data_present) ? true : false
+        = f.hidden_field :uniq_identifier, :value => 'attr1'
+        - if false#@invitee_structure.new_record?
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+            .form-group
+              %label.col-lg-4.control-label.ml-color--shades-white
+                Select Unique Identifier?
+              .col-lg-7
+                %i.arrow.single
+                = f.select("invitee_structure", "uniq_identifier", [["Column 1", 'attr1'], ["Column 2", 'attr2'], ["Column 3", 'attr3'], ["Column 4", 'attr4'], ["Column 5", 'attr5'], ["Column 6", 'attr6'], ["Column 7", 'attr7'], ["Column 8", 'attr8'], ["Column 9", 'attr9'], ["Column 10", 'attr10'], ["Column 11", 'attr11'], ["Column 12", 'attr12'], ["Column 13", 'attr13'], ["Column 14", 'attr14'], ["Column 15", 'attr15']], {:selected => @invitee_structure.uniq_identifier}, {include_blank: 'None',:class=> 'select2-single form-control' })
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)
+         
+:javascript
+  $(window).load(function(){
+    $('.fileUpload input').change(function(){
+      filename = $(this)[0].files[0].name;
+      $(".file_name").text(filename);
+    });
+  })   

@@ -1,0 +1,60 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section.tables-data
+    .ml-header.relative.clear.mdl-color--light-blue-800
+      .mdl-grid.mdl-grid--no-spacing
+        .mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet
+          %h3.mdl-color-text--white.m-t-15.p-l-40.p-v-20
+            Database Records
+
+    .mdl-grid.mdl-grid--no-spacing
+      .mdl-cell.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+        .p-35.ml-card-holder.ml-card-holder-first.HeaderHeight
+          .mdl-card.mdl-shadow--1dp.m-b-30.clients.index_mdl
+            .mdl-card__title.mdl-color--light-blue-600.mdl-typography--text-right.displayBlock
+              %h2.mdl-card__title-text.mdl-color-text--white.displayBlock.mdl-typography--text-right.displayBlock.mdl-typography--text-right.heightHeading
+                = @closed_data.try(:count)
+                = 'Database ' + 'Record'.pluralize(@closed_data.count)
+                = render partial: 'admin/layouts/add_link'
+
+            = form_tag({}, method: :get, class: "category_dropdown") do
+              = submit_tag 'Re-Open', { class: 'btn btn-primary pull-left', style: 'margin: 10px;' }
+              .mdl-typography--text-center.BlnkTxt
+                .mdl-cell.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+                  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16.ng-scope.ng-table.manage-event{"template-pagination" => "custom/pager"}
+                    %tr
+                      %th{"data-priority" => "1"}
+                        = label_tag 'Select All'
+                        = check_box_tag 'checkAll'
+                      %th Email ID  
+                      %th.test
+                        .event_select123
+                          Call Status
+                        .invitee_com12
+                        = form_tag({}, method: :get, class: "drop category_dropdown") do
+                          = select_tag "filter[status]",options_for_select([['All','All'], ["REGISTERED","REGISTERED"],["HOT", "HOT"], ["WARM", "WARM"], ["FOLLOW UP", "FOLLOW UP"], ["REGRET", "REGRET"], ["TENTATIVE", "TENTATIVE"], ["CALL BACK - NO RESPONSE", "CALL BACK - NO RESPONSE"], ["DISCREPANT NUMBER", "DISCREPANT NUMBER"], ["NO NUMBER", "NO NUMBER"], ["DISCREPANT CONTACT", "DISCREPANT CONTACT"], ["DO NOT CALL", "DO NOT CALL"], ["BLACK LISTED", "BLACK LISTED"], ["UNSUBSCRIBE", "UNSUBSCRIBE"], ["DUPLICATE", "DUPLICATE"], ["ADD NEW RECORD", "ADD NEW RECORD"], ["SEND EMAIL", "SEND EMAIL"]]), { include_blank: true, onchange: 'this.form.submit();' }
+                      %th.test
+                        .event_select123
+                          Reported Status
+                        .invitee_com12  
+                        = form_tag({}, method: :get, class: "category_dropdown") do
+                          = select_tag "filter[reported_status]",options_for_select([['All','All'],["REGISTERED","REGISTERED"],["HOT", "HOT"], ["WARM", "WARM"],["REGRET", "REGRET"], ["OTHER", "OTHER"]]), { include_blank: true, onchange: 'this.form.submit();' }
+                      %th Remark
+                    - @closed_data.each do |invitee_datum|
+                      %tr
+                        %td
+                          = check_box_tag 'invitee_datum_ids[]', invitee_datum.id
+                        %td.font16= invitee_datum.attr1
+                        %td.font16= invitee_datum.status
+                        %td.font16= invitee_datum.reported_status
+                        %td.font16= invitee_datum.remark
+
+                  = will_paginate @closed_data
+                        
+:javascript
+  $( document ).ready(function() {   
+    $('#filter_status').select2();
+    $('#filter_reported_status').select2();
+  });
+  $("#checkAll").click(function () {
+    $('input:checkbox').not(this).prop('checked', this.checked);
+  });

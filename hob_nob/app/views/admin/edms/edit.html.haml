@@ -1,0 +1,2 @@
+= render :partial => 'layouts/layout_form', :locals => {:page => 'New eDM'} if @edm.flag == "0"
+= render :partial => 'layouts/layout_form', :locals => {:page => 'Edit eDM'} if @edm.flag != "0"

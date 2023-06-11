@@ -1,0 +1,103 @@
+/ Header Start
+- if @microsite.microsite_look_and_feel.present?
+  - color = @microsite.microsite_look_and_feel.logo_back_color
+.header{:style => "background-color: ##{color};"}
+  .container
+    .row
+      %nav.navbar.navbar-default.nav_slide_menu
+        .container
+          .navbar-header
+            - if @microsite.microsite_look_and_feel.present? 
+              = link_to microsite_path(:id => @event.seo_name), :class => "navbar-brand" do
+                = image_tag(@event.microsite.microsite_look_and_feel.logo.url, :alt => "")
+          #myNavbarnew
+            %ul.nav_right_slide.pull-right.headerMenuColor
+              /
+              %span{:onclick => "openNav()", :style => "font-size:30px; color:#fff; cursor:pointer"} ☰ Menu
+        .clear
+        #mySidenav.sidenav
+          %a.closebtn{:href => "javascript:void(0)", :onclick => "closeNav()"} ×
+          %ul
+            %li 
+              = link_to "Home", microsite_path(:id => @event.seo_name)# to show home link in navbar added by gopi
+            - @microsite.get_active_features.each do |feature|
+              - if feature.name == "images"
+                %li
+                  = link_to feature.page_title,  microsite_path(:id => @event.seo_name, :type => "gallery")
+              - elsif feature.name == "emergency_exits"
+                %li
+                  = link_to feature.page_title,  microsite_path(:id => @event.seo_name, :type => "venue")
+              - elsif feature.name == "registrations"
+                %li
+                  = link_to feature.page_title, @microsite.registration_url , :target =>  "_blank"
+              - elsif feature.name == "custom_page1s"
+                %li
+                  - if @event.custom_page1s.blank? or (@event.custom_page1s.first.page_type == "build_new")
+                    = link_to feature.page_title,  microsite_path(:id => @event.seo_name, :type => "custom_pages", :page => "custom_page1s")
+                  - else
+                    = link_to feature.page_title, @event.custom_page1s.first.site_url , :target =>  "_blank"
+              - elsif feature.name == "custom_page2s"
+                %li
+                  - if  @event.custom_page2s.blank? or (@event.custom_page2s.first.page_type == "build_new")
+                    = link_to feature.page_title,  microsite_path(:id => @event.seo_name, :type => "custom_pages", :page => "custom_page2s")
+                  - else
+                    = link_to feature.page_title, @event.custom_page2s.first.site_url , :target =>  "_blank"
+              - elsif feature.name == "custom_page3s"
+                %li
+                  - if @event.custom_page3s.blank? or  (@event.custom_page3s.first.page_type == "build_new")
+                    = link_to feature.page_title,  microsite_path(:id => @event.seo_name, :type => "custom_pages", :page => "custom_page3s")
+                  - else
+                    = link_to feature.page_title, @event.custom_page3s.first.site_url, :target =>  "_blank"
+              - elsif feature.name == "custom_page4s"
+                %li
+                  - if @event.custom_page4s.blank? or (@event.custom_page4s.first.page_type == "build_new")
+                    = link_to feature.page_title,  microsite_path(:id => @event.seo_name, :type => "custom_pages", :page => "custom_page4s")
+                  - else
+                    = link_to feature.page_title, @event.custom_page4s.first.site_url, :target =>  "_blank"
+              - elsif feature.name == "custom_page5s"
+                %li
+                  - if @event.custom_page5s.blank? or (@event.custom_page5s.first.page_type == "build_new")
+                    = link_to feature.page_title,  microsite_path(:id => @event.seo_name, :type => "custom_pages", :page => "custom_page5s")
+                  - else
+                    = link_to feature.page_title, @event.custom_page5s.first.site_url , :target =>  "_blank"        
+              - elsif feature.name == "custom_page6s"
+                %li
+                  - if @event.custom_page6s.blank? or (@event.custom_page6s.first.page_type == "build_new")
+                    = link_to feature.page_title,  microsite_path(:id => @event.seo_name, :type => "custom_pages", :page => "custom_page6s")
+                  - else
+                    = link_to feature.page_title, @event.custom_page6s.first.site_url , :target =>  "_blank"  
+              - elsif feature.name == "custom_page7s"
+                %li
+                  - if @event.custom_page7s.blank? or (@event.custom_page7s.first.page_type == "build_new")
+                    = link_to feature.page_title,  microsite_path(:id => @event.seo_name, :type => "custom_pages", :page => "custom_page7s")
+                  - else
+                    = link_to feature.page_title, @event.custom_page7s.first.site_url , :target =>  "_blank"
+              - elsif feature.name == "custom_page8s"
+                %li
+                  - if  @event.custom_page8s.blank? or (@event.custom_page8s.first.page_type == "build_new")
+                    = link_to feature.page_title,  microsite_path(:id => @event.seo_name, :type => "custom_pages", :page => "custom_page8s")
+                  - else
+                    = link_to feature.page_title, @event.custom_page8s.first.site_url , :target =>  "_blank"
+              - elsif feature.name == "custom_page9s"
+                %li
+                  - if @event.custom_page9s.blank? or (@event.custom_page9s.first.page_type == "build_new") 
+                    = link_to feature.page_title,  microsite_path(:id => @event.seo_name, :type => "custom_pages", :page => "custom_page9s")
+                  - else
+                    = link_to feature.page_title, @event.custom_page9s.first.site_url , :target =>  "_blank"
+              - elsif feature.name == "custom_page10s"
+                %li
+                  - if @event.custom_page10s.blank? or (@event.custom_page10s.first.page_type == "build_new")
+                    = link_to feature.page_title,  microsite_path(:id => @event.seo_name, :type => "custom_pages", :page => "custom_page10s")
+                  - else
+                    = link_to feature.page_title, @event.custom_page10s.first.site_url , :target =>  "_blank"             
+              - else
+                %li
+                  = link_to feature.page_title,  microsite_path(:id => @event.seo_name, :type => feature.name.singularize)
+:javascript
+  function openNav() {
+      document.getElementById("mySidenav").style.width = "300px";
+  }
+  
+  function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+  }

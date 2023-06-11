@@ -1,0 +1,48 @@
+.save_button.mdl-card
+  = nested_form_for @font, font_form_params(@font) do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          Font Information
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .form-group
+              .col-lg-4.control-label
+                = f.label 'Font Name'
+              .col-lg-7
+                = f.text_field :font_name, class: 'form-control', id: 'font_name'
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .form-group
+              .col-lg-4.control-label
+                = f.label 'Select File Counts'
+              .col-lg-2
+                = number_field_tag 'counts', @font_files, min: 1, max: 6, class: 'form-control number_field'
+                .field_with_errors
+                  .span{ class: 'errorMessage' }
+                    = f.object.errors.messages[:file_count].join(', ') rescue nil
+        #documents
+          = f.fields_for :documents do |document|
+            = render 'document_fields', f: document
+        .col-lg-4
+        .col-lg-7
+          .field_with_errors
+            .span{ class: 'errorMessage' }
+              = f.object.errors.messages[:base].join(', ') rescue nil
+    .fixed-activon-btn-new
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-color--light-blue-600.mdl-js-ripple-effect.btnsubmit.floatRight.m-l-18
+        .mdl-cell--12-col.mdl-cell--12-col-tablet
+          = submit_tag 'SAVE', onClick: 'showSuccessToast();'
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn.registcancel
+          = link_to content_tag(:span, 'Cancel', class: 'waves-effect waves-light btn'), back_path, confirm: 'Are you sure?'
+
+:javascript
+
+  $('.number_field').on('input', function() {
+    var count = $(this).val();
+    var cid = $('#new_font').attr('action').split('/')[3]
+    var font_name = $('#font_name').val();
+    var url = "#{APP_URL}/admin/clients/" + cid + "/fonts/new"
+    window.location.href = url.split('?')[0] + '?counts=' + count + '&font_name=' + font_name
+  });

@@ -1,0 +1,9 @@
+%ul.fixed-activon-btn-new
+  %li.mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-color--red-700.drop
+    %i.material-icons.ml-color-text--shades-white view_module
+    %ul{:for => "demo-menu-top-right"}
+      %li
+        - if @event.present?
+          = link_to  new_admin_event_e_kit_path(:event_id => @event.id),:class => " centerAlign" do
+            / %i.mdl-color-text--blue-grey-400.material-icons.align>supervisor_account  
+            Add e_Kit

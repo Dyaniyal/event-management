@@ -1,0 +1,60 @@
+.row
+  %section.content
+    %h4.heading-borderCard.m-l-10.m-b-20
+      Content
+    /abouts feature is removed for microsites
+    -# if show_card_microsite("abouts")  
+    = #render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "about.png", :objs => @event, :url => "abouts"}
+
+    - if show_card_microsite("speakers") 
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "speakers.png", :objs => @microsite.event.speakers, :url => "speakers", :@count => @count}
+
+    - if show_card_microsite("agendas")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "agenda.png", :objs => @microsite.event.agendas, :url => "agendas", :@count => @count}
+
+    - if show_card_microsite("faqs")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "faq.png", :objs => @microsite.event.faqs, :url => "faqs", :@count => @count}
+    - if show_card_microsite("images")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "galler_1y.png", :objs => @microsite.event.images, :url => "images", :@count => @count}
+
+    - if show_card_microsite("contacts")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "contact_us.png", :objs => @microsite.event.contacts, :url => "contacts", :@count => @count}
+
+    - if show_card_microsite("emergency_exits")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "venue.png", :objs => @event, :url => "emergency_exits", :@count => 0} 
+
+    - if show_card_microsite("sponsors")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "sponsor.png", :objs => @microsite.event.sponsors, :url => "sponsors", :@count => @count}
+
+    - if show_card_microsite("registrations")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "registration.png", :objs => @microsite, :url => "registrations", :@count => @count}
+
+    - if show_card_microsite("custom_page1s")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "custom.png", :objs => @microsite.event.custom_page1s, :url => "custom_page1s", :@count => 0}
+
+    - if show_card_microsite("custom_page2s")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "custom.png", :objs => @microsite.event.custom_page2s, :url => "custom_page2s", :@count => 0}
+
+    - if show_card_microsite("custom_page3s")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "custom.png", :objs => @microsite.event.custom_page3s, :url => "custom_page3s", :@count => 0}
+
+    - if show_card_microsite("custom_page4s")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "custom.png", :objs => @microsite.event.custom_page4s, :url => "custom_page4s", :@count => 0}
+
+    - if show_card_microsite("custom_page5s")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "custom.png", :objs => @microsite.event.custom_page5s, :url => "custom_page5s", :@count => 0} 
+
+    - if show_card_microsite("custom_page6s")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "custom.png", :objs => @microsite.event.custom_page6s, :url => "custom_page6s", :@count => 0}
+
+    - if show_card_microsite("custom_page7s")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "custom.png", :objs => @microsite.event.custom_page7s, :url => "custom_page7s", :@count => 0}
+
+    - if show_card_microsite("custom_page8s")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "custom.png", :objs => @microsite.event.custom_page8s, :url => "custom_page8s", :@count => 0}
+
+    - if show_card_microsite("custom_page9s")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "custom.png", :objs => @microsite.event.custom_page9s, :url => "custom_page9s", :@count => 0}
+
+    - if show_card_microsite("custom_page10s")
+      = render :partial => "admin/microsites/cards", :locals => {:icon => '', :img => "custom.png", :objs => @microsite.event.custom_page10s, :url => "custom_page10s", :@count => 0}

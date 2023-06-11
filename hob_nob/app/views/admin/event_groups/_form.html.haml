@@ -1,0 +1,16 @@
+.save_button.mdl-card  
+  = form_for [:admin, @client, @event_group], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          General Information
+          / %a{:href => 'javascript:void(0);', :class =>'helpTag testhelp'}
+          /   what's this?
+      = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "event_group_generalInfo.jpg", :section_id => "event_group_general_section"} 
+      = f.custom_text_field :name, "Name"
+      = f.custom_text_area_field :remarks,"Remarks"
+    .fixed-activon-btn-new
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)

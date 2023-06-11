@@ -1,0 +1,18 @@
+%form.ng-pristine.ng-valid{:action => "#"}
+  .mdl-grid
+    = show_field("Category  ", obj.sponsor_type.capitalize) rescue nil
+    = show_field("Website  ", obj.website_url) rescue nil
+    = show_field("Contact Person Name ", obj.contact_person_name) rescue nil
+    = show_field("Contact No.  ", obj.mobile) rescue nil
+    = show_field("Description  ", obj.description) rescue nil
+    .mdl-cell--4-col.no-p-l.no-p-t.no-p-r.no-p-b
+      %p.no-m-b
+        %strong Logo :
+        %span
+          - if obj.logo.url !=  "/logos/original/missing.png"
+            = image_tag(obj.logo.url(:thumb), :alt=> "logo pic" )
+          - else
+            %strong No attachment available!
+  .m-l-10
+    .mdl-cell--12-col.mdl-cell--12-col-tablet
+      = back_button_detailed_page(:back)

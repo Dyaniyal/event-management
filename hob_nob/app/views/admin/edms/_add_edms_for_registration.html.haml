@@ -1,0 +1,57 @@
+%table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}    
+  %tr
+    %th Name
+    %th Status
+    %th
+  - edms = @event.campaigns.where(:id => 0).first.edms.where(:event_id => @event.id)
+  %tr
+    %td.font16= "Approved Email"
+    - edm_id = edms.where(mail_to: 'approved').first.id rescue nil
+    %td.font16= edm_id ? (Edm.find(edm_id).active ? 'Active' : 'Inactive') : ''
+    %td.IconDrp
+      = more_vert_button(1)
+      %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right1"}
+        - if edm_id.present?
+          - links_to_existing_reg_edm(edm_id, 'approved').each do |link|
+            = link
+        - else
+          = links_to_new_reg_edm(edm_id, 'approved')
+
+  %tr
+    %td.font16= "Confirmed Email"
+    - edm_id = edms.where(mail_to: 'confirmed').first.id rescue nil
+    %td.font16= edm_id ? (Edm.find(edm_id).active ? 'Active' : 'Inactive') : ''
+    %td.IconDrp
+      = more_vert_button(2)
+      %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right2"}
+        - if edm_id.present?
+          - links_to_existing_reg_edm(edm_id, 'confirmed').each do |link|
+            = link
+        - else
+          = links_to_new_reg_edm(edm_id, 'confirmed')
+
+  %tr
+    %td.font16= "Pending Email"
+    - edm_id = edms.where(mail_to: 'pending').first.id rescue nil
+    %td.font16= edm_id ? (Edm.find(edm_id).active ? 'Active' : 'Inactive') : ''
+    %td.IconDrp
+      = more_vert_button(3)
+      %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right3"}
+        - if edm_id.present?
+          - links_to_existing_reg_edm(edm_id, 'pending').each do |link|
+            = link
+        - else
+          = links_to_new_reg_edm(edm_id, 'pending')
+
+  %tr
+    %td.font16= "Rejected Email"
+    - edm_id = edms.where(mail_to: 'rejected').first.id rescue nil
+    %td.font16= edm_id ? (Edm.find(edm_id).active ? 'Active' : 'Inactive') : ''
+    %td.IconDrp
+      = more_vert_button(4)
+      %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right4"}
+        - if edm_id.present?
+          - links_to_existing_reg_edm(edm_id, 'rejected').each do |link|
+            = link
+        - else
+          = links_to_new_reg_edm(edm_id, 'rejected')

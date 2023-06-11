@@ -1,0 +1,89 @@
+.checkboxDiv{display:inline-block; vertical-align:top; position:relative;}
+.checkboxDiv label {display:inline-block; line-height:23px; vertical-align:top; color: #626262; margin-right:12px;}
+.checkboxDiv input{display:inline-block;}
+.fieldDiv p{color:#626262; }
+.checkboxDiv input{margin-right:2px; display: inline-block; vertical-align: top; cursor:pointer;}
+.checkboxDiv span.checkbox{display:inline-block; vertical-align: top;}
+.checkboxDiv input[type="checkbox"] + .checkbox {border-color: #01579b;}
+.checkboxDiv input[type="checkbox"] { opacity: 0; position: absolute; margin-left: -30px; z-index:9; width:21px;}
+
+.checkboxDiv input[type="checkbox"] + .checkbox:before {
+    background-color: #000000;
+    border-radius: 50%;
+    content: " ";
+    height: 2px;
+    left: 50%;
+    margin-left: -1px;
+    margin-top: -1px;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    transition: all 0.1s ease 0s;
+    width: 2px;
+}
+.checkboxDiv input[type="checkbox"] + .checkbox:after {
+    animation: 0.2s ease 0s normal none 1 checkbox-marker-off;
+    border-color: rgba(0, 0, 0, 0);
+    border-style: solid;
+    border-width: 0 0 2px 2px;
+    content: " ";
+    cursor: pointer;
+    height: 8px;
+    left: 50%;
+    margin-left: -7px;
+    margin-top: -6px;
+    position: absolute;
+    top: 50%;
+    transform: rotate(-45deg);
+    width: 14px;
+}
+.checkboxDiv label{padding-left:25px;} 
+
+.checkboxDiv input[type="checkbox"] + .checkbox {
+    animation: 0.25s ease 0s normal none 1 checkbox-bg-off;
+    border-radius: 2px;
+    border-style: solid;
+    border-width: 2px;
+    content: " ";
+    cursor: pointer;
+    display: inline-block;
+    height: 20px;
+    left: 0;
+    margin-left: 0;
+    margin-top: 2px;
+    position: absolute;
+    top: 0;
+    visibility: visible;
+    width: 20px;
+}
+.checkboxDiv .checkbox {
+    padding-top: 0;
+}
+.checkboxDiv .checkbox {
+    min-height: 20px;
+}
+.checkboxDiv input[type="checkbox"]:checked:focus + .checkbox:before {
+    background-color: #4db16a;
+    opacity: 0.2;
+}
+.checkboxDiv input[type="checkbox"]:focus + .checkbox:before {
+    height: 50px;
+    margin-left: -25px;
+    margin-top: -25px;
+    opacity: 0.08;
+    width: 50px;
+}
+.checkboxDiv input[type="checkbox"]:checked + .checkbox {
+    animation: 0.1s ease 0s normal none 1 checkbox-bg-on;
+    border-width: 10px;
+}
+.checkboxDiv input[type="checkbox"]:checked + .checkbox:after {
+    animation: 0.15s ease 0s normal none 1 checkbox-marker-on;
+    border-color: #ffffff;
+}
+
+.fieldCheckbox{margin-top:15px;}
+
+.thankYouWrapper{text-align:center;}
+.editBadgeFormChkBox{padding: 0 12px;}
+.editBadgeForm{  font-family: 'Ubuntu',sans-serif;}

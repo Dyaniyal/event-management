@@ -1,0 +1,21 @@
+%table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{'template-pagination' => 'custom/pager'}
+  %thead
+    %th Font Family
+    %th{style: 'padding-left:50;'} Font Files
+    %th
+
+  - @fonts.each do |font|
+    %tr
+      %td
+        = font.font_name
+      %td
+        %table
+          - font.documents.each do |document|
+            %tr
+              %td
+                = link_to document.document_file_name, document.document.expiring_url
+      %td.IconDrp
+        %button.mdl-button.mdl-js-button.mdl-button--icon{id: "demo-menu-lower-right#{font.id}"}
+          %i.material-icons more_vert
+        %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{for: "demo-menu-lower-right#{font.id}"}
+          = link_to 'Delete',admin_client_font_path(id: font.id), method: :delete, data: { confirm: 'Are you sure?' }, class: 'mdl-menu__item'

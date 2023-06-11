@@ -1,0 +1,114 @@
+= javascript_include_tag "jquery.fancybox"
+.save_button.mdl-card.agendaheight.feedbackFormPage 
+  = form_for [:admin, @event, @e_kit], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          Visibility Settings
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Show Feature To
+            .col-lg-3.p-h-12  
+              = f.custom_radio_button_menu :show_e_kit_feature, "all","All", :id => "feature_option_1#{f.object.id}", :default_checked => "#{f.object.show_e_kit_feature =="all" || f.object.show_e_kit_feature.blank? ? "checked" : ""}",:class => "show_e_kit_feature"
+              = f.custom_radio_button_menu :show_e_kit_feature, "group", "Group", :id => "feature_option_2#{f.object.id}", :default_checked => "#{f.object.show_e_kit_feature == "group" ? "checked" : ""}",:class => "show_e_kit_feature"
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8{:style => ((f.object.show_e_kit_feature == 'all' or f.object.show_e_kit_feature.blank?)? 'margin-top:30px;display:none;' : 'margin-top:30px'), :id => 'group_check_boxes'}
+            .form-group
+              %label.col-lg-4.control-label.ml-color--shades-white
+                Select Groups *
+                %br
+                / %a{:href => admin_event_invitee_groups_path(:event_id => @event.id), :class =>'', :title => "Invitee Groups", :target => '_blank'}
+                /   (View Available Groups)
+              - er = f.object.errors.messages[:group_ids].join(',') rescue nil
+              .col-lg-7.notification
+                - default_group_list = [['No Polls taken', 'No Polls taken'], ['No Feedback given', 'No Feedback given'], ['No Quiz taken', 'No Quiz taken'], ['No Q&A', 'No Q&A'], ['NO QR code scanned', 'NO QR code scanned'], ['No Chat', 'No Chat']]
+                - default_group_list = @default_groups.collect{|group| [ group.name, group.id ]}
+                - default_group_list.each_with_index do |group, index|
+                  - if index == 0
+                    .usersep
+                      Default Groups
+                  .md-checkbox
+                    %label
+                      %span.checkbox 
+                      = group[0]
+                - default_group_list = @other_groups.collect{|group| [ group.name, group.id ]}
+                - default_group_list.each_with_index do |group, index|
+                  - if index == 0
+                    .usersep
+                      Groups created by you
+                  .md-checkbox
+                    %label
+                      = f.check_box :group_ids, {:multiple => true, :class => "myclass", :style => "mystyle", include_hidden: false}, group[1].to_s
+                      %span.checkbox 
+                      = group[0] 
+              .clear
+              .field_with_errors.marginErrMgs
+                .span{:class => "errorMessage"}
+                  = er 
+    .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          E- Kit Information
+          / %a{:href => '/whats_this/e-KIT/e-kit_Information/ekit_generalInfo.jpg', :class =>'helpTag testhelp fancybox'}
+          /   what's this?
+      = #render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "ekit_generalInfo.jpg", :section_id => "e_kit_general_section"}
+      = f.custom_text_field :name, "File Name *","background" => "false"
+      = f.custom_text_field :tag_list, "Tags (Folder)",:view_popup => {:image_path => "e-KIT/e-kit_Information/Help_eKit_TagsField.jpg", :rel=> "tags_folder", :title => "Tags (Folder)"},"background" => "false"
+      = f.custom_text_field :sub_folder, "Sub Folder",:view_popup => {:image_path => "e-KIT/e-kit_Information/Help_eKit_TagsField.jpg", :rel=> "tags_folder", :title => "Tags (Folder)"},"background" => "false"
+      - if @tags.present?
+        .mdl-cell--8-col.mdl-cell--8-col-tablet.m-8.display_select_tag
+          .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+            = select_tag(:tag_name, options_for_select(@tags),:id => "tag_select", :prompt => "select tag")
+      = f.new_custom_file_browser_field :attachment, "Attachment (xls/pdf/word/ppt/jpg) upto 10mb *", :id => "uploadBtn", :value => f.object.attachment_file_name, :action=> params[:action], "background" => "false"
+      = hidden_field_tag "type","#{params[:type]}" if params[:type].present?
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.form-group{:style=>"width:32%;"}
+          .md-checkbox
+            %label
+              = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated
+      - if @event.event_features.pluck(:name).include?("agendas")
+      = hidden_field_tag "from","#{params[:from]}" if params[:from].present?
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+          .form-group
+            %label.col-lg-4.control-label.ml-color--shades-white
+              Select Session
+            .col-lg-7
+              - agendas = [["Select Session",""]] + @event.agendas.collect {|p| [ p.title, p.id ] }.uniq
+              -# agenda_tracks = agenda_tracks.unshift(["Add New Track", 0])
+              %i.arrow.single
+              = f.select("e_kit", "agenda_id", agendas, {:selected => f.object.agenda_id.present? ? f.object.agenda_id : ""}, {:class=> 'select2-single form-control'})
+              .field_with_errors
+                .span{:class => "errorMessage"}
+                  = f.object.errors.messages[:agenda_id].join("") rescue nil   
+                  %br
+      - if @event.event_features.pluck(:name).include?("sponsors")      
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+          .form-group
+            %label.col-lg-4.control-label.ml-color--shades-white
+              Select Sponsor
+            .col-lg-7
+              - sponsors = [["Select Sponsor",""]] + @event.sponsors.collect {|p| [ p.name, p.id ] }.uniq
+              -# agenda_tracks = agenda_tracks.unshift(["Add New Track", 0])
+              %i.arrow.single
+              = f.select("e_kit", "sponsor_id", sponsors, {:selected => f.object.sponsor_id.present? ? f.object.sponsor_id : ""}, {:class=> 'select2-single form-control'})
+              .field_with_errors
+                .span{:class => "errorMessage"}
+                  = f.object.errors.messages[:sponsor_id].join("") rescue nil      
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+:javascript
+  $(window).load(function(){
+    $(".show_e_kit_feature").change(function(){
+      selected_value = $(this).val();
+      if (selected_value == "group"){
+        $("#group_check_boxes").show();
+      }else{
+        $("#group_check_boxes").hide();
+      }  
+    });
+  })  

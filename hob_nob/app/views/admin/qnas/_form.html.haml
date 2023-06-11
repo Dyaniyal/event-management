@@ -1,0 +1,67 @@
+- if params[:import].present?
+  = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+- else
+  .save_button.mdl-card
+    = form_for [:admin, @event, @qna], :html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+      .mdl-grid.mdl-card.pollInfo.mdl-shadow--1dp
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            General Information
+        = f.custom_text_field :sender_email, "Email *", :value => f.object.new_record? ? f.object.sender_email : f.object.email_id, :id => 'user_email',"background" => "false"
+        - if params[:event_id].present?  
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+            .form-group
+              %label.col-lg-4.control-label.ml-color--shades-white
+                Select Panel
+              .col-lg-7
+                %i.arrow.single
+                = f.select("qna", "receiver_id", @panels.collect{|p| [ p.name, p.id ]} , {:selected => "#{@qna.receiver_id}",:prompt => "#{f.object.receiver_id.present? ? f.object.receiver_id : "Please Select" }"}, {include_blank: 'None',:class=> 'select2-single form-control',:onclick =>"answers();"})
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = f.object.errors.messages[:receiver_id].join("") rescue nil
+        =# render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "qna_generalInfo.jpg", :section_id => "qna_general_section"}
+        = f.custom_text_field :question, "Question *","background" => "false"
+        =# f.custom_text_field :answer, "Answer *"
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)
+
+
+:javascript
+  $(window).load(function(){
+      BindControls();
+      $(document).on("keydown", "#user_email, #user_search", function(event){
+    //$('.flyFrom').keydown(function(event){
+        var newEvent = $.Event('keydown', {
+            keyCode: event.keyCode
+        });
+
+        if (newEvent.keyCode !== $.ui.keyCode.TAB) {
+            return;
+        }
+
+        if (newEvent.keyCode == $.ui.keyCode.TAB) {
+            var liActiveCount=$('.ui-autocomplete').find('.ui-state-focus').size()
+            if(liActiveCount<1){
+              newEvent.keyCode = $.ui.keyCode.DOWN;
+              $(this).trigger(newEvent);
+              newEvent.keyCode = 13
+              $(this).trigger(newEvent);
+            }
+        }
+    });
+  });
+
+  function BindControls() {
+      var Countries = JSON.parse(#{@event.name_with_email.to_json.to_json});
+      $('#user_email, #user_search').autocomplete({
+        source: Countries,
+        minLength: 0,
+        scroll: true
+        }).focus(function() {
+          $(this).autocomplete("search", "");
+        });
+    }
+

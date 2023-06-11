@@ -1,0 +1,11 @@
+<% if @qna.present? and @qna.errors.present? %>
+ $("#error_div_<%=@qna.id%>").html("This field is required.");
+ $("#error_div_<%=@qna.id%>").css('color', 'red');
+ $("#error_div_<%=@qna.id%>").css('margin-left', '43%');
+<% else %>
+  <% if @receiver_qnas.present? %>
+    window.location.href = "<%= admin_event_receiver_qnas_path(:event_id => @event.id,:rid => params["qna"]["rid"],:sid => params["qna"]["sid"])%>";
+  <% else %>
+    window.location.href = "<%= admin_event_user_qnas_path(:event_id => @event.id,:rid => params["qna"]["rid"],:sid => params["qna"]["sid"]) %>";
+  <% end %>
+<% end %>

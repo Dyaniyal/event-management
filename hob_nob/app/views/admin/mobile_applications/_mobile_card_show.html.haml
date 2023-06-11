@@ -1,0 +1,143 @@
+%section.setting
+  / .mdl-cell--12-col.mdl-cell--12-col-tablet.m-b-20
+  .row
+    - constant_features = {"app_info" => "edit.png","look_and_feel"=>"themes.png","features" => "feature.png", "menus" => "menu.png","content" => 'content.png',"engagement" => 'engagement_breadcumb.png',"consent_questions" => "settings.png"}
+    - name = {"app_info" => "App Info","look_and_feel"=>"Look And Feel","features" => "Features", "menus" => "Menu", "content" => 'Content',"engagement" => 'Engagement',"consent_questions" => "Consent Questions" }
+    - redirect_urls = {"app_info" => @event.is_parent? ? "#{edit_admin_event_mobile_application_path(@event.id, @mobile_application.id)}" : "", "look_and_feel"=>"#{ (@event.theme.is_preview?) ? new_admin_event_theme_path(:event_id => @event.id, :step => "event_theme") : edit_admin_event_theme_path(:event_id => @event.id, :id => @event.theme_id, :step => "event_theme")}", "look_and_feel1"=>"#{edit_admin_event_theme_path(:event_id => @event.id, :id => @event.theme_id, :step => "event_theme")}" , "features" => "#{new_admin_event_event_feature_path(:event_id => @event.id)}" , "menus" => "#{admin_event_menus_path(:event_id => @event.id)}", "content" => "#{admin_event_mobile_application_path(:event_id => @event.id, :id => @mobile_application.id, :type => "show_content")}", "engagement" => "#{admin_event_mobile_application_path(:event_id => @event.id, :id => @mobile_application.id, :type => "show_engagement")}", "consent_questions" => "#{admin_event_mobile_application_mobile_consent_questions_path(:event_id => @event.id, :mobile_application_id => @mobile_application.id)}"}
+    - constant_features.each_with_index do |feature,index|
+      / - if current_user.has_role? "db_manager"
+      - if current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])
+        -if (name[feature[0]] == "Engagement" or name[feature[0]] == "Content")
+          .col-sm-3.col-xl-3{:id => "active_card#{index}"}
+            %a{:href => "#{redirect_urls[feature[0]]}"}
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-5.ph5
+                      = image_tag("coloured_icons/#{feature[1]}", :size => "60x60")
+                    .col-xs-7.pl5
+                      %h6.text-muted.truncate
+                        = "#{name[feature[0]]}"
+                      - if "#{name[feature[0]]}" != "Engagement"
+                        %h2.fs30.mt5.mbn
+                          = "#{@event.review_status(feature[0])}%"
+      
+      -else
+        .col-sm-3.col-xl-3{:id => "active_card#{index}"}
+          %a{:href => "#{redirect_urls[feature[0]]}"}
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph5
+                    = image_tag("coloured_icons/#{feature[1]}", :size => "60x60")
+                  .col-xs-7.pl5
+                    %h6.text-muted.truncate
+                      = "#{name[feature[0]]}"
+                    - if "#{name[feature[0]]}" != "Engagement" and "#{name[feature[0]]}" != "Consent Questions"
+                      %h2.fs30.mt5.mbn
+                        = "#{@event.review_status(feature[0])}%"
+  - if ((@event.check_event_content_status[0].present? or @mobile_application.review_status[1].present?) or @mobile_application.review_status[1] and ["show_content","show_engagement"].exclude?(params[:type])) and params[:analytics].blank? and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])) and @event.is_parent?
+    - if @mobile_application.review_status[1].present? or (@event.review_look_and_feel[1].present? or @event.check_event_content_status[0].present? or @event.review_menus[1].present? )
+      .row
+        %section.content
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-b-5
+            %h4.heading-borderCard.m-l-25
+              Review
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-b-20.m-l-25.ReviewList
+            .mdl-grid.widthChange
+              - if @mobile_application.review_status[1].present?
+                .mdl-cell--2-col.mdl-cell--2-col-tablet
+                  %h4.heading-borderCard.mdl-cell--6-col.mdl-cell--6-col-tablet
+                    = 'App info'
+                  - @mobile_application.review_status[1].each do |feature|
+                    .mdl-cell--8-col.mdl-cell--8-col-tablet
+                      - page_link = redirect_urls['app_info']
+                      = link_to Event::REVIEW_ATTRIBUTES[feature], page_link
+              - if @event.review_look_and_feel[1].present?
+                .mdl-cell--2-col.mdl-cell--2-col-tablet
+                  %h4.heading-borderCard.mdl-cell--6-col.mdl-cell--6-col-tablet   
+                    = 'Look And Feel'
+                  - @event.review_look_and_feel[1].each do |feature|
+                    .mdl-cell--8-col.mdl-cell--8-col-tablet
+                      - page_link = redirect_urls['look_and_feel']
+                      = link_to Event::REVIEW_ATTRIBUTES[feature], page_link
+              - content_missing = @event.check_event_content_status[0] - ["e_kits","feedbacks","polls","quizzes","chats","social_sharings"]
+              - engagement_missing = @event.check_event_content_status[0] - ["abouts","agendas","speakers","faqs","images","awards","invitees","contacts","event_highlights","sponsors","exhibitors","chats","social_sharings","my_travels","maps"]
+              -if content_missing.present?
+                .mdl-cell--2-col.mdl-cell--2-col-tablet
+                  %h4.heading-borderCard.mdl-cell--6-col.mdl-cell--6-col-tablet     
+                    = 'Content'
+                  - content_missing.each do |feature|
+                    .mdl-cell--8-col.mdl-cell--8-col-tablet 
+                      - page_link = get_feature_url(feature, params)
+                      - single_associate = ["abouts", "event_highlights", "emergency_exits","maps"]
+                      - page_link = page_link + "/new" if single_associate.exclude? feature
+                      - page_link = page_link.gsub('images/new','folders') if gallery_folder_enable(@event)
+                      = link_to Client::display_hsh[feature], page_link
+              - if engagement_missing.present?       
+                .mdl-cell--2-col.mdl-cell--2-col-tablet
+                  %h4.heading-borderCard.mdl-cell--6-col.mdl-cell--6-col-tablet     
+                    = 'Engagement'
+                  - engagement_missing.each do |feature|
+                    .mdl-cell--8-col.mdl-cell--8-col-tablet 
+                      - page_link = get_feature_url(feature, params)
+                      - single_associate = ["abouts", "event_highlights", "emergency_exits","maps"]
+                      - page_link = page_link + "/new" if single_associate.exclude? feature
+                      - page_link = page_link.gsub('images/new','folders') if gallery_folder_enable(@event)
+                      - page_link = new_admin_event_event_feature_path(:event_id => @event.id, :type => "image_setting") if gallery_folder_setting_not_saved(@event)
+                      = link_to Client::display_hsh[feature], page_link
+              - if @event.review_menus[1].present?       
+                .mdl-cell--3-col.mdl-cell--3-col-tablet
+                  %h4.heading-borderCard.mdl-cell--6-col.mdl-cell--6-col-tablet     
+                    = 'Menus'
+                  - @event.review_menus[1].each do |value|
+                    .mdl-cell--8-col.mdl-cell--8-col-tablet 
+                      = link_to "#{Client::display_hsh[value[:feature]]} - #{value[:icon]}", admin_event_menus_path(:event_id => @event.id)
+  - if @event.parent_id.present? and (["show_content","show_engagement"].exclude?(params[:type])) and params[:analytics].blank? and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+    - if true
+      .row
+        %section.content
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-b-5
+            %h4.heading-borderCard.m-l-25
+              Review
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-b-20.m-l-25.ReviewList
+            .mdl-grid.widthChange
+              - content_missing = MobileApplication.get_content_data(@event)
+              - engagement_missing = ["e_kits","qnas","polls","quizzes","feedbacks"]
+              -if content_missing.present?
+                .mdl-cell--2-col.mdl-cell--2-col-tablet
+                  %h4.heading-borderCard.mdl-cell--6-col.mdl-cell--6-col-tablet     
+                    = 'Content'
+                  - content_missing.each do |feature|
+                    -feature = "Contact Us" if feature == "contact"
+                    .mdl-cell--8-col.mdl-cell--8-col-tablet 
+                      - page_link = get_feature_url(feature, params)
+                      - single_associate = ["abouts", "event_highlights", "emergency_exits","maps"]
+                      / - page_link = page_link + "/new" if single_associate.exclude? feature
+                      = link_to Client::display_hsh[feature], page_link
+              - if engagement_missing.present?       
+                .mdl-cell--2-col.mdl-cell--2-col-tablet
+                  %h4.heading-borderCard.mdl-cell--6-col.mdl-cell--6-col-tablet     
+                    = 'Engagement'
+                  - engagement_missing.each do |feature|
+                    - if @event.send(feature).present? and @event.send(feature).pluck(:language_updated).include? false
+                      .mdl-cell--8-col.mdl-cell--8-col-tablet 
+                        - page_link = get_feature_url(feature, params)
+                        - page_link  = page_link.gsub('/new','')
+                        = link_to Client::display_hsh[feature], page_link                      
+
+:javascript
+  $(window).load(function(){
+    if ("#{params[:type]}" == "show_content"){
+      $('#active_card4').find('.panel').addClass('mdl-color--grey-200')
+    }
+    else{
+      $('#active_card4').find('.panel').removeClass('mdl-color--grey-200')
+    }
+    if ("#{params[:type]}" == "show_engagement"){
+      $('#active_card5').find('.panel').addClass('mdl-color--grey-200')
+    }
+    else{
+      $('#active_card5').find('.panel').removeClass('mdl-color--grey-200')
+    }
+  })

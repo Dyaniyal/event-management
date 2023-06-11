@@ -1,0 +1,18 @@
+- if @event.present? and @event.is_parent?
+  - @folder.images.each_with_index do |image,show|
+    .mdl-cell--2-col.mdl-cell--4-col-tablet.imggallery
+      = link_to admin_event_image_path(:event_id => image.imageable_id, :id => image.id, :folder_id => @folder.id), :method => 'delete',data: { confirm: 'Are you sure?' }, :class => "galleryImg" do
+        %span.galleryclose
+          X
+        = image_tag(image.image_url(:small), :size => "200x200")
+      .orderseq
+        - if show != 0
+          %span.fleft
+            = link_to "",admin_event_sequence_path(:event_id => image.imageable_id, :id => image.id, :seq_type => "up", :feature_type => "images", :folder_id => @folder.id),:class => "gallerydownarrow", :method => "put", :remote => true
+        - if image.sequence.to_i != 0 and (@folder.images.length - 1) != show
+          %span
+            = link_to "",admin_event_sequence_path(:event_id => image.imageable_id, :id => image.id, :type => "down", :feature_type => "images", :folder_id => @folder.id),:class => "galleryuparrow", :method => "put", :remote => true
+- else
+  - @folder.images.each_with_index do |image,show|
+    .mdl-cell--2-col.mdl-cell--4-col-tablet.imggallery
+      = image_tag(image.image_url(:small), :size => "200x200")

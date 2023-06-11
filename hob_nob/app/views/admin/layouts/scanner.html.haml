@@ -1,0 +1,11 @@
+!!!
+%html
+  %head
+    %title Hobnob
+    = favicon_link_tag 'fevicon.png'
+    %meta{:content => "IE=edge", "http-equiv" => "X-UA-Compatible"}
+    %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
+    = stylesheet_link_tag "scanner", "custome"
+    = javascript_include_tag "scanner", "jquery-ui.min-dash"
+    = csrf_meta_tags
+  = yield

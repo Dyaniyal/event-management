@@ -1,0 +1,31 @@
+.save_button.mdl-card.mdl-shadow--1dp  
+  = form_for [:admin, @client, @event], :builder => CustomFormBuilder do |f|
+    .mdl-grid
+      - @users.each_with_index do |user,index|
+        .mdl-cell--4-col.mdl-cell--2-col-tablet.mdl-cell--1-col-phone.md-checkbox
+          %label{:for => "event_user_ids_#{user.id}"}
+            = check_box_tag "event[user_ids][]", user.id , @present_users.include?(user.id), :class => "", :id => "event_user_ids_#{user.id}"
+            %span.checkbox   
+            = user.email
+            = hidden_field_tag :add_user_event, "true"
+    .mdl-button.mdl-js-button.mdl-button--raised.mdl-color--light-blue-800.mdl-js-ripple-effect.btnsubmit.m-l-18  
+      = link_to "CHECK ALL ", "#", :id => "selectAll", :class =>"mdl-color-text--white p-h-20" 
+    .mdl-button.mdl-js-button.mdl-button--raised.mdl-color--light-blue-800.mdl-js-ripple-effect.btnsubmit.m-l-18  
+      = link_to "UNCHECK ALL", "#", :id => "unSelectAll", :class =>"mdl-color-text--white p-h-20"
+    .mdl-button.mdl-js-button.mdl-button--raised.mdl-color--light-blue-800.mdl-js-ripple-effect.btnsubmit.m-l-18  
+      = f.custom_submit_button "SAVE"
+
+:javascript
+
+  $('#selectAll').click(function() {
+    $(':checkbox').each(function() {
+      this.checked = true;                        
+    });
+  });  
+
+  $('#unSelectAll').click(function() {
+    $(':checkbox').each(function() {
+      this.checked = false;                        
+    });
+  }); 
+                

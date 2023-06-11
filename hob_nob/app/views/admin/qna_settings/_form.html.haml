@@ -1,0 +1,43 @@
+.save_button.mdl-card.agendaHeight
+  = form_for [:admin, @event, @qna_setting], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp.p-b-35
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.show_hide_custome_page1
+        .mdl-grid.p-v-5
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Display on App?
+          .col-lg-5.p-h-12
+            / - er = f.object.errors.messages[:open_with].join(',') rescue nil
+            / - f.object.errors.messages[:open_with].clear if f.object.errors.messages[:open_with].present?   
+            = f.custom_radio_button_menu :display_qna_on_app, "yes","Yes", :id => "display_qna_on_app_yes", :default_checked => (f.object.display_qna_on_app == 'yes') ? 'checked' : ''
+            = f.custom_radio_button_menu :display_qna_on_app, "no","no", :id => "display_qna_on_app_no", :default_checked => (f.object.display_qna_on_app == 'no') ? 'checked' : ''
+            %div#custom_email_check
+              - if @qna_setting.errors.present? and @qna_setting.errors[:display_qna_on_app].present?
+                = @qna_setting.errors[:display_qna_on_app].join
+            / .field_with_errors
+            /   .span{:class => "errorMessage"}
+            /     = er
+        .mdl-grid.p-v-5
+          = f.custom_text_area_field :description, "Description","background" => "false"
+          = f.custom_text_field :ask_a_question_to, "Label  *","background" => "false"
+          %span.limitinfo (Limit 20 Characters Only)          
+
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+:css
+  / .errorMessage{
+  /   display:none;
+  /   }
+  #custom_email_check{
+    color:red;
+    white-space: nowrap;
+  }
+
+  .limitinfo{
+    padding-left: 35%;
+  }

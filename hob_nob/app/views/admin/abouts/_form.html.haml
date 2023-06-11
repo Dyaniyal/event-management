@@ -1,0 +1,25 @@
+.save_button.mdl-card.agendaheight  
+  = form_for @event, url: admin_event_abouts_path(@event), html: { method: :post,:class =>'form-horizontal' } , :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          General Information
+      = f.custom_text_area_field :about,"about", :value => "#{@event.about.present? ? @event.about : ""}", "background" => "false"
+      - if f.object.errors.messages[:start_event_date].present? or f.object.errors.messages[:end_event_date].present?
+        .field_with_errors.adjust_error_message
+          .span{:class => "errorMessage"}
+            = "start event date or end event date not given, update it for futher process."
+      = hidden_field_tag :update_about, true
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.col-md-4{:style=>"width:35%;"}
+          .md-checkbox
+            %label
+              = f.check_box :about_language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated
+      = hidden_field_tag "from","#{params[:from]}" if params[:from].present? 
+    .fixed-activon-btn-new 
+      = f.custom_submit_button "SAVE" 
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)

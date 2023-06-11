@@ -1,0 +1,25 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = index_nodata_message("leaderboards")
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("invitees")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      %th Invitee Name 
+      / %th Email id
+      / %th Company Name 
+      / %th Designation
+      %th Points
+      %th Rank
+      %th
+        - objs.each do |invitee|
+          %tr
+            %td.font16= invitee.name_of_the_invitee rescue nil
+            / %td.font16= invitee.email rescue nil
+            / %td.font16= invitee.company_name.capitalize rescue nil
+            / %td.font16= invitee.designation.capitalize rescue nil
+            %td.font16= invitee.points rescue nil
+            %td.font16= invitee.rank rescue nil              
+            %td

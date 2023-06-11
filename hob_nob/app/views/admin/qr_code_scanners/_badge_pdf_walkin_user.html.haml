@@ -1,0 +1,81 @@
+= stylesheet_link_tag "scanner", :media => 'screen, print'
+%title
+%body.qr-scanner-page#print
+  - @badge_pdf = BadgePdf.find_by_event_id(params[:event_id])
+  -  @user_registration = UserRegistration.find_by_id(params[:user_registration_id])
+  - if @badge_pdf.present? and @event.present? and params[:qr_code_preview].blank? and (@badge_pdf.column1.present? && @badge_pdf.column1 == "active" or @badge_pdf.column2.present? && @badge_pdf.column2 == "active" or @badge_pdf.column3.present? && @badge_pdf.column3 == "active" or @badge_pdf.last_name.present? && @badge_pdf.last_name == "active" or @badge_pdf.badge_image.present?)
+    .container.printPage{:style => "background-image:url(#{@badge_pdf.badge_image.url(:large)})"}
+      .title
+        %img{:src => @event.logo.url}
+      .description
+        - if @badge_pdf.sequence.present?
+          - @badge_pdf.sequence.each do |field|
+            - if @badge_pdf.column1.present? && @badge_pdf.column1 == "active"  and field == "column1"
+              / %p.welcomeText
+              .company
+                = @user_registration.send(@badge_pdf.reg_match_name_field)
+            - if @badge_pdf.last_name.present? && @badge_pdf.last_name == "active" and field == "last_name"
+              //%p.welcomeText
+              .company
+                = @user_registration.send(@badge_pdf.last_name_match_field)            
+            - if @badge_pdf.column2.present? && @badge_pdf.column2 == "active" and field == "column2"
+              .company
+                = @user_registration.send(@badge_pdf.reg_match_company_field)
+            - if @badge_pdf.column3.present? && @badge_pdf.column3 == "active" and field == "column3"
+              .designation
+                = @user_registration.send(@badge_pdf.reg_match_designation_field)
+        - else
+          - if @badge_pdf.column1.present? && @badge_pdf.column1 == "active"
+            / %p.welcomeText
+            .company
+              = @user_registration.send(@badge_pdf.reg_match_name_field)
+          - if @badge_pdf.last_name.present? && @badge_pdf.last_name == "active"
+            / %p.welcomeText
+            .company
+              = @user_registration.send(@badge_pdf.last_name_match_field)            
+          - if @badge_pdf.column2.present? && @badge_pdf.column2 == "active"
+            .company
+              = @user_registration.send(@badge_pdf.reg_match_company_field)
+          - if @badge_pdf.column3.present? && @badge_pdf.column3 == "active"
+            .designation
+              = @user_registration.send(@badge_pdf.reg_match_designation_field)
+        %p.subText
+          = "#{@event.start_event_date.strftime('%d %b')} - #{@event.end_event_date.strftime('%d %b %Y')}"
+        %p.subText.place
+          = @event.cities rescue nil
+    %div
+      .checkin_form
+        = form_tag admin_event_qr_code_scanners_path(:event_id => @event.id,:confirm_print=>"true"),:method=>"get",:remote=>true,:id=>"check_in_form" do
+          = check_box_tag 'checkin_', 'true', true
+          %label
+            CheckIN
+          = submit_tag 'Submit',:type=>"hidden"
+      %span
+        = link_to "Confirm", "#", :id => 'prnt', :class =>"printBtn", :onclick => "printpage()" if @event.present? and params[:qr_code_preview].blank? #[368, 165, 168].include? @event
+  / - else
+  /   .container.printPage
+  /     .title
+  /       - if @invitee.present?
+  /         %img{:src => @invitee.qr_code.url}
+  /     .description
+  /       %p.welcomeText
+  /         = @invitee.name_of_the_invitee rescue nil
+  /       .company
+  /         = @invitee.company_name
+  /   = link_to "Confirm", "#", :id => 'prnt', :class =>"printBtn", :onclick => "printpage()" if @event.present?
+
+  :javascript
+    function printpage() {
+      /*$("#check_in_form").submit();*/
+      $('.checkin_form').css('display','none');
+      var printButton = document.getElementById("prnt");
+      printButton.style.visibility = 'hidden';
+      window.print()
+      printButton.style.visibility = 'visible';
+      window.close();
+    }
+:css
+  .checkin_form{
+    padding-bottom: 9px;
+    display:inline-block;
+  }  

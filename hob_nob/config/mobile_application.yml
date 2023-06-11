@@ -1,0 +1,184 @@
+user_engagement_feature:
+  abouts: About
+  awards: Award
+  speakers: Speaker
+  polls: Poll
+  invitees: Invitee
+  faqs: FAQ
+  conversations: Conversation
+  e_kits: E-Kit
+  qnas: Q&A
+  agendas: Agenda
+  contacts: Contact
+  galleries: Gallery
+  feedbacks: Feedback
+  emergency_exits: Emergency Exit
+  event_highlights: Event Highlight
+  notes: Note
+  sponsors: Sponsor
+  my_profile: My Profile
+  qr_code: QR Code Scan
+  maps: Map
+
+card_images:
+  notifications: notification.png
+  Notifications sent: notification.png
+  highlights: event_highlights.png
+  event highlights: event_highlights.png
+  gallery listings: galler_1y.png
+  highlight_images: gallery.png
+  contacts: contact_us.png
+  emergency_exits: emergency_exit.png
+  About: about.png
+  abouts: about.png
+  Speakers: speakers.png
+  Speaker: speakers.png
+  speakers: speakers.png
+  Sessions: agenda.png
+  sessions: agenda.png
+  Agenda: agenda.png
+  agendas: agenda.png
+  invitees: invitees.png
+  awards: awards_2.png
+  polls: polls_1.png
+  Conversation: conversations.png
+  Conversations: conversations.png
+  conversations: conversations.png
+  faqs: faq.png
+  e_kits: e-kit.png
+  Questions Asked: Q&A.png
+  feedbacks: feedback.png
+  images: galler_1y.png
+  mobile_applications: mobile-app.png
+  winners: winner.png
+  panels: panel_1.png
+  dashboards: dashboard.png
+  events: event.png
+  clients: client.png
+  users: user_3.png
+  licensees: licensee.png
+  imports: invitees.png
+  push_pem_files: user-permission.png
+  store_infos: mobile-app.png
+  menus: user-permission.png
+  sponsor: sponsor.png
+  sponsors: sponsor.png
+  invitee_structures: database.png
+  registrations: registration.png
+  my profiles: my_profile.png
+  quizzes: polls.png
+  Poll: polls_1.png
+  Exhibitors listing: Exhibitor-breadcumb.png
+  exhibitors: Exhibitor-breadcumb.png
+  qr codes: qr_code.png
+  QR Code scans: qr_code.png
+  e-Kit Document Views: e-kit.png
+  e-kits: e-kit.png
+  venues: emergency_exit.png
+  notes: note.png
+  emergency exits: emergency_exit.png
+  edit profiles: my_profile.png
+  q&as: Q&A.png
+  galleries: galler_1y.png
+  Q&As: Q&A-breadcumb.png
+  E-Kits: e-kit.png
+  Page views: page_view_icon.png
+  Favorites: myfavourite.png
+  Session Ratings: feedback.png
+  Speaker Ratings: feedback.png
+  Polls taken: polls_1.png
+  Feedback Submitted: feedback-breadcumb.png
+  Quiz: polls_breadcumb.png
+  Quiz answered: polls_breadcumb.png
+  Ios active users: invitees.png
+  Ios unique users: invitees.png
+  Total active users: invitees.png
+  Total unique users: invitees.png
+  my favorites: myfavourite.png
+  maps: map.png
+  consent_questions: settings.png
+  mobile_consent_questions: settings.png
+  consent_question_look_and_feels: themes.png
+
+
+breadcrum_images:
+  themes: themes_breadcumb.png
+  event_features: feature-breadcumb.png
+  notifications: notification-breadcumb.png
+  event_highlights: event_highlights-breadcumb.png
+  highlight_images: gallery.png
+  contacts: contact_us-breadcumb.png
+  emergency_exits: venue-breadcumb.png
+  abouts: about-breadcumb.png
+  speakers: speakers-breadcumb.png
+  agendas: agenda-breadcumb.png
+  invitees: invitees-breadcumb.png
+  awards: awards_2-breadcumb.png
+  polls: polls_1-breadcumb.png
+  conversations: conversations_breadcumb.png
+  faqs: faq-breadcumb.png
+  e_kits: e-kit-breadcumb.png
+  qnas: Q&A-breadcumb.png
+  feedbacks: feedback-breadcumb.png
+  images: galler_1y-breadcumb.png
+  mobile_applications: mobile-app-breadcumb.png
+  winners: winner-breadcumb.png
+  panels: panel_1-breadcumb.png
+  dashboards: dashboard.png
+  events: event-breadcumb.png
+  clients: client-breadcumb.png
+  users: user_3-breadcumb.png
+  licensees: licensee_breadcumb.png
+  imports: invitees-breadcumb.png
+  push_pem_files: user-permission_breadcumb.png
+  store_infos: mobile-app-breadcumb.png
+  menus: menu-breadcumb.png
+  sponsors: sponsor-breadcumb.png
+  invitee_structures: database-breadcumb.png
+  registrations: registration-breadcumb.png
+  profiles: my_profile_breadcumb.png
+  quizzes: polls_breadcumb.png
+  exhibitors: Exhibitor-breadcumb.png
+  manage_mobile_apps: mobile-app-breadcumb.png
+  custom_page1s: custom.png
+  custom_page2s: custom.png
+  custom_page3s: custom.png
+  custom_page4s: custom.png
+  custom_page5s: custom.png
+  custom_page6s: custom.png
+  custom_page7s: custom.png
+  custom_page8s: custom.png
+  custom_page9s: custom.png
+  custom_page10s: custom.png
+  registration_settings: registration-setting.png
+  telecallers: telecaller.png
+  invitee_datas: telecaller.png
+  groupings: database.png
+  user_registrations: registration.png
+  my_travels: travel.png
+  smtp_settings: smtp_setting.png
+  manage_invitee_fields: manage_invitee.png
+  qna_walls: settings.png
+  conversation_walls: settings.png
+  quiz_walls: settings.png
+  poll_walls: settings.png
+  activity_feeds: activity_feed.png
+  qna_settings: Q&A-breadcumb.png
+  icon_libraries: Library.png
+  telecaller_dashboards: telecaller.png
+  invitee_groups: notification-breadcumb.png
+  edms: edm.png
+  campaigns: campaign.png
+  maps: map.png
+  microsite_features: feature-breadcumb.png
+  microsites: microsite.png
+  microsite_menus: menu-breadcumb.png
+  microsite_look_and_feels: themes.png
+  import_data_api: database-breadcumb.png
+  registration_look_and_feels: themes.png
+  feedback_forms: feedback-breadcumb.png
+  track_link_users: edm.png
+  consent_questions: settings.png
+  mobile_consent_questions: settings.png
+  consent_question_look_and_feels: themes.png
+  campaign_details: content.png

@@ -1,0 +1,65 @@
+-if !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("invitee_structures")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16.ng-scope.ng-table{"template-pagination" => "custom/pager"}
+    %tr
+      %th Name
+      %th Data count
+      %th 
+      - objs.each_with_index do |grouping,index|
+        %tr
+          %td
+            / = link_to admin_event_invitee_datas_path(:event_id => @event.id, :grouping_id => grouping.id), :target => '_blank' do
+            /   = grouping.name rescue nil
+            = grouping.name rescue nil
+          %td
+            - grouping_count = grouping.get_search_data_count(@invitee_data).count rescue 0
+            = grouping_count
+          %td.IconDrp
+            = more_vert_button(grouping.id)
+            %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{grouping.id}"}
+              - if grouping.name.present? and grouping.name != "All Records"
+                = edit_link(params, grouping.id)
+              - telecaller_group = !(@event.telecaller_groups.pluck(:assign_grouping).flatten.include?(grouping.id.to_s))
+              - if telecaller_group and grouping.name != "All Records"
+                = delete_link(params, grouping.id)
+              - if telecaller_group and grouping.name != "All Records" and grouping_count > 0
+                = delete_link_all(params, grouping.id)
+              - if grouping.name == "All Records" and grouping_count > 0
+                = delete_link1(params, grouping.id)
+              - if (@event.present? and (@event.client.hide_export.present? and @event.client.hide_export == "no")) and grouping_count > 0
+                = link_to admin_event_grouping_path(:event_id => @event.id, :id => grouping.id,:format => 'xls'), :class =>"mdl-menu__item" do
+                  Export Invitee data
+      - if false
+        - present_keys = []
+        - invitee_attributes = @invitee_structure.attributes.except('id', 'created_at', 'updated_at', 'event_id', 'uniq_identifier')
+        - invitee_attributes.compact!.each do |attrr|
+          - if attrr[1].present?
+            %th
+              - present_keys << attrr[0]
+              = attrr[1].humanize rescue nil
+        - if false
+          %th
+      - if false
+        - objs.each_with_index do |obj, index|
+          - obj_attributes = obj.attributes
+          %tr
+            - present_keys.each do |key|
+              %td.font16
+                = obj_attributes[key]
+            - if false
+              %td.IconDrp
+                = more_vert_button(obj_attributes['id'])
+                %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{obj_attributes['id']}"}
+                  = edit_link(params, "#{obj_attributes['id']}")
+                  = delete_link(params, "#{obj_attributes['id']}")
+                  
+:javascript
+
+  $('input[readonly]').dblclick(function() {
+    $(this).removeAttr('readonly');
+  });
+
+
+

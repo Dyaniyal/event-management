@@ -1,0 +1,44 @@
+/ - if !objs.present? and !params[:admin_search].present?
+/   .mdl-typography--text-center.BlnkTxt.p-t-10
+/     = index_nodata_message("Registration Setting")
+/ -elsif !objs.present? and params[:admin_search].present?
+/   .mdl-typography--text-center.BlnkTxt.p-t-10
+/     = get_search_data("Registration Settings")
+/ - else  
+%table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+  %tr
+    %th Event Name
+    %th Start Date
+    %th End Date
+    %th URL
+    %th
+  - objs.each do |event|
+    %tr
+      %td.description_adjust.font16= event.event_name
+      %td.font16= time_with_zone(event.start_event_date,"IST")
+      %td.font16= time_with_zone(event.end_event_date,"IST")
+      - invitee_search_url = "#{APP_URL}/admin/events/#{params[:event_id]}/invitee_searches"
+      %td.font16= link_to invitee_search_url,invitee_search_url, target: "_blank" 
+      %td.IconDrp
+        = more_vert_button(event.id)
+        %ul.badgeUL.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{event.id}"}
+          
+          - if @badge_pdf.present?
+            = link_to edit_admin_event_badge_pdf_path(:event_id => event.id, :id =>@badge_pdf.id), :class => "mdl-menu__item mdl-js-ripple-effect",target: '_blank' do
+              Edit Badge
+          - else
+            = link_to new_admin_event_badge_pdf_path(:event_id => event.id), :class => "mdl-menu__item mdl-js-ripple-effect",target: '_blank' do
+              Add Badge
+          - if @attendees.present?
+            .mdl-menu__item
+              = link_to "Attendee Export", {action: 'index', controller: 'invitee_searches',:format => 'xls' }    
+          / - if @event.registrations.present?
+          /   = link_to regi_setti_url,:target =>"_blank"  ,:class => "mdl-menu__item mdl-js-ripple-effect" do
+          /     Preview Form
+          / -if @event.registrations.present? and regi_setting.registration == "hobnob"
+          /   = link_to edit_admin_event_registration_path(:event_id => @event.id, :id => @event.registrations.first.id), :class => "mdl-menu__item mdl-js-ripple-effect" do
+          /     Edit Form
+          / -if (@event.registrations.present? and regi_setting.template == "custom" and regi_setting.registration == "hobnob")
+          /   = link_to edit_admin_event_registration_path(:event_id=> @event.id,:id => @event.registrations.first.id,:change_code => "true"), :class => "mdl-menu__item mdl-js-ripple-effect" do
+          /     Extract Code
+  / = will_paginate @event

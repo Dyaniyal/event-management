@@ -1,0 +1,23 @@
+.newresitration.agendaHeight.user_reg_form.db
+  .mdl-grid.mdl-shadow--1dp.p-b-25.m-b-5
+    .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+    %h1{ style: "text-align: center;font-family: #{@font_hash[0][:font_name]}"}
+      = @message.html_safe
+    %table.set_css
+      / - if @registration_look_and_feel.present? and  @registration_look_and_feel.registration_form_header.present?
+      /   %h4.heading-border.p-t-10.m-b-15{:style => "font-size: #{@registration_look_and_feel.header_font_size}px; font-weight:bold;font-family: #{@registration_look_and_feel.page_font.present? ? @registration_look_and_feel.page_font : ""}" }
+      /     = @registration_look_and_feel.registration_form_header.html_safe
+      / - @registration.attributes.except('id', 'created_at', 'updated_at', 'event_id', 'custom_css','custom_js', 'custom_source_code','email_field','parent_id').map{|key, value| (value['label'].present? and value['option_type'].present?) ? [key,value] : nil}.compact.each do |key,hsh|
+      /   %tr
+      /     %td.space
+      /       = "#{hsh['label']}" 
+      /       %span.show-colon
+      /         = ':'   
+      /     %td= @user_registration["#{key}"]
+      /     - if (hsh["option_type"].present? and ["Radio Button","Check Box","Drop-Down list"].include?(hsh["option_type"]) and (hsh["text_box_required_after_options"].present? and hsh["text_box_required_after_options"] == "yes"))
+      /       %tr
+      /         %td.space
+      /           = "Description"
+      /           %span.show-colon
+      /             = ':'   
+      / %td= @user_registration["text_box_for_checkbox_or_radiobutton"][key].present? ? @user_registration["text_box_for_checkbox_or_radiobutton"][key].first : ""

@@ -1,0 +1,101 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "users", :role => "client_admin", :url => "javascript:void(0);", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("users")     
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    - if params[:content] == "role_base"
+      %tr
+        %th
+          Name
+        %th  
+      - ["client_admin", "event_admin", "moderator"].each do |role|
+        - if true#current_user.has_role? :event_admin and ["client_admin", "event_admin"].exclude?role
+          %tr
+            %td.font16
+              = role.titleize
+            %td.IconDrp
+              %button.mdl-button.mdl-js-button.mdl-button--icon{:id => "demo-menu-lower-right#{role}"}
+                %i.material-icons more_vert
+              %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{role}"}
+                = link_to admin_clients_path(:feature => "users", :role => role, :redirect_page => "index"), :class => "mdl-menu__item" do
+                  Manage Users
+    - else
+      %tr
+        %th Name
+        %th Email
+        %th Status
+        %th Role
+        %th
+        - if params[:role] == "all" and current_user.has_role?("licensee_admin")
+          - Role.get_client_role(@event.client_id, current_user).each do |user|
+            %tr
+              %td.font16
+                = user.first_name.capitalize rescue nil
+              %td.font16
+                = user.email rescue nil
+              %td.font16
+                =# user.status.capitalize rescue nil
+                = user.telecaller == "true" ? user.telecaller_status.capitalize : user.status.capitalize rescue nil  
+              %td.font16
+                = Role.joins(:users).where('roles.resource_type = ? and resource_id = ? and users.id = ?', 'Client', @event.client_id, user.id).pluck(:name).map{|n| n.humanize}.join(', ')
+              %td.IconDrp
+                %button.mdl-button.mdl-js-button.mdl-button--icon{:id => "demo-menu-lower-right#{user.id}"}
+                  %i.material-icons more_vert
+                %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{user.id}"}
+                  = link_to edit_admin_client_user_path(:client_id => @event.client_id, :id => user.id, :events_id => @event.id, :get_role => "all"), :class => "mdl-menu__item" do
+                    Edit
+                  = link_to admin_client_user_path(:client_id => @event.client_id, :id => user.id, :delete_role => "true", :events_id => @event.id, :get_role => "all"), :method => "delete", :class => "mdl-menu__item" do
+                    Delete
+        - if objs.present?
+          - objs.each do |user|         
+            %tr
+              %td.font16
+                = user.first_name.capitalize rescue nil
+              %td.font16
+                = user.email rescue nil
+              %td.font16
+                =# user.status.capitalize rescue nil
+                = user.telecaller == "true" ? user.telecaller_status.capitalize : user.status.capitalize rescue nil  
+              %td.font16
+                - if params[:client_id].present?
+                  = Role.joins(:users).where('roles.resource_type = ? and resource_id = ? and users.id = ?', 'Client', @client.id, user.id).pluck(:name).map{|n| n.humanize}.join(', ')
+                  =# @client.roles.map{|r| (r.user_ids.include? user.id)? r.name.humanize : nil}.compact.join(', ')
+                - if params[:event_id].present?
+                  = Role.joins(:users).where('roles.resource_type = ? and resource_id = ? and users.id = ?', 'Event', @event.id, user.id).pluck(:name).map{|n| n.humanize}.join(', ')
+                - if params[:client_id].nil? and params[:event_id].nil?
+                  = user.roles.pluck(:name).uniq.join(",") rescue nil 
+              %td.IconDrp
+                %button.mdl-button.mdl-js-button.mdl-button--icon{:id => "demo-menu-lower-right#{user.id}"}
+                  %i.material-icons more_vert
+                %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{user.id}"}
+                  - if params[:event_id].present?
+                    -# current_user_roles = Role.joins(:users).where('roles.resource_type = ? and resource_id = ? and users.id = ?', 'Event', @event.id, current_user.id).pluck(:name)
+                    - current_user_roles = user.get_roles_for_user_for_checking('Event',@event.id,current_user.id)
+                    - if user.has_role? :telecaller
+                      = link_to edit_admin_event_telecaller_path(:event_id => params[:event_id], :id => user.id, :get_role => params["role"]), :class => "mdl-menu__item" do
+                        Edit
+                    - elsif current_user_roles.exclude? 'moderator' 
+                      = link_to edit_admin_event_user_path(:event_id => params[:event_id], :id => user.id, :get_role => params["role"]), :class => "mdl-menu__item" do
+                        Edit
+                      = link_to admin_event_user_path(:event_id => params[:event_id], :id => user.id, :delete_role => "true", :get_role => params["role"]),:method => "delete", :class => "mdl-menu__item" do
+                        Delete 
+                  - elsif params[:client_id].present?
+                    -# current_user_roles = Role.joins(:users).where('roles.resource_type = ? and resource_id = ? and users.id = ?', 'Client', @client.id, current_user.id).pluck(:name)
+                    - current_user_roles = user.get_roles_for_user_for_checking('Client',@client.id,current_user.id)
+                    - if current_user_roles.include? 'licensee_admin'
+                      = link_to edit_admin_client_user_path(:client_id => params[:client_id], :id => user.id), :class => "mdl-menu__item" do
+                        Edit
+                      = link_to  admin_client_user_path(:client_id => params[:client_id], :id => user.id, :delete_role => "true"), :method => "delete", :class => "mdl-menu__item" do
+                        Delete  
+                    -# user.aasm.events.each do |eve|
+                      =# link_to "#{eve.name.to_s.titlecase}".html_safe,{:action=>"update", :controller=>"admin/licensees", :id => user.id, :status => eve.name.to_s}, :method => "put", :class => "mdl-menu__item"
+                    - if false
+                      - if params[:client_id].present?
+                        = link_to "/admin/roles?resource_type=client&resource_id=#{params[:client_id]}&user_id=#{user.id}&role_type=client_admin&link=#{request.path_info}", :class => "mdl-menu__item", :method =>:post do
+                          Make Client Admin
+                      - elsif params[:event_id].present?
+                        = link_to "/admin/roles?resource_type=event&resource_id=#{params[:event_id]}&user_id=#{user.id}&role_type=event_admin&link=#{request.path_info}", :class => "mdl-menu__item", :method =>:post do
+                          Make Event Admin

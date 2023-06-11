@@ -1,0 +1,101 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section#content_wrapper
+    = render :partial => "admin/dashboards/breadcumb_links",:locals => {:page => "Statistics",:name => params[:controller]}
+    %section#content.table-layout.animated.fadeIn
+      .chute.chute-center
+        .row.DashPage.eventShowCard
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Uploaded Data
+                    %h2.fs30.mt5.mbn
+                      =# link_to objs.count, admin_event_invitee_datas_path(:event_id => @event.id,:total_data => true)
+                      = objs.count
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+                  / #{check_curent_user_role("client", client_ids,session[:current_user_role]) ? "0px" : "23px"}"
+                  / .col-xs-12.ph5
+                  /   / - if check_curent_user_role("client", client_ids,session[:current_user_role])
+                  /   %a{:href => "/admin/clients/new", :class => "displayBlock"}
+                  /     = 'Add One'# if @clients.count('clients.id') <= 0
+                  /     = 'New Client'# if @clients.count('clients.id') > 0
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Assigned to eDMs
+                    %h2.fs30.mt5.mbn
+                      = 0 #link_to objs.count, "#" 
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+                  / #{check_curent_user_role("client", client_ids,session[:current_user_role]) ? "0px" : "23px"}"
+                  / .col-xs-12.ph5
+                  /   / - if check_curent_user_role("client", client_ids,session[:current_user_role])
+                  /   %a{:href => "/admin/clients/new", :class => "displayBlock"}
+                  /     = 'Add One'# if @clients.count('clients.id') <= 0
+                  /     = 'New Client'# if @clients.count('clients.id') > 0
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Assigned to Telecallers
+                    %h2.fs30.mt5.mbn
+                      - @data = InviteeDatum.telecaller_data(@event)
+                      =# link_to @data.flatten.uniq.count, admin_event_invitee_datas_path(:event_id => @event.id,:telecaller_data => true)#, :remote => true
+                      = @data.flatten.uniq.count
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+                  / #{check_curent_user_role("client", client_ids,session[:current_user_role]) ? "0px" : "23px"}"
+                  / .col-xs-12.ph5
+                  /   / - if check_curent_user_role("client", client_ids,session[:current_user_role])
+                  /   %a{:href => "/admin/clients/new", :class => "displayBlock"}
+                  /     = 'Add One'# if @clients.count('clients.id') <= 0
+                  /     = 'New Client'# if @clients.count('clients.id') > 0
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Records Updated
+                    %h2.fs30.mt5.mbn
+                      - @data = InviteeDatum.get_updated_data_count(@event)
+                      = @data.present? ? @data : "0"
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+                  / #{check_curent_user_role("client", client_ids,session[:current_user_role]) ? "0px" : "23px"}"
+                  / .col-xs-12.ph5
+                  /   / - if check_curent_user_role("client", client_ids,session[:current_user_role])
+                  /   %a{:href => "/admin/clients/new", :class => "displayBlock"}
+                  /     = 'Add One'# if @clients.count('clients.id') <= 0
+                  /     = 'New Client'# if @clients.count('clients.id') > 0
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted People Registered
+                    %h2.fs30.mt5.mbn
+                      - @data = UserRegistration.user_registration_count(@event)
+                      =# link_to @data.count, admin_event_invitee_datas_path(:event_id => @event.id,:user_registred_data => true) 
+                      = @data.count
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+                  / #{check_curent_user_role("client", client_ids,session[:current_user_role]) ? "0px" : "23px"}"
+                  / .col-xs-12.ph5
+                  /   / - if check_curent_user_role("client", client_ids,session[:current_user_role])
+                  /   %a{:href => "/admin/clients/new", :class => "displayBlock"}
+                  /     = 'Add One'# if @clients.count('clients.id') <= 0
+                  /     = 'New Client'# if @clients.count('clients.id') > 0

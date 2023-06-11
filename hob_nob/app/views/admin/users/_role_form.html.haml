@@ -1,0 +1,22 @@
+- if @user.present?
+  = form_for [:admin, @source, @user], :builder => CustomFormBuilder do |f|
+    .mdl-grid
+      = f.custom_text_field :email, "Email Address *", :disabled => @user.id.present?
+      / = f.custom_text_field :last_name, "Last Name"
+      = f.custom_text_field :first_name, "First Name *"
+      = f.custom_text_field :last_name, "Last Name *"
+      - if f.object.id.blank?
+        = f.custom_text_field :password, "Password *", :type => 'password'
+      - role_type = @source.class.name.singularize.downcase
+      = f.hidden_field "role_type", :value => "#{params[:role]}"
+      - @url = @url || request.referer
+      = hidden_field_tag :redirect_url, @url
+      = hidden_field_tag "role", "#{params[:role]}"
+      = hidden_field_tag "page_id", params[:page_id] if params[:page_id].present?
+      = hidden_field_tag "events_id", "#{params[:events_id]}" if params[:events_id].present?
+      = hidden_field_tag "get_role", "#{params[:get_role]}" if params[:get_role].present?
+    .fixed-activon-btn-new
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)

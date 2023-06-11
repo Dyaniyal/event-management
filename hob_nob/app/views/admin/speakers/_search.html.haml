@@ -1,0 +1,15 @@
+.mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.newsearchlaypout.HideTabularData
+  = form_tag admin_event_speakers_url(:event_id => @event.id), :method => :get do
+    .mdl-js-textfield.mdl-textfield--floating-label.mdl-grid.f-right.m-r-25.m-t-10
+      #select-container.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell--6-col.mdl-cell--5-col-tablet.mdl-cell--12-col-phone.search_header
+        = custom_basic_text_field_tag "search_keyword", "", :selected => params[:search_keyword].present? ? params[:search_keyword] : ""
+        = hidden_field_tag :admin_search, "true"
+        = hidden_field_tag :search, "search"
+      = custom_basic_button_tag "SEARCH"
+      - if params[:from] == "microsites"
+        = link_to admin_event_speakers_path(:event_id => @event.id, :from => "microsites"), :class => "back_btn_header" do
+          Back
+      - else
+        = link_to admin_event_speakers_path(:event_id => @event.id), :class => "back_btn_header" do
+          Back 
+      / = custom_advance_search_link_tag "Search"

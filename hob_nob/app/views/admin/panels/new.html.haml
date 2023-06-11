@@ -1,0 +1,17 @@
+= render :partial => 'layouts/layout_form', :locals => {:page => 'New Panel'}
+
+:javascript 
+  / $('#selected_speaker').parent().parent().css("display","none");
+  $('#selected_invitee').css("display","none");
+  $("#selected_type").change(function() {
+    type = $("#selected_type").val();
+    if (type == "invitee"){
+      $('#selected_invitee').parent().parent().css("display","block");
+      $('#selected_speaker').parent().parent().css("display","none");
+    }
+    else{
+    	$('#selected_invitee').parent().parent().css("display","none");
+      $("#selected_speaker").parent().parent().css("display","block");
+    }
+  });
+

@@ -1,0 +1,47 @@
+- if (@event_feature_names.include? Analytic::TOP_PAGE_LIST_TO_FEATURES[feature[0]]) or feature[0] == 'top_pages'
+  %div.panel{:id => "tab#{index + 8}", :class => 'panel'}
+    .panel-heading
+      %span.panel-title
+        = feature[1]
+    .panel-body.scroller-sm.heightAuto
+      %table.table.mbn.tc-icon-bold.br-t
+        %tbody
+          - if @detailed_analytics_counts[1][feature[0]].present?
+            - feature_array = feature[0] != 'top_pages' ? @detailed_analytics_counts[1][feature[0]] : @detailed_analytics_counts[1][feature[0]][1]
+            - feature_array.each do |feature_arr|
+              - obj = get_analytic_details(feature[0], feature_arr[0]) if feature[0] != 'top_pages'
+              - if (obj.present? and obj[0].present?) or (feature[0] == 'top_pages' and @event_feature_names.include? Analytic::VIEWABLE_TYPE_TO_FEATURE[feature_arr[0]])
+                %tr
+                  %td
+                    - if feature[0] == 'top_pages'
+                      - if @event_feature_names.include? Analytic::VIEWABLE_TYPE_TO_FEATURE[feature_arr[0]]
+                        %span.va-t.mr10.TopspeakerImg
+                          = image_tag("coloured_icons/#{@breadcrum_image[feature_arr[0].pluralize.downcase]}")
+                    - elsif obj[0].class.name == 'Invitee'
+                      %span.va-t.mr10.TopspeakerImg
+                        - if obj[0].profile_pic.present?
+                          = image_tag(obj[0].profile_pic.url(:thumb))
+                        - else
+                          = image_tag('/profile_pics/thumb/missing.png')
+                    - elsif obj[0].class.name == 'Speaker'
+                      %span.va-t.mr10.TopspeakerImg
+                        - if obj[0].profile_pic.present?
+                          = image_tag(obj[0].profile_pic.url(:thumb))
+                        - else
+                          = image_tag('/profile_pics/thumb/missing.png')
+                    - elsif obj[0].class.name == 'Panel'
+                      %span.va-t.mr10.TopspeakerImg
+                        = image_tag('/profile_pics/thumb/missing.png')
+                    = obj[0].attributes[obj[1]].truncate(80) rescue '' if feature[0] != 'top_pages'
+                    = feature_arr[0] if feature[0] == 'top_pages' and @event_feature_names.include? Analytic::VIEWABLE_TYPE_TO_FEATURE[feature_arr[0]]
+                  %td
+                    - if feature[0] == 'top_rated_speakers'
+                      = feature_arr[1].round(1) if feature[0] == 'top_rated_speakers'
+                    - elsif feature[0] == 'top_rated_agendas' and feature[0] != 'top_pages'
+                      = feature_arr[1].round(1) if feature[0] == 'top_rated_agendas'
+                    - elsif feature[0] != 'top_rated_speakers' and feature[0] != 'top_pages'
+                      = feature_arr[1] if feature[0] != 'top_rated_speakers'
+                    - elsif feature[0] != 'top_rated_speakers' and feature[0] == 'top_pages' and @event_feature_names.include? Analytic::VIEWABLE_TYPE_TO_FEATURE[feature_arr[0]]
+                      = feature_arr[1]
+          - else
+            = 'No data available'

@@ -1,0 +1,49 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = index_nodata_message("Q&A")
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("Q&As")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      %th Question
+      / %th Answer
+      / %th Speaker Name
+      %th Speaker / Expert Name
+      %th User Name
+      / %th Company Name
+      %th Date 
+      %th Status
+      %th On Wall
+      %th
+    - objs.each do |ques_answer|
+      %tr
+        %td.description_adjust.font16= ques_answer.question
+        / %td.description_adjust.font16= ques_answer.answer
+        %td.font16= ques_answer.get_panel_name
+        %td.font16= ques_answer.get_user_name
+        / %td.font16= ques_answer.get_company_name
+        %td.font16= formatted_time(ques_answer.created_at_with_event_timezone, "%Y-%m-%d %H:%M")
+        %td.font16
+          = ques_answer.status
+        %td.font16
+          - if ques_answer.on_wall == "yes" and ques_answer.status != "rejected" 
+            = "Pushed on Wall"
+          - else 
+            = ""
+        %td.IconDrp
+          - if (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])) #!(current_user.has_role? :db_manager)
+            = more_vert_button(ques_answer.id)
+            %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{ques_answer.id}"}
+              = edit_link(params, ques_answer.id)
+              = delete_link(params, ques_answer.id)
+              - if (ques_answer.on_wall == "yes" and ques_answer.status == "approved")and ques_answer.status == "approved" 
+                = link_to "Remove From Wall",{:action=>"update", :controller=>"admin/qnas", :id => ques_answer.id, :on_wall => "no",:anonymous_on_wall => "false",:page => params[:page]}, :method => "patch", :data => { confirm: 'Are you sure, you want Remove From Wall.'},:class => "mdl-menu__item" 
+              - elsif (ques_answer.on_wall == "no" or ques_answer.on_wall.blank?) and ques_answer.status == "approved"
+                = link_to "Push To Wall",{:action=>"update", :controller=>"admin/qnas", :id => ques_answer.id, :on_wall => "yes",:page => params[:page]}, :method => "patch", :data => { confirm: 'Are you sure, you want Push To Wall.'},:class => "mdl-menu__item"
+              - if (ques_answer.anonymous_on_wall == "false" and ques_answer.status == "approved" and ques_answer.on_wall != "yes")
+                = link_to "Anonymous Wall",{:action=>"update", :controller=>"admin/qnas", :id => ques_answer.id, :on_wall => "yes",:anonymous_on_wall => "true",:page => params[:page]}, :method => "patch", :data => { confirm: 'Are you sure, you want Push Anonymous Wall.'},:class => "mdl-menu__item"
+              - ques_answer.aasm.events.each do |eve|
+                = link_to "#{eve.name.to_s.titlecase}".html_safe,{:action=>"update", :controller=>"admin/qnas", :id => ques_answer.id, :status => eve.name.to_s, :page => params[:page]}, :method => "put", :data => { confirm: 'Are you sure, you want to change the status.'},:class => "mdl-menu__item"
+  = will_paginate objs

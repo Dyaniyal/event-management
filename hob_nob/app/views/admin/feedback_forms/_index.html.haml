@@ -1,0 +1,48 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "feedback_forms", :url => "/admin/events/#{params[:event_id]}/feedbacks/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("feedback_forms")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+    %tr.create-feedback-form
+      - if @event.is_parent?
+        %th Sequence
+      %th.feedback-title Feedback Title 
+      %th Status
+      %th 
+    - objs.each_with_index do |feedback_form,index|
+      %tr
+        - if @event.is_parent?
+          %td.sortable
+            .sort-indicator.frstsequence
+              =# feedback.sequence.to_i rescue nil
+            .orderseq
+              - if index != 0
+                %span= link_to "",admin_event_sequence_path(:event_id => feedback_form.event_id, :id => feedback_form.id, :seq_type => "up", :feature_type => "feedback_forms"),:class => "uparrow", :method => "put", :remote => true
+              - if feedback_form.sequence.to_i != 0 and (@feedback_forms.length - 1) != index
+                %span= link_to "",admin_event_sequence_path(:event_id => feedback_form.event_id, :id => feedback_form.id, :seq_type => "down", :feature_type => "feedback_forms"),:class => "downarrow", :method => "put", :remote => true
+        %td.font16
+          / %a{'href' => admin_event_feedback_form_feedbacks_path(:feedback_form_id => feedback_form.id)}
+          %a{'href' => admin_event_feedbacks_path(:event_id => params[:event_id],:feedback_form_id=>feedback_form.id)}
+
+            = feedback_form.title
+        %td.font16
+          = feedback_form.status.titleize     
+        %td.IconDrp
+          = more_vert_button(feedback_form.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{feedback_form.id}"}
+            - if (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+              - unless feedback_form.user_feedbacks.present?
+                = edit_link(params, feedback_form.id)
+            - if @event.is_parent?
+              = delete_link(params, feedback_form.id)
+            = link_to "Manage Question",admin_event_feedbacks_path(:event_id=>feedback_form.event_id,:feedback_form_id=>feedback_form.id),:class => "mdl-menu__item"
+            - if @event.is_parent?
+              - if (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))               
+                - if feedback_form.status == "active" 
+                  = link_to "Deactivate",{:action=>"update", :controller=>"admin/feedback_forms", :id => feedback_form.id,:status=> "deactive", :feedback_form_status => "true",:page => params[:page]}, :method => "patch", :data => { confirm: 'Are you sure, you want change status.'},:class => "mdl-menu__item"
+                - else
+                  = link_to "Activate",{:action=>"update", :controller=>"admin/feedback_forms", :id => feedback_form.id,:status=> "active", :feedback_form_status => "true",:page => params[:page]}, :method => "patch", :data => { confirm: 'Are you sure, you want change status.'},:class => "mdl-menu__item"
+                    

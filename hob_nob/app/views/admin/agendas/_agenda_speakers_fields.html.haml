@@ -1,0 +1,4 @@
+- list_of_speakers = event_speakers_list(params[:event_id])
+- speaker_name = list_of_speakers.collect{|p| [ p.speaker_name, p.id ]}
+- speaker_name << ["Add Speaker", 0]
+= f.select("agenda_speaker", "speaker_id[#{i}]", speaker_name, {:selected => f.object.speaker_id.present? ? f.object.speaker_id : (params[:agenda].present? ? params[:agenda][:speaker_id] : ''),:prompt => "#{(f.object.speaker_id.nil? and f.object.speaker_name.present?) ? f.object.speaker_name : "Select Speaker" }"}, {include_blank: 'None',:class=> 'select2-single form-control select-speaker'}) 

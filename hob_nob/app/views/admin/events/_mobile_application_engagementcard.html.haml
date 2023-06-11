@@ -1,0 +1,54 @@
+.row
+  %section.content
+    %h4.heading-borderCard.m-l-10.m-b-20
+      Engagement
+    - if (!current_user.has_role_for_event?("moderator", @event.id,session[:current_user_role])) and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+      - if show_card("e_kits")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "e-kit.png", :objs => @event.e_kits, :url => "e_kits", :@count => @count}
+      - if show_card("feedbacks")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "feedback.png", :objs => @event.feedback_forms, :url => "feedbacks", :@count => @count}
+      - if show_card("chats")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "chat.png", :objs => 0, :url => "chats", :@count => @count}       
+      - if show_card("social_sharings")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "social_sharing.png", :objs => 0, :url => "social_sharings", :@count => @count}
+    - if (current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+      - if show_card("feedbacks")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "feedback.png", :objs => @event.feedback_forms, :url => "feedbacks", :@count => @count}
+      - if show_card("leaderboard")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "Leaderboard.png", :objs => @event, :url => "leaderboard", :@count => 0}
+      - if show_card("conversations")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "conversations.png", :objs => @event.conversations, :url => "conversations", :@count => @count}
+      - if show_card("qnas")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "Q&A.png", :objs => @event.qnas, :url => "qnas", :@count => @count}
+      - if show_card("polls")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "polls_1.png", :objs => @event.polls, :url => "polls", :@count => @count}
+      - if show_card("quizzes")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "polls.png", :objs => @event.quizzes, :url => "quizzes", :@count => @count}
+      - constant_features = {"notifications" => "notification.png"}
+      - constant_features.each do |feature|
+        - if params[:event_id].present?
+          - @event = Event.get_event_by_id(params[:event_id].to_i)
+          = render :partial => "constant_feature_card", :locals => {:feature => feature}
+    -else
+      - if show_card("leaderboard")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "Leaderboard.png", :objs => @event, :url => "leaderboard", :@count => 0} 
+      - constant_features = {"notifications" => "notification.png"}
+      - constant_features.each do |feature|
+        - if params[:event_id].present?
+          - @event = Event.get_event_by_id(params[:event_id].to_i)
+          = render :partial => "constant_feature_card", :locals => {:feature => feature}
+      - if show_card("quizzes")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "polls.png", :objs => @event.quizzes, :url => "quizzes", :@count => @count}  
+      - if show_card("conversations")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "conversations.png", :objs => @event.conversations, :url => "conversations", :@count => @count}
+      - if show_card("qnas")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "Q&A.png", :objs => @event.qnas, :url => "qnas", :@count => @count}
+      - if show_card("polls")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "polls_1.png", :objs => @event.polls, :url => "polls", :@count => @count}
+    - if (!current_user.has_role_for_event?("moderator", @event.id,session[:current_user_role])) and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))  
+      / - if show_card("chats")
+      /   = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "chat.png", :objs => @event.chats, :url => "chats", :@count => @count}       
+      / - if show_card("social_sharings")
+      /   = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "social_sharing.png", :objs => @event.chats, :url => "social_sharings", :@count => @count}  
+      - if show_card("activity_feeds")
+        = render :partial => "admin/events/cards", :locals => {:icon => '', :img => "activity_feed.png", :objs => [], :url => "activity_feeds", :@count => (@event.show_social_feeds.nil?) ? 0 : 1 }

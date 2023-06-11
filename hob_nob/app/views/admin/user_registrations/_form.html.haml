@@ -1,0 +1,151 @@
+!!!
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %title Hobnob
+    = favicon_link_tag 'fevicon.png'
+    %meta{:content => "width=device-width, initial-scale=1.0, user-scalable=0", :name => "viewport"}/
+    %link{:href => "/assets/main_look_and_fill.css", :rel => "stylesheet", :type => "text/css"}/
+    %link{:href => "/assets/look_and_fill_responsive.css", :rel => "stylesheet", :type => "text/css"}/
+    - @font_hash.each do |hash|
+      - if hash.has_key? :url
+        :css
+          @font-face {
+            font-family: "#{hash[:font_name]}";
+            src: url("#{hash[:url][0]}") format("#{hash[:format]}"),
+                 url("#{hash[:url][1]}") format("#{hash[:format]}");
+          }
+  - if @registration_look_and_feel.present? and @registration_look_and_feel.body_background_image_file_name.present?
+    %body{:style=>"background-image:url(#{@registration_look_and_feel.body_background_image.url});", :class => "dynamic-user-form"}
+      - if @registration_look_and_feel.logo_back_color.present? or @registration_look_and_feel.logo_file_name.present?
+        %header.header{:style => "background-color:#{@registration_look_and_feel.logo_back_color}"}
+          - if params[:show_buttons].present? and params[:show_buttons] == "true"
+            .emailer_button{:style => "float:right;margin-right:28px;margin-top:15px;"}
+              = link_to "Edit", edit_admin_event_registration_look_and_feel_path(:event_id => @event.id, :id=>@registration_look_and_feel.id),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+              = link_to "Save", admin_event_user_registrations_path(:event_id => @event.id),{:style => "background:#4d4e4f;color:#fff;padding:6px 8px;text-decoration:none;"}
+          .container
+            .brand-logo{:style=>"float:#{@registration_look_and_feel.logo_alignment}"}
+              - if @registration_look_and_feel.logo_file_name.present?
+                = image_tag(@registration_look_and_feel.logo.url, :width=>"auto")#,:style => "float:#{@registration_look_and_feel.logo_alignment}")
+              - else
+                / %img{:src => "/assets/brand-logo.png"}/
+      .container
+        .form-banner
+          - if @registration_look_and_feel.banner_image_file_name.present?
+            = image_tag(@registration_look_and_feel.banner_image.url(:large))
+            .header-inner
+              - if @registration_look_and_feel.header_formatter.present?
+                %p
+                  = @registration_look_and_feel.header_formatter.html_safe
+          - else
+      - if (DateTime.now + @event.timezone_offset.seconds).between?(@registration_setting.start_date, @registration_setting.end_date)
+        .form_Section
+          .container.bgfff
+            = render :partial => 'user_registraion_form'
+      - else
+        .registration_msg
+          = @registration_look_and_feel.submit_msg.html_safe rescue nil
+      %footer
+        - if @registration_look_and_feel.footer_color.present? or @registration_look_and_feel.footer_image.present? or @registration_look_and_feel.footer_formatter.html_safe.present?
+          - #if @registration_look_and_feel.footer_image.present? or @registration_look_and_feel.footer_formatter.html_safe.present?
+          .container.box-shadow-block{:style => "background-color:#{@registration_look_and_feel.footer_color}"}
+            .bottom.clear.clearfix
+              .copyright.cvent-footer
+                .cvent-footer-wrapper
+                  %a{:href => "http://www.cvent.com/", :target => "_blank"}
+                    - if  @registration_look_and_feel.present? and @registration_look_and_feel.footer_image_file_name.present?
+                      = image_tag(@registration_look_and_feel.footer_image.url(:small))
+                    - else
+                  - if @registration_look_and_feel.present? and @registration_look_and_feel.footer_formatter.present?
+                    = @registration_look_and_feel.footer_formatter.html_safe
+                %p
+  - elsif @registration_look_and_feel.present? and @registration_look_and_feel.body_background_color.present?
+    %body{:style => "background-color:#{@registration_look_and_feel.body_background_color}; ", :class => "dynamic-user-form"}
+      - if @registration_look_and_feel.logo_back_color.present? or @registration_look_and_feel.logo_file_name.present?
+        %header.header{:style => "background-color:#{@registration_look_and_feel.logo_back_color}"}
+          - if params[:show_buttons].present? and params[:show_buttons] == "true"
+            .emailer_button{:style => "float:right;margin-right:28px;margin-top:15px;"}
+              = link_to "Edit", edit_admin_event_registration_look_and_feel_path(:event_id => @event.id, :id=>@registration_look_and_feel.id),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+              = link_to "Save", admin_event_user_registrations_path(:event_id => @event.id),{:style => "background:#4d4e4f;color:#fff;padding:6px 8px;text-decoration:none;"}
+          .container
+            .brand-logo{:style=>"float:#{@registration_look_and_feel.logo_alignment}"}
+              - if @registration_look_and_feel.logo_file_name.present?
+                = image_tag(@registration_look_and_feel.logo.url, :width=>"auto")#,:style => "float:#{@registration_look_and_feel.logo_alignment}")
+              - else
+                / %img{:src => "/assets/brand-logo.png"}/
+      .container
+        .form-banner
+          - if @registration_look_and_feel.banner_image_file_name.present?
+            = image_tag(@registration_look_and_feel.banner_image.url(:large))
+            .header-inner
+              - if @registration_look_and_feel.header_formatter.present?
+                %p
+                  = @registration_look_and_feel.header_formatter.html_safe
+          - else
+      - if (DateTime.now + @event.timezone_offset.seconds).between?(@registration_setting.start_date, @registration_setting.end_date)
+        .form_Section
+          .container.bgfff
+            = render :partial => 'user_registraion_form'
+      - else
+        .registration_msg
+          = @registration_look_and_feel.submit_msg.html_safe rescue nil
+      %footer
+        - if @registration_look_and_feel.footer_color.present? or @registration_look_and_feel.footer_image.present? or @registration_look_and_feel.footer_formatter.html_safe.present?
+          - #if @registration_look_and_feel.footer_image.present? or @registration_look_and_feel.footer_formatter.html_safe.present?
+          .container.box-shadow-block{:style => "background-color:#{@registration_look_and_feel.footer_color}"}
+            .bottom.clear.clearfix
+              .copyright.cvent-footer
+                .cvent-footer-wrapper
+                  %a{:href => "http://www.cvent.com/", :target => "_blank"}
+                    - if  @registration_look_and_feel.present? and @registration_look_and_feel.footer_image_file_name.present?
+                      = image_tag(@registration_look_and_feel.footer_image.url(:small))
+                    - else
+                  - if @registration_look_and_feel.present? and @registration_look_and_feel.footer_formatter.present?
+                    = @registration_look_and_feel.footer_formatter.html_safe
+                  %p
+  - else #@registration_look_and_feel.body_background_image_file_name.present?
+    %body{:style=>"background-image:url(#{@registration_look_and_feel.body_background_image.url}); ", :class => "dynamic-user-form"}
+      - if @registration_look_and_feel.logo_back_color.present? or @registration_look_and_feel.logo_file_name.present?
+        %header.header{:style => "background-color:#{@registration_look_and_feel.logo_back_color}"}
+          - if params[:show_buttons].present? and params[:show_buttons] == "true"
+            .emailer_button{:style => "float:right;margin-right:28px;margin-top:15px;"}
+              = link_to "Edit", edit_admin_event_registration_look_and_feel_path(:event_id => @event.id, :id=>@registration_look_and_feel.id),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+              = link_to "Save", admin_event_user_registrations_path(:event_id => @event.id),{:style => "background:#4d4e4f;color:#fff;padding:6px 8px;text-decoration:none;"}
+          .container
+            .brand-logo{:style=>"float:#{@registration_look_and_feel.logo_alignment}"}
+              - if @registration_look_and_feel.present? and @registration_look_and_feel.logo_file_name.present?
+                = image_tag(@registration_look_and_feel.logo.url, :width=>"auto")#,:style => "float:#{@registration_look_and_feel.logo_alignment}")
+              - else
+                / %img{:src => "/assets/brand-logo.png"}/
+      .container
+        .form-banner
+          - if @registration_look_and_feel.present? and @registration_look_and_feel.banner_image_file_name.present?
+            = image_tag(@registration_look_and_feel.banner_image.url(:large))
+            .header-inner
+              - if @registration_look_and_feel.header_formatter.present?
+                %p
+                  = @registration_look_and_feel.header_formatter.html_safe
+          - else
+            / %img{:src => "/assets/form-banner.jpg"}/
+      - if (DateTime.now + @event.timezone_offset.seconds).between?(@registration_setting.start_date, @registration_setting.end_date)
+        .form_Section
+          .container.bgfff
+            = render :partial => 'user_registraion_form'
+      - else
+        .registration_msg
+          = @registration_look_and_feel.submit_msg.html_safe rescue nil
+      %footer
+        - if @registration_look_and_feel.footer_color.present? or @registration_look_and_feel.footer_image.present? or @registration_look_and_feel.footer_formatter.html_safe.present?
+          - #if @registration_look_and_feel.footer_image.present? or @registration_look_and_feel.footer_formatter.html_safe.present?
+          .container.box-shadow-block{:style => "background-color:#{@registration_look_and_feel.footer_color}"}
+            .bottom.clear.clearfix
+              .copyright.cvent-footer
+                .cvent-footer-wrapper
+                  %a{:href => "http://www.cvent.com/", :target => "_blank"}
+                    - if  @registration_look_and_feel.present? and @registration_look_and_feel.footer_image_file_name.present?
+                      = image_tag(@registration_look_and_feel.footer_image.url(:small))
+                    - else
+                  - if @registration_look_and_feel.present? and @registration_look_and_feel.footer_formatter.present?
+                    = @registration_look_and_feel.footer_formatter.html_safe
+:css
+  .registration_msg {text-align: center;}

@@ -1,0 +1,11 @@
+!!!
+%html
+  %head
+    %title Login
+    %meta{:content => "IE=edge", "http-equiv" => "X-UA-Compatible"}
+    %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
+    = stylesheet_link_tag "external_login"
+    = javascript_include_tag "external_login"
+    = csrf_meta_tags
+  %body.login-body
+    = yield

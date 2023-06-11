@@ -1,0 +1,34 @@
+- count = 0
+- feature_length = @event.microsite.microsite_features.length
+= form_for [:admin, @event, @event.microsite] ,:url => admin_event_microsite_microsite_menus_path(:event_id => @event.id,:microsite_id => @microsite.id), :method => "post", :builder => CustomFormBuilder do |f|
+  = f.fields_for :microsite_features do |builder|
+    .mdl-grid.mdl-card.mdl-shadow--1dp.m-b-10.agendaheight.menuSubCard
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.heading-border.menuEventList
+        %h4.p-t-10.displayInlineBlock
+          - if builder.object.name == "faqs"
+            = "FAQ"
+          - else
+            = Client.display_hsh2[builder.object.name] rescue nil
+        %span.floatRight.m-t-10  
+          - if count != 0
+            = link_to "",admin_event_microsite_microsite_sequence_path(:event_id => @event.id, :microsite_id => @microsite.id, :id => builder.object.id, :seq_type => "up", :feature_type => "microsite_features"),:class => "uparrow", :method => "put", :remote => true
+          - if count != (feature_length - 1)
+            = link_to "",admin_event_microsite_microsite_sequence_path(:event_id => @event.id, :microsite_id => @microsite.id, :id => builder.object.id, :type => "down", :feature_type => "microsite_features"),:class => "downarrow", :method => "put", :remote => true
+          = link_to "show", "javascript:void(0);", :class => "CardClick #{builder.object.name}"
+      .MenuCardHide.mdl-grid{:style => "display: #{builder.object.errors.messages.present? ? "flex": "none"}"}      
+        - count = count + 1
+        = builder.custom_text_field :page_title, "Page Title",:view_popup => {:image_path => "event_menu/#{builder.object.name}_title/Help_Menu_PageTitle.jpg", :rel=> "#{builder.object.name}_title", :title => "Page title"}
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Status
+            .col-lg-7.p-h-12.m-8
+              = builder.custom_radio_button_menu :status, "active","Active", :id => "option-1#{builder.object.id}", :default_checked => "#{builder.object.status == "active" ? "checked" : ""}",:class => "menu_status_active"
+              = builder.custom_radio_button_menu :status, "deactive", "Deactive", :id => "option-2#{builder.object.id}", :default_checked => "#{builder.object.status == "deactive" ? "checked" : ""}",:class => "menu_status_deactive"
+  .fixed-activon-btn-new  
+    = f.custom_submit_button "SAVE"
+    .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+        = back_button(:back)
+
+= javascript_include_tag "jquery.fancybox"

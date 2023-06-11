@@ -1,0 +1,4 @@
+- if params[:quiz_wall] == "true"  
+  = render :partial => 'quiz_wall', :locals => {:objs => @quizzes}      
+- else
+  = render :partial => 'admin/layouts/index_header', :locals => {:objs => @quizzes}

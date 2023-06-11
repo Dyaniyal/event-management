@@ -1,0 +1,90 @@
+.save_button
+  = form_for [:admin, @event, @highlight_image], :html => { :multipart => true, :id => "fileupload"  } do |f|
+    .row.fileupload-buttonbar
+      .col-lg-7
+        %span.btn.btn-success.fileinput-button
+          %i.icon-plus.icon-white
+          %span Add files...
+          = f.file_field :highlight_image
+        %button.btn.btn-primary.start{:type => "submit"}
+          %i.icon-upload.icon-white
+          %span Start upload 
+        %button.btn.btn-warning.cancel{:type => "reset"}
+          %i.icon-ban-circle.icon-white
+          %span Cancel upload
+      .col-lg-5.fileupload-progress.fade
+        .progress.progress-striped.active{"aria-valuemax" => "100", "aria-valuemin" => "0", :role => "progressbar"}
+          .progress-bar.progress-bar-success{:style => "width:0%;"}
+        .progress-extended       
+    %table.table.table-striped{:role => "presentation"}
+      %tbody.files      
+
+
+= stylesheet_link_tag 'css/bootstrap.min','css/blueimp-gallery.min', 'css/jquery.fileupload', 'css/jquery.fileupload-ui'
+
+= javascript_include_tag 'js/jquery.ui.widget', 'js/tmpl.min' ,'js/load-image.all.min', 'js/canvas-to-blob.min', 'js/bootstrap.min', 'js/jquery.blueimp-gallery.min','js/jquery.iframe-transport', 'js/jquery.fileupload', 'js/jquery.fileupload-process', 'js/jquery.fileupload-image', 'js/jquery.fileupload-audio', 'js/jquery.fileupload-video', 'js/jquery.fileupload-validate', 'js/jquery.fileupload-ui', 'js/main', 'js/test' 
+
+/ :javascript
+
+
+  
+%script#template-download{:type => "text/x-tmpl"}
+  {% for (var i=0, file; file=o.files[i]; i++) { %}
+  %tr.template-download.fade
+    %td
+      %span.preview
+        {% if (file.url) { %}
+        %a{"data-gallery" => "", :download => "{%=file.name%}", :href => "{%=file.url%}", :title => "{%=file.name%}"}
+          %img{:src => "{%=file.url%}"}/
+        {% } %}
+    %td
+      %p.name
+        {% if (file.url) { %}
+        <a href="/admin/events/#{@event.id}/highlight_images", method='post'>{%=file.name%}
+        {% } else { %}
+        %span {%=file.name%}
+        {% } %}
+      {% if (file.error) { %}
+      %div
+        %span.label.label-danger Error
+        {%=file.error%}
+      {% } %}
+    %td
+      %span.size {%=o.formatFileSize(file.size)%}
+    %td
+      {% if (file.url) { %}
+      <a href="/admin/events/#{@event.id}/highlight_images/{%=file.id %}", data-method='delete'>{%=file.name%}
+      %i.glyphicon.glyphicon-trash
+      %span Delete
+      %span
+        {% } else { %}
+        %button.btn.btn-warning.cancel
+          %i.glyphicon.glyphicon-ban-circle
+          %span Cancel
+        {% } %}
+  {% } %}
+
+%script#template-upload{:type => "text/x-tmpl"}
+  {% for (var i=0, file; file=o.files[i]; i++) { %}
+  %tr.template-upload.fade
+    %td
+      %span.preview
+    %td
+      %p.name {%=file.name%}
+      %strong.error.text-danger
+    %td
+      %p.size Processing...
+      .progress.progress-striped.active{"aria-valuemax" => "100", "aria-valuemin" => "0", "aria-valuenow" => "0", :role => "progressbar"}
+        .progress-bar.progress-bar-success{:style => "width:0%;"}
+    %td
+      {% if (!i && !o.options.autoUpload) { %}
+      %button.btn.btn-primary.start{:disabled => ""}
+        %i.glyphicon.glyphicon-upload
+        %span Start
+      {% } %}
+      {% if (!i) { %}
+      %button.btn.btn-warning.cancel
+        %i.glyphicon.glyphicon-ban-circle
+        %span Cancel
+      {% } %}
+  {% } %}

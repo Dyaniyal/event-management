@@ -1,0 +1,13 @@
+!!!
+%html
+  %head
+    %title Hobnob
+    = favicon_link_tag 'fevicon.png'
+    %meta{:content => "IE=edge", "http-equiv" => "X-UA-Compatible"}
+    %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}
+    %meta{'http-equiv' => "Content-Type", 'content'=> "text/html; charset=utf-8"}
+    = stylesheet_link_tag "user_registration"
+    = javascript_include_tag "user_registration"
+    = csrf_meta_tags
+  %body
+    = yield

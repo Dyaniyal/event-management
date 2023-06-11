@@ -1,0 +1,24 @@
+!!!
+%html
+  %head
+    %meta{:charset => "UTF-8"}
+      %title Login Form
+  %body
+    -#%span#toggle-login.button{:href => "#"} Log in
+    #login.new_user
+      #triangle
+      %h1 Log in
+      = form_tag "http://localhost:3000/api/v1/tokens/get_key", :method => :post, :class => 'LogInFrm' do |f|
+        = hidden_field_tag :mobile_application_preview_code, params[:mobile_application_preview_code]
+        = hidden_field_tag :mobile_application_code, params[:mobile_application_code]
+        = email_field_tag :email, params[:email], {:autofocus => true, :placeholder => "Email"}
+        = password_field_tag :password, '', {:autocomplete => "off", :placeholder => "Password", :type => "password"}
+        - if @status.present? and @status != 'Valid User'
+          .errorMess
+            = @status if @status.present?
+        = submit_tag "Log in", :class => 'logInSbmt'
+        #links_left
+        #links_right
+          %a{:href => 'new_password_path(resource_name)'} Forgot your Password?
+        
+    

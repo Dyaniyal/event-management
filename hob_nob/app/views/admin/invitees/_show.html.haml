@@ -1,0 +1,21 @@
+%form.ng-pristine.ng-valid{:action => "#"}
+  .mdl-grid
+    = show_field("Event Name ", "#{obj.event.event_name.capitalize rescue ""}") 
+    = show_field("Name ", "#{obj.name_of_the_invitee.capitalize rescue ""}")
+    = show_field("Email id ", "#{obj.email rescue ""}")
+    = show_field("Company Name ", "#{obj.company_name.capitalize rescue ""}")
+    = show_field("Status ", "#{obj.invitee_status rescue ""}")
+    = show_field("Application Status ", "#{obj.visible_status.capitalize rescue ""}")
+    = show_field("Description ", "#{obj.about rescue ""}")
+    / = show_field("Interested Topics ", obj.interested_topics)
+    .mdl-cell--5-col.no-p-l.no-p-t.no-p-r.no-p-b
+      %p.no-m-b
+        %strong Profile Picture:
+        %span
+          - if obj.profile_pic_url == "/profile_pics/small/missing.png"
+            %strong No attachment available!
+          - else
+            = image_tag(obj.profile_pic_url(:thumb), :alt=> "profile pic" )
+  .m-l-18
+    .mdl-cell--12-col.mdl-cell--12-col-tablet
+      = back_button_detailed_page(:back)

@@ -1,0 +1,11 @@
+.mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.newsearchlaypout.HideTabularData.telecallerSearch
+  = form_tag admin_event_telecaller_searchs_path(:event_id => @event.id), :method => :get do
+    .mdl-js-textfield.mdl-textfield--floating-label.mdl-grid.f-right.m-r-20.m-t-0
+      #select-container.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell--6-col.mdl-cell--5-col-tablet.mdl-cell--12-col-phone.search_header
+        = custom_basic_text_field_tag "search_keyword", "", :selected => params[:search_keyword].present? ? params[:search_keyword] : ""
+        = hidden_field_tag :search, "search"
+      = custom_basic_button_tag "SEARCH"
+      - if params[:action] == 'show' && @event.telecaller_accessible_columns.present?
+        .m-10.mdl-button.btnsubmit.mdl-color--light-blue-900
+          = link_to new_admin_event_telecaller_invitee_path(@event), style: "color: white;" do
+            Add New

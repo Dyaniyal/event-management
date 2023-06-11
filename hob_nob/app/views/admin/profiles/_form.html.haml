@@ -1,0 +1,28 @@
+.save_button.mdl-card.agendaheight  
+  = form_for [:admin, @user], :url => params[:action] == "new" || params[:action] == "create" ? admin_profiles_path : admin_profile_path, :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp.p-b-25
+      - if params[:change_password].present? or (params[:user].present? and params[:user].include? 'password_confirmation')
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10
+            General Information
+        = f.custom_password_field :current_password, "Current Password *"
+        = f.custom_password_field :password, "New Password *"
+        = f.custom_password_field :password_confirmation, "Confirm Password *"
+      - else
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10
+            General Information
+        - if params[:action] == "edit" 
+          = f.custom_text_field :email, "Email id *", :value => f.object.email.present? ? f.object.email : '',:disabled => true
+        - else 
+          = f.custom_text_field :email, "Email id *", :value => f.object.email.present? ? f.object.email : ''
+        =# f.custom_text_field :first_name, "Full Name *"
+        = f.custom_text_field :first_name, "First Name *"
+        = f.custom_text_field :last_name, "Last Name *"
+        = f.custom_text_field :company, "Company Name"
+        = f.custom_text_field :designation, "Designation"
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)

@@ -1,0 +1,59 @@
+- if params[:import].present?
+  = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+- else
+  .save_button.mdl-card
+    = form_for [:admin, @event ,@invitee], :builder => CustomFormBuilder do |f|
+      .mdl-grid.mdl-card.mdl-shadow--1dp.p-b-35
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            General Information
+            / %a{:href => '/whats_this/invitee/general_information/invitee_generalInfo.jpg', :class =>'helpTag testhelp fancybox'}
+            /   what's this?
+        = #render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "invitee_generalInfo.jpg", :section_id => "invitee_general_section"}
+        = f.new_custom_file_browser_field :profile_pic, "Profile picture (png/jpg) only", :id => "uploadBtn", :value => f.object.profile_pic_file_name, :action=> params[:action], :action=> params[:action], "background" => "false"
+        =# f.custom_text_field :name_of_the_invitee, "Full Name *","background" => "false"
+        = f.custom_text_field :first_name, "First Name *","background" => "false"
+        = f.custom_text_field :last_name, "Last Name *","background" => "false"
+        = f.custom_text_field :email, "Email Address *","background" => "false"
+        / - if f.object.id.blank?
+        /   = f.custom_text_field :password, "Password", :type => 'password'
+        / = f.hidden_field :password, :value => "password"
+        = f.custom_text_field :designation, "Designation","background" => "false"
+        = f.custom_text_field :company_name, "Company Name","background" => "false"
+        = f.custom_text_area_field :about,"Description", "background" => "false"
+        / = f.custom_text_field :interested_topics, "Interested Topics"
+        = f.custom_text_field :mobile_no, "Mobile No.","background" => "false"
+        = f.custom_text_field :website, "Website ","background" => "false"
+        = f.custom_text_field :facebook_id, "Facebook link ","background" => "false"
+        = f.custom_text_field :google_id, "Google+ link ","background" => "false"
+        = f.custom_text_field :linkedin_id, "LinkedIn link ","background" => "false"
+        = f.custom_text_field :instagram_id, "Instagram ","background" => "false"
+        = f.custom_text_field :street, "City ","background" => "false"
+        = f.custom_text_field :country, "Country ","background" => "false"
+        = f.custom_text_area_field :remark,"Remark", "background" => "false"
+        = hidden_field_tag "type","#{params[:type]}" if params[:type].present?
+        - if false
+          .mdl-cell--12-col.mdl-cell--4-col-tablet.ml-color--shades-white.m-8
+            %p.displayInlineBlock.multicitytxt Invitee Status
+            = f.custom_radio_button :invitee_status, 'yes', "Yes", :id => "option-1"
+            = f.custom_radio_button :invitee_status, 'no', "No", :id => "option-2"
+            = f.custom_radio_button :invitee_status, 'maybe', "May Be", :id => "option-3"
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.form-group{:style=>"width:32%;"}
+          .md-checkbox
+            %label
+              = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)
+:javascript
+  $(window).load(function(){
+    $('.gui-file').change(function(){
+      filename = $(this)[0].files[0].name;
+      $(".gui-input").val(filename);
+    });
+  }) 

@@ -1,0 +1,22 @@
+%form.ng-pristine.ng-valid{:action => "#"}
+  .mdl-grid
+    = show_field("Application Name: ", obj.name) 
+    = show_field("Application Type: ", obj.application_type.capitalize)
+    - if obj.events.present?
+      - events = obj.events
+      - events.each do |event|
+        / = show_field("", event.event_name)
+        .mdl-cell--8-col.no-p-l.no-p-t.no-p-r.no-p-b
+          .mdl-grid
+            .mdl-cell--2-col
+              = event.event_name
+            .mdl-cell--2-col
+              = link_to 'View Features', admin_event_mobile_application_path(:event_id => event.id, :id => @mobile_application.id), :class =>'p-h-10'
+            - if false
+              .mdl-cell--4-col
+                - review_status =  event.check_event_content_status 
+                = review_status[1].blank? ? "All Features Enabled" : "Features Not Enabled : #{review_status[1].join(', ')}"
+              .mdl-cell--4-col
+                = review_status[0].blank? ? "All Content Added" : "Content Missing Features : #{review_status[0].join(', ')}"
+        
+        

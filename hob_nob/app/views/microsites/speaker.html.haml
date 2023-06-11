@@ -1,0 +1,28 @@
+.main-container{:style => "font-size: 20px;color: #333;"}
+  .main-content.about-content
+    .container
+      .text-center
+        - speaker = @microsite.get_active_features.where(:name => "speakers")
+        - if speaker.present?
+          %h1{:style => "font-size:50px;"} #{speaker.first.page_title}
+      - if @event.speakers.present?
+        - @event.speakers.each_with_index do |speaker, index|
+          .col-md-4
+            .agent
+              %span
+                - if speaker.profile_pic_file_name.present?
+                  = image_tag(speaker.profile_pic_url(:original), :width => 100, :heigth => 100, :class => "img-responsive center-block img-circle" )
+                - else
+                  = image_tag(speaker.profile_pic_url(:thumb), :width => 100, :heigth => 100, :class => "img-responsive center-block img-circle" )
+              .speaker_info
+                %h2.speaker_name{:style => "font-weight: bold;"} #{speaker.speaker_name}
+                %p
+                  #{speaker.designation},
+                  %br #{speaker.company}
+                  %p.speaker_link
+                    = link_to "#myModal#{speaker.id}", :class => "speakerPopup btn btn-info btn-lg", "data-toggle" => "modal", "data-target" => "#myModal#{speaker.id}" do
+                      Read more &#xBB;
+                    / %button.btn.btn-info.btn-lg{"data-target" => "#myModal#{index}", "data-toggle" => "modal", :type => "button"} 
+                
+                = render :partial => 'speaker_popup', :locals => {:speaker => speaker}
+  

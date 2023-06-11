@@ -1,0 +1,23 @@
+.save_button.mdl-card.agendaHeight
+  = form_for [:admin, @event, @icon_library], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          General
+      = f.icon_library_custom_text_field_name :icon_library_name, "Icon Library Name *"
+      = f.fields_for :icons do |icon|
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10
+            - feature = {"faqs" => "FAQ", "e_kits"=>"e-KIT", "qnas" => "Q&A", "qr_code" => "QR code Scanner", "favourites" => "My Favourites", "abouts" => "About", "agendas" => "Agenda", "galleries" => "Gallery", "feedbacks" => "Feedback", "contacts" => "Contact Us", "my_profile" => "My Profile","quizzes" => "Quiz", "venue" => "Venue", "leaderboard" => "Leaderboard", "chats" => "One on One Chat", "my_travels" => "My Travel", "all_events" => "Event Listing", "activity_feeds" => "Activity Feed ","maps" => "Map"}
+            = (["faqs","e_kits","qnas","qr_code","favourites","abouts","agendas","galleries","feedbacks","contacts","my_profile","quizzes","venue","leaderboard","chats","my_travels","all_events","activity_feeds","maps"].include? (icon.object.icon_name)) ? feature[icon.object.icon_name] : icon.object.icon_name.pluralize.humanize
+        = icon.hidden_field :icon_name, :value => icon.object.icon_name
+        = icon.icon_library_browser_field :menu_icon, "Drawer Icon (72x72px png only) *", :id => "drawerIcon_#{icon.object.icon_name}", :value => ((icon.object.present? and icon.object.menu_icon_file_name.present?) ? icon.object.menu_icon_file_name : ""), :action=> params[:action], "background" => "false"
+
+        - if ["contacts","venue"].exclude?(icon.object.icon_name)
+          = icon.icon_library_browser_field :main_icon, "Menu Icon (288x288px png only) *", :id => "main_icon_#{icon.object.icon_name}", :value => ((icon.object.present? and icon.object.main_icon_file_name.present?) ? icon.object.main_icon_file_name : ""), :action=> params[:action], "background" => "false"
+      
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)

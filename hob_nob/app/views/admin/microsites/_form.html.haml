@@ -1,0 +1,41 @@
+= javascript_include_tag "jquery-1.11.3.min", "pick-a-color-1.2.0.min", "tinycolor", "jquery.fancybox", "theme_color_pick"
+.save_button.mdl-card.feedbackFormPage
+  = form_for [:admin, @event, @microsite], :html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+    - if params[:get].present? or (f.object.get.present? and f.object.get == "registrations")
+      = render :partial => 'registration', :locals => {:f => f}
+    - else params[:get].blank? 
+      .mdl-grid.mdl-shadow--1dp.mdl-card.p-b-15
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.displaybolck.p-t-10
+            General Information
+          = f.custom_text_field :name, "Microsite Name *","background" => "false"        
+          / .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15.feedbackFormPage
+          /   .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+          /     %h4.heading-border.displaybolck.p-t-10
+          /       Social Login
+          /   .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          /     .mdl-grid.p-v-5.socialMediaRadioBtn
+          /       .col-lg-4.mdl-typography--text-right
+          /         %p.displayInlineBlock.multicitytxt  Do you need Social Media Login?
+          /       .col-lg-3.p-h-12
+          /         = f.custom_radio_button_menu :social_media_status, "active","Yes", :id => "url_page_type", :default_checked => (f.object.social_media_status == 'active') ? 'checked' : ''
+          /         = f.custom_radio_button_menu :social_media_status, "deactive","No", :id => "build_new_page_type", :default_checked => (f.object.social_media_status == 'deactive') ? 'checked' : ''
+          /   .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess.socialMedialogins{:style => "display: #{(f.object.social_media_status.present? and f.object.social_media_status == "active") ? "" : "none"}"}
+          /     = f.custom_text_field :facebook_id, "Facebook ","background" => "false"
+          /     = f.custom_text_field :twitter_id, "Twitter ","background" => "false"
+          /     = f.custom_text_field :linkedin_id, "Linked in ","background" => "false"
+          /     = f.custom_text_field :instagram_id, "Instagram ","background" => "false"
+          /     = f.custom_text_field :google_id, "Google ","background" => "false"
+        .fixed-activon-btn-new  
+          = f.custom_submit_button "SAVE"
+          .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+              = back_button(:back)
+:javascript
+  $("#url_page_type").click(function(){
+    $(".socialMedialogins").show()
+  });
+
+  $("#build_new_page_type").click(function(){
+    $(".socialMedialogins").hide()
+  });

@@ -1,0 +1,55 @@
+= stylesheet_link_tag "signup.css"
+%div.qnaTabs.clearfix
+  %a.unAnswered{:href => "#"}
+    Un-Answered
+  %a.answered{:href => "#"}
+    Answered
+#unAnswered
+  .signupBg
+    .mdl-grid.mdl-card.mdl-shadow--1dp.signupDiv
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .h3{:style=>"text-align:center;"}
+          No Unanswered questions available
+                
+#answered{:style => "display:none",:class =>'form-horizontal signup-form'}
+  -if @receiver_answered_qnas.present?
+    .signupBg
+      .mdl-grid.mdl-card.mdl-shadow--1dp.signupDiv
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %table
+          - @receiver_answered_qnas.each do |recei_answer|
+            %tr
+              %td.font16
+                Question :
+                %b
+                  = recei_answer.question
+            %tr
+              %td.font16
+                Answer :
+                %b
+                  = recei_answer.answer
+            %tr
+              %td
+                &nbsp;    
+:javascript
+  $('.unAnswered').click(function(){
+    $('#unAnswered').show();
+    $('#answered').hide();
+    $('.answered').css({
+        'background' : '#00b1bb'
+    });
+    $('.unAnswered').css({
+        'background' : '#516161'
+    });
+  });
+
+  $('.answered').click(function(){
+    $('#answered').show();
+    $('#unAnswered').hide();
+    $('.answered').css({
+        'background' : '#516161'
+    });
+    $('.unAnswered').css({
+        'background' : '#00b1bb'
+    });
+  });

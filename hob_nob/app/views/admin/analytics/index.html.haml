@@ -1,0 +1,8 @@
+- if params[:print_preview].present?
+  = render :partial => "/admin/analytics/detailed_analytic_pdf"
+- else
+  = render :partial => 'admin/layouts/index_header', :locals => {:objs => @analytics}
+:javascript
+  function PrintDiv() {
+    document.getElementById("prnt").click();
+  }

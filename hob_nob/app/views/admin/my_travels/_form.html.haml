@@ -1,0 +1,136 @@
+- if params[:import].present?
+  = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+- else
+  .save_button.mdl-card
+    = form_for [:admin, @event, @my_travel], :html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+      .mdl-grid.mdl-card.pollInfo.mdl-shadow--1dp
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            General Information
+            %span.titleQuestion
+              = link_to("?" ,"/whats_this/my_travels/general_information/My_Travel.png", rel: "custom_pages", title: "Custom Page1", :class =>"fancybox whatsImg")
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+          .form-group
+            %label.col-lg-4.control-label.ml-color--shades-white
+              Select Invitee *
+            .col-lg-7
+              - default_agenda_type = @event.invitees.collect{|p| [ p.name_with_email, p.id ]}
+              - default_agenda_type = default_agenda_type.sort {|a,b| a[0].downcase <=> b[0].downcase}
+              - default_agenda_type = default_agenda_type.reject { |c| c.empty? }
+              %i.arrow.single
+              = f.select("my_travel", "invitee_id", default_agenda_type, {:selected => f.object.invitee_id,:prompt => "#{f.object.invitee_id.present? ? f.object.invitee_id : "Select Invitee" }"}, {include_blank: 'None',:class=> 'select2-single form-control'})
+              .field_with_errors
+                .span{:class => "errorMessage"}
+                  = f.object.errors.messages[:invitee_id].join("") rescue nil 
+        = f.custom_text_field :comment_box, "Comment box (100 characters only)","background" => "false"
+        = f.custom_text_field :attach_file_1_name, "File Name 1 *","background" => "false"
+        / = f.new_custom_file_browser_field :attach_file, "Attach File 1(pdf) upto 10mb only *", :id => "uploadBtn1", :value => f.object.attach_file_file_name, :action=> params[:action], :action=> params[:action], "background" => "false"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8
+          .bs-component
+            .form-group
+              .span.col-lg-4
+                = f.label "Attach File 1(pdf) upto 10mb only *",:class =>"control-label", style: "float: right;"
+              .col-lg-7
+                %label.field.file
+                  %span.button.btn-primary
+                    Choose File 
+                  - er = f.object.errors.messages[:attach_file].join(',') rescue nil
+                  - f.object.errors.messages[:attach_file].clear if f.object.errors.messages[:attach_file].present?
+                  = f.file_field :attach_file,:id => "attach_file_uploadBtn", :class=>"gui-file"
+                  = text_field_tag("text_file_name","", id: "1attach_file_uploadBtn", class: "gui-input", :value => "#{f.object.attach_file_file_name.nil? ? "there is no Attachment Available !" : f.object.attach_file_file_name}", :read_only => true)
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = er
+              - if @my_travel.present? and @my_travel.id.present? and @event.present? and @my_travel.attach_file_file_name.present?
+                .col-lg-1
+                  = link_to admin_event_my_travel_path(:event_id => @event.id, :id => @my_travel.id,:remove_image => true,:file_field_name => "attach_file"), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                    %span
+                      X
+
+        = f.custom_text_field :attach_file_2_name, "File Name 2","background" => "false"
+        =# f.new_custom_file_browser_field :attach_file_2, "Attach File 2(pdf) upto 10mb only", :id => "uploadBtn2", :value => f.object.attach_file_2_file_name, :action=> params[:action], :action=> params[:action], "background" => "false"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8
+          .bs-component
+            .form-group
+              .span.col-lg-4
+                = f.label "Attach File 2(pdf) upto 10mb only",:class =>"control-label", style: "float: right;"
+              .col-lg-7
+                %label.field.file
+                  %span.button.btn-primary
+                    Choose File 
+                  = f.file_field :attach_file_2,:id => "attach_file_2_uploadBtn", :class=>"gui-file"
+                  = text_field_tag("text_file_name","", id: "1attach_file_2_uploadBtn", class: "gui-input", :value => "#{f.object.attach_file_2_file_name.nil? ? "there is no Attachment Available !" : f.object.attach_file_2_file_name}", :read_only => true)
+              - if @my_travel.present? and @my_travel.id.present? and @event.present? and @my_travel.attach_file_2_file_name.present?
+                .col-lg-1
+                  = link_to admin_event_my_travel_path(:event_id => @event.id, :id => @my_travel.id,:remove_image => true,:file_field_name => "attach_file_2"), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                    %span
+                      X
+
+        = f.custom_text_field :attach_file_3_name, "File Name 3","background" => "false"
+        =# f.new_custom_file_browser_field :attach_file_3, "Attach File 3(pdf) upto 10mb only", :id => "uploadBtn3", :value => f.object.attach_file_3_file_name, :action=> params[:action], :action=> params[:action], "background" => "false"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8
+          .bs-component
+            .form-group
+              .span.col-lg-4
+                = f.label "Attach File 3(pdf) upto 10mb only",:class =>"control-label", style: "float: right;"
+              .col-lg-7
+                %label.field.file
+                  %span.button.btn-primary
+                    Choose File 
+                  = f.file_field :attach_file_3,:id => "attach_file_3_uploadBtn", :class=>"gui-file"
+                  = text_field_tag("text_file_name","", id: "1attach_file_3_uploadBtn", class: "gui-input", :value => "#{f.object.attach_file_3_file_name.nil? ? "there is no Attachment Available !" : f.object.attach_file_3_file_name}", :read_only => true)
+              - if @my_travel.present? and @my_travel.id.present? and @event.present? and @my_travel.attach_file_3_file_name.present?
+                .col-lg-1
+                  = link_to admin_event_my_travel_path(:event_id => @event.id, :id => @my_travel.id,:remove_image => true,:file_field_name => "attach_file_3"), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                    %span
+                      X
+
+        = f.custom_text_field :attach_file_4_name, "File Name 4","background" => "false"
+        =# f.new_custom_file_browser_field :attach_file_4, "Attach File 4(pdf) upto 10mb only", :id => "uploadBtn4", :value => f.object.attach_file_4_file_name, :action=> params[:action], :action=> params[:action], "background" => "false"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8
+          .bs-component
+            .form-group
+              .span.col-lg-4
+                = f.label "Attach File 4(pdf) upto 10mb only",:class =>"control-label", style: "float: right;"
+              .col-lg-7
+                %label.field.file
+                  %span.button.btn-primary
+                    Choose File 
+                  = f.file_field :attach_file_4,:id => "attach_file_4_uploadBtn", :class=>"gui-file"
+                  = text_field_tag("text_file_name","", id: "1attach_file_4_uploadBtn", class: "gui-input", :value => "#{f.object.attach_file_4_file_name.nil? ? "there is no Attachment Available !" : f.object.attach_file_4_file_name}", :read_only => true)
+              - if @my_travel.present? and @my_travel.id.present? and @event.present? and @my_travel.attach_file_4_file_name.present?
+                .col-lg-1
+                  = link_to admin_event_my_travel_path(:event_id => @event.id, :id => @my_travel.id,:remove_image => true,:file_field_name => "attach_file_4"), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                    %span
+                      X
+
+        = f.custom_text_field :attach_file_5_name, "File Name 5","background" => "false"
+        =# f.new_custom_file_browser_field :attach_file_5, "Attach File 5(pdf) upto 10mb only", :id => "uploadBtn5", :value => f.object.attach_file_5_file_name, :action=> params[:action], :action=> params[:action], "background" => "false"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8
+          .bs-component
+            .form-group
+              .span.col-lg-4
+                = f.label "Attach File 5(pdf) upto 10mb only",:class =>"control-label", style: "float: right;"
+              .col-lg-7
+                %label.field.file
+                  %span.button.btn-primary
+                    Choose File 
+                  = f.file_field :attach_file_5,:id => "attach_file_5_uploadBtn", :class=>"gui-file"
+                  = text_field_tag("text_file_name","", id: "1attach_file_5_uploadBtn", class: "gui-input", :value => "#{f.object.attach_file_5_file_name.nil? ? "there is no Attachment Available !" : f.object.attach_file_5_file_name}", :read_only => true)
+              - if @my_travel.present? and @my_travel.id.present? and @event.present? and @my_travel.attach_file_5_file_name.present?
+                .col-lg-1
+                  = link_to admin_event_my_travel_path(:event_id => @event.id, :id => @my_travel.id,:remove_image => true,:file_field_name => "attach_file_5"), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                    %span
+                      X
+        - if @event.present? and @event.parent_id.present?
+          .mdl-grid.p-v-5.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.col-md-4
+            .md-checkbox
+              %label
+                = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+                %span.checkbox 
+                Is language updated        
+      .fixed-activon-btn-new     
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)

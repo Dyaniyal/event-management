@@ -1,0 +1,7 @@
+.row
+  .CreateDashLayout
+    %h2
+      - if params[:licensee_access].present?
+        Please note there is no API configured for this License. Please contact your Admin.
+      - else
+        Please note you are not authorized to perform this operation. Please contact your Admin for more details.

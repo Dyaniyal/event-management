@@ -1,0 +1,25 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section.menus
+    .ml-header.relative.clear.mdl-color--light-blue-800
+      .mdl-grid.mdl-grid--no-spacing
+        .mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet
+          %h3.mdl-color-text--white.m-t-15.p-l-40.p-v-20 #{(@e_kit.name).capitalize}
+    
+  .mdl-cell--13-col.mdl-cell--13-col-tablet.mdl-cell--13-col-phone
+    %div
+      .mdl-tabs.mdl-js-tabs.ProfileTabLeft
+        .mdl-tabs__tab-bar
+          %a.mdl-tabs__tab.is-active{:href => "#"} #{(@e_kit.attachment_file_name.gsub(/[^a-zA-Z0-9\-]/," ").split(" ").second).titleize}
+          //#{(@e_kit.attachment_file_name.gsub(/[^a-zA-Z0-9\-]/," ").delete! "pdf" ).titleize}
+
+        #starks-panel.mdl-tabs__panel.is-active.ml-color--shades-white.p-v-18.m-20
+          .mdl-cell--13-col.mdl-cell--13-col-tablet.mdl-cell--13-col-phone
+            %iframe{:src => "#{@e_kit.attachment.url}",  :height => "68%", width: "100%", :style => "border: none;"}
+                          
+                      
+
+
+
+
+
+                  

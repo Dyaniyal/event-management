@@ -1,0 +1,44 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section.menus
+    .eventDetailSection.relative.clear
+      = render :partial => "/admin/dashboards/breadcumb_links",:locals => {:name => params[:controller],:page => page}
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.p-t-75
+        .p-40.ml-card-holder
+          .mdl-card.mdl-color--grey-100
+            .p-b-40.p-r-40.p-l-40
+              - if page == "Add Gallery"
+                = render :partial => 'add_form'
+              - elsif page == 'Edit Database' and params[:setting] == "true"
+                = render :partial => 'setting'
+              - else
+                = render :partial => 'form'
+
+
+
+-if false
+  %main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+    %section.menus
+      .mdl-color--light-blue-800.eventDetailSection.relative.clear
+        .p-20.height150
+          / .eventLogoDiv
+          /   = image_tag(@event.logo_url(:large)) rescue nil
+          .displayInlineBlock.m-l-20
+            %h3.mdl-color-text--white.m-t-20.m-b-5 
+              -if params[:controller] == "admin/users" and params[:client_id].present?
+                -if params[:action] == "new"
+                  Add Client Admin 
+                -else
+                  Edit Client Admin 
+              - else
+                - if (params["controller"] == "admin/abouts" and params[:edit] == "true")
+                  = "Edit About"
+                - else  
+                  = page
+        .mdl-cell--13-col.mdl-cell--13-col-tablet.mdl-cell--13-col-phone
+          .p-40.ml-card-holder.mdl-card
+            .mdl-card
+              .p-b-40.p-r-40.p-l-40
+                - if page == "Add Gallery"
+                  = render :partial => 'add_form'
+                - else
+                  = render :partial => 'form'

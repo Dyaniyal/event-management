@@ -1,0 +1,50 @@
+.main-container{:style => "font-size: 20px;color: #333;"}
+  .main-content.about-content
+    .container
+      .text-center
+        - @microsite.get_active_features.each do |feature|
+          - if feature.name == "sponsors"
+            %h1{:style => "font-size:50px;"} #{feature.page_title}
+      .tabbable-panel.faqsWrap
+        .tabbable-line
+          %ul.nav.nav-tabs{:style => "padding-bottom: 14px;"}
+            - @event.sponsors.pluck(:sponsor_type).uniq.each_with_index do |sponsor_type, index|
+              %li{:class => index == 0 ? "active" : ""}
+                %a{"data-toggle" => "tab", :href => "#tab_default_#{index}"}
+                  #{sponsor_type}
+           
+      .tab-content
+        - @event.sponsors.group(:sponsor_type).count.each_with_index do |sponsor, index|
+          .tab-pane{:id => "tab_default_#{index}", :class => index == 0 ? "active" : ""}
+            .row.speaker
+              - sponsors = @event.sponsors.where("sponsor_type = ?", sponsor[0])
+              - sponsors.each do |sponsor|
+                .col-md-12
+                  .row
+                    .col-md-3
+                      = image_tag(sponsor.logo.url(:small), :class =>"img-responsive img-square")
+                    .col-md-9
+                      %p{:style => "margin-top:7px !important;"} #{sponsor.name}
+                      %p{:style => "margin-top:7px !important;"}
+                        = link_to sponsor.website_url, sponsor.website_url , :target =>  "_blank"
+                      %p{:style => "margin-top:7px !important;"} #{sponsor.contact_person_name}
+                      %p{:style => "margin-top:7px !important;"} #{sponsor.email}
+                      %p{:style => "margin-top:7px !important;"} #{sponsor.mobile}
+                      %p{:style => "margin-top:7px !important;"}
+                        %div{:style => "white-space:pre-line;"}
+                          - if sponsor.description.length > 296
+                            = truncate(sponsor.description, length: 296)
+                            = link_to 'Read more', '', class: "read-more-#{sponsor.id}"
+                            :javascript
+                              $('.read-more-#{sponsor.id}').on('click', function(e) {
+                                e.preventDefault()
+                                $(this).parent().html('#{escape_javascript sponsor.description}')
+                              })
+                          - else
+                            = sponsor.description
+                        %div
+                      %p
+
+
+                  %hr/
+          .clear

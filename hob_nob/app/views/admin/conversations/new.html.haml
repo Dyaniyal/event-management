@@ -1,0 +1,4 @@
+- if params[:import].present? and params[:importable_type].present?
+	= render :partial => 'layouts/layout_form', :locals => {:page => "Import #{params[:importable_type]}"}
+-else
+	= render :partial => 'layouts/layout_form', :locals => {:page => 'New Conversation'}

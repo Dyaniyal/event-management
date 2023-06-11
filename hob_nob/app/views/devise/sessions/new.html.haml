@@ -1,0 +1,38 @@
+/ = javascript_include_tag "materialize"
+%section.loginwrap.loginwrap-newsign
+  .loginBlog
+    %center.BlnkTxt.p-t-10
+      / - flash.each do |key, value|
+      /   %div{:class => "flash #{key}"}= value
+    .formInfo.z-depth-1
+      .LoginLogo
+        = image_tag("logo-new.png")
+      .row
+        .col.s12.loginFrom
+          = form_for(resource, as: resource_name, :html => {:class =>'form-horizontal'}, url: session_path(resource_name)) do |f|
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+              .bs-component
+                .form-group
+                  .col-lg-12  
+                    = f.email_field :email, :class => "form-control", :placeholder => "Email ID"
+
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+              .bs-component
+                .form-group
+                  .col-lg-12  
+                    = f.password_field :password, :class => "form-control m-t-20", :placeholder => "Password", :autocomplete => false
+                    = link_to "Forgot password ?", new_user_password_path, {style:'font-weight: 400;'}
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        - if flash['alert'].present? and flash['alert'] == 'Your account is not activated yet.'
+                          = 'Your account is deactive, Please contact admin.'
+                        - elsif session[:date_error].present?
+                          = 'Your account has been expired, Please contact admin.'
+                          = session[:date_error] = nil
+                        - else
+                          = "#{(flash.first[1].present? and request.referer.include? "sign_in") ? "Invalid email and password." : ""}" rescue ""
+            .m-t-10.logbtn.m-8
+              %button.mdl-button.mdl-js-button.mdl-js-ripple-effect.newSignTxt{:name => "action", :type => "submit"} SIGN IN
+          / <a href="javascript:void(0);" class="termscondition">TERMS AND CONDITIONS</a>
+
+  

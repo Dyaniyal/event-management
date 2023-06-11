@@ -1,0 +1,18 @@
+= form_tag admin_licensees_url, :method => :get do
+  .mdl-grid
+    = custom_text_field_tag "search[first_name]", "Search by Name" ,adv_search_value(params,"first_name")
+    = custom_text_field_tag "search[email]", "Search by Email id" ,adv_search_value(params,"email")
+    .mdl-cell--4-col.mdl-cell--4-col-tablet.mdl-cell--4-col-phone.m-8
+      .moreBtn.collapseminus
+        %a.f-right.m-t-5{:href => "javascript:void(0);"}
+          Hide
+        = submit_tag "SEARCH", :class => "mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-color--light-blue-600 f-right m-r-35"
+    .mdl-cell--4-col.mdl-cell--4-col-tablet.m-8
+      .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+        = select_tag "search[package_type]", options_for_select([["Silver", "silver"], ["Gold", "gold"],["Diamond","diamond"],["Platinum","platinum"]], :selected => adv_search_value(params,"package_type")), :prompt => 'Package Type'#rescue nil
+    .mdl-cell--4-col.mdl-cell--4-col-tablet.m-8
+      .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+        = select_tag "search[status]", options_for_select([["Pending", "pending"], ["Rejected", "reject"],["Deactive","deactive"],["Active","active"]], adv_search_value(params,"status")), :prompt => 'Licensee Status'
+        = hidden_field_tag :admin_search, "true"
+        = hidden_field_tag :adv_search, "true"
+       

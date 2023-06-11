@@ -1,0 +1,71 @@
+-if @edm.template_type.present? and @edm.template_type == "default_template"
+  .emailer_button{:style => "float:right;margin-right:28px;margin-top:15px;"}
+    - if params["campaign_id"].present? and params["campaign_id"] == "0"
+      / update_mail
+      - if params[:preview].blank?
+        = link_to "EDIT", edit_admin_event_campaign_edm_path(:event_id => @event.id,:campaign_id => 0,:id => @edm.id),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+        = link_to "OK", admin_event_campaign_edms_path(:event_id => @event.id, :campaign_id => 0, :email_setting => true),{:style => "background:#4d4e4f;color:#fff;padding:6px 8px;text-decoration:none;"}
+                                   
+    - elsif params[:preview].blank?
+      =# link_to "BROADCAST", edit_admin_event_campaign_edm_path(@edm.event_id,@edm.campaign_id,@edm.id, :next => 'NEXT'),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+      = link_to "EDIT", edit_admin_event_campaign_edm_path(@edm.event_id,@edm.campaign_id,@edm.id),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+      = link_to "OK", admin_event_campaign_edms_path(:event_id => @edm.event_id, :campaign_id => @edm.campaign_id),{:style => "background:#4d4e4f;color:#fff;padding:6px 8px;text-decoration:none;"}
+  = render :partial => '/user_mailer/default_template_header.html.haml', :locals => {:@edm => @edm}
+
+-else @edm.template_type.present? and @edm.template_type == "custom_template"
+  .emailer_button{:style => "margin-right:28px;margin-top:15px;"}
+    - if params["campaign_id"].present? and params["campaign_id"] == "0"
+      - if params[:preview].blank?
+        .pull-right
+          = link_to "EDIT", edit_admin_event_campaign_edm_path(:event_id => @event.id,:campaign_id => 0,:id => @edm.id),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+          = link_to "OK", admin_event_user_registrations_path(:event_id => @edm.event_id),{:style => "background:#4d4e4f;color:#fff;padding:6px 8px;text-decoration:none;"}
+    - elsif params[:preview].blank?
+      .pull-right
+        =# link_to "BROADCAST",edit_admin_event_campaign_edm_path(@edm.event_id,@edm.campaign_id,@edm.id, :next => 'NEXT'),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+        = link_to "EDIT", edit_admin_event_campaign_edm_path(@edm.event_id,@edm.campaign_id,@edm.id),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+        = link_to "OK", admin_event_campaign_edms_path(:event_id => @edm.event_id, :campaign_id => @edm.campaign_id),{:style => "background:#4d4e4f;color:#fff;padding:6px 8px;text-decoration:none;"}
+    = render :partial => '/user_mailer/preview_custom_template.html.haml', :locals => {:@edm => @edm}
+
+
+:css
+  .pull-right{float: right;margin-bottom: 40px;}
+
+
+
+
+
+
+
+- if false
+  -if @edm.template_type.present? and @edm.template_type == "default_template"
+    .emailer_button{:style => "float:right;margin-right:28px;margin-top:15px;"}
+      - if params["campaign_id"].present? and params["campaign_id"] == "0"
+        / update_mail
+        - if params[:preview].blank?
+          = link_to "EDIT", edit_admin_event_campaign_edm_path(:event_id => @event.id,:campaign_id => 0,:id => @edm.id),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+                                     
+      - else
+        = link_to "BROADCAST", edit_admin_event_campaign_edm_path(@edm.event_id,@edm.campaign_id,@edm.id, :next => 'NEXT'),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+        = link_to "EDIT", edit_admin_event_campaign_edm_path(@edm.event_id,@edm.campaign_id,@edm.id),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+      - if params[:preview].blank?
+        = link_to "CANCEL", admin_event_user_registrations_path(:event_id => @edm.event_id),{:style => "background:#4d4e4f;color:#fff;padding:6px 8px;text-decoration:none;"}
+    = render :partial => '/user_mailer/default_template_header.html.haml', :locals => {:@edm => @edm}
+
+  -else @edm.template_type.present? and @edm.template_type == "custom_template"
+    .emailer_button{:style => "float:right;margin-right:28px;margin-top:15px;"}
+      - if params["campaign_id"].present? and params["campaign_id"] == "0"
+        - if params[:preview].blank?
+          .pull-right
+            = link_to "EDIT", edit_admin_event_campaign_edm_path(:event_id => @event.id,:campaign_id => 0,:id => @edm.id),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+            = link_to "CANCEL", admin_event_user_registrations_path(:event_id => @edm.event_id),{:style => "background:#4d4e4f;color:#fff;padding:6px 8px;text-decoration:none;"}
+        = render :partial => '/user_mailer/preview_custom_template.html.haml', :locals => {:@edm => @edm}
+      - else
+        .pull-right
+          = link_to "BROADCAST",edit_admin_event_campaign_edm_path(@edm.event_id,@edm.campaign_id,@edm.id, :next => 'NEXT'),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+          = link_to "EDIT", edit_admin_event_campaign_edm_path(@edm.event_id,@edm.campaign_id,@edm.id),{:style => "background:#1cb1ba;color:#fff;padding:6px 8px;text-decoration:none;"}
+          = link_to "CANCEL", admin_event_campaign_edms_path(:event_id => @edm.event_id, :campaign_id => @edm.campaign_id),{:style => "background:#4d4e4f;color:#fff;padding:6px 8px;text-decoration:none;"}
+        = render :partial => '/user_mailer/preview_custom_template.html.haml', :locals => {:@edm => @edm}
+
+
+  :css
+    .pull-right{float: right;margin-bottom: 40px;}

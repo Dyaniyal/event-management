@@ -1,0 +1,177 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope               
+  %section.tables-data
+    .ml-header.relative.clear.mdl-color--light-blue-800
+      .mdl-grid.mdl-grid--no-spacing
+        .mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet
+          %h3.mdl-color-text--white.m-t-15.p-l-40.p-v-20
+            - page = params[:controller].split("/").second
+            - display_page_name = {"qnas" => "Q&A", "abouts" => "About", "contacts" => "Contact Us", "feedbacks" => "Feedback","quizzes" => "Quiz","faqs" => "FAQ","manage_mobile_apps" => "Mobile Apps","custom_page1s"=> "Custom Page 1","custom_page2s"=> "Custom Page 2","custom_page3s"=> "Custom Page 3","custom_page4s"=> "Custom Page 4","custom_page5s"=> "Custom Page 5", "chats" => "Chat", "invitee_groups" => "Invitee Group","marketing_apps" => "Hub Space","unsubscribes" => "Unsubscribe Emails","multi_lng_events" => "Multilingual events", "log_changes" => "Logs"}
+            -if display_page_name.keys.include?(page)
+              Manage 
+              = display_page_name[page]
+            - elsif page == "edms"
+              Manage eDMs
+            - elsif page == "invitee_structures"
+              Manage Database Group
+            - elsif page == "invitee_datas"
+              Manage Invitee Data 
+            - elsif page == "manage_users"
+              Manage Users
+            - elsif page == "prohibited_accesses"
+              Restricted Access
+            - elsif page == "feedback_forms"
+              Manage Feedback Form
+            - elsif page == "feedbacks"
+              Manage Question                            
+            - elsif page == "registration_details"
+              Manage  
+              - if params[:type].present? and params[:type] =="mark_person_as_drop_outed"
+                = "Drop out Registrations"
+              - elsif params[:type].present? and params[:type] =="put_on_holded"
+                = "On Hold Registrations"
+              - elsif params[:type].present?
+                = "#{params[:type].capitalize.humanize} Registrations"
+              - elsif params[:type].blank?
+                = "User Registrations"
+            - elsif page == "microsites"
+              Manage Microsite
+            - elsif params[:controller] == "admin/folders"
+              Manage Folder
+            - elsif page == "telecaller_searchs"
+              Search Results
+            - elsif page == "track_link_users"
+              - if params[:email_count] == "true"
+                Manage Opened Email
+              - else 
+                Track Link Users
+            - else
+              Manage
+              = page.humanize.titleize == "E Kits" ? "e-KIT" : page.humanize.titleize
+        - if ["panels", "highlight_images", "event_highlights", "abouts", "groupings", 'invitee_structures', 'analytics', "manage_users", "leaderboards","chats", "invitee_groups", "activity_feeds", "qr_scanner_details","onsite_registrations", "microsites","telecaller_dashboards", "folders","track_link_users","log_changes","mobile_consent_questions"].exclude?(page)
+          = render :partial => 'search'
+    - if ["admin/attendees","admin/licensees","admin/speakers", "admin/events"].include? (params[:controller])
+      .mdl-grid.HideSearchBlog
+        .p-h-25.ml-card-holder
+          = render :partial => 'advance_search'
+    .mdl-grid.mdl-grid--no-spacing
+      .mdl-cell.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+        .p-35.ml-card-holder.ml-card-holder-first.HeaderHeight
+          .mdl-card.mdl-shadow--1dp.m-b-30.clients.index_mdl
+            .mdl-card__title.mdl-color--light-blue-600.mdl-typography--text-right.displayBlock
+              %h2.mdl-card__title-text.mdl-color-text--white.displayBlock.mdl-typography--text-right.displayBlock.mdl-typography--text-right.heightHeading
+                -if false
+                  - features = ["speakers", "attendees", "invitees", "agendas", "polls", "conversations", "faqs", "qnas", "awards", "feedbacks", "e_kits", "contacts"] 
+                - if page != "prohibited_accesses" and params[:email_setting].blank?
+                  - if page != "abouts" and page != 'event_highlights' and page != 'emergency_exits'
+                    - if objs.present? and objs.count != 0
+                      - if page == "users"
+                        - if current_user.has_role?("licensee_admin") and params[:role] == "all"
+                          = objs.count + Role.get_client_role(@event.client_id, current_user).length rescue ""
+                        - else
+                          = objs.count rescue nil 
+                      - else
+                        = objs.count rescue nil
+                      -if page == "qnas"
+                        Q&A
+                      - elsif page == "edms"
+                        eDM
+                      - elsif page == "feedbacks"
+                        Feedback
+                      - elsif page == "contacts"
+                        Contact Us 
+                      -elsif (page == "polls" or page == "faqs")
+                        Questions
+                      - elsif page == "quizzes"
+                        Quiz
+                      - elsif (page == "invitee_structures" or page == "faqs")
+                        Database
+                      - elsif ["custom_page1s","custom_page2s","custom_page3s","custom_page4s","custom_page5s"].include? page
+                        = page.humanize.singularize rescue nil
+                      - elsif page == "marketing_apps"
+                        Hub Space
+                      -elsif page == "multi_lng_events"
+                        Multilingual events                         
+                      - elsif page == "telecaller_searchs"
+                        Results
+                      - elsif page == "track_link_users"
+                        - if params[:email_count] == "true"
+                          Opened Emails
+                        - else
+                          Track Link Users
+                      -else
+                        = page.humanize == "E kits" ? page.humanize.gsub(" ","-") : page.humanize rescue nil
+                    -elsif (page == "polls" or page == "faqs")
+                      No Questions
+                    - elsif page =="multi_lng_events"
+                      Multilingual events
+                    -elsif (page == "edms")
+                      No eDMs
+                    -else 
+                      - if @invitee_structures.present?
+                        = '1'
+                      -elsif page == "manage_users"
+                        = Role.get_user_role_list(current_user).length rescue "No"
+                      - elsif page =="onsite_registrations"
+                      - else
+                        No
+                      -if page == "qnas"
+                        Q&A
+                      - elsif page.humanize == "E kits"
+                        e-KIT
+                      - elsif page == "feedbacks"
+                        Feedback 
+                      - elsif page == "contacts"
+                        Contact Us 
+                      - elsif page == "invitee_structures"
+                        Database
+                      - elsif page == "quizzes"
+                        Quiz
+                      - elsif page == "registration_details"
+                        - if params[:type].present? and params[:type] =="mark_person_as_drop_outed"
+                          = "Drop out Registrations"
+                        - elsif params[:type].present? and params[:type] =="put_on_holded"
+                          = "On Hold Registrations"
+                        - elsif params[:type].present?
+                          = "#{params[:type].capitalize.humanize} Registrations"  
+                        - elsif params[:type].blank?
+                          = "User Registrations"      
+                      -elsif page == "unsubscribes"
+                        Unsubscribe Emails
+                      - elsif page == "log_changes"
+                        Log Changes
+                      - elsif ["custom_page1s","custom_page2s","custom_page3s","custom_page4s","custom_page5s"].include? page
+                        = page.humanize.singularize rescue nil
+                      - elsif page =="onsite_registrations"
+
+                      - else
+                        = page.humanize rescue nil   
+                      -if false 
+                        = page.humanize == "E kits" ? "e-KIT" : page.humanize rescue nil
+                  -elsif objs.present?
+                    = 1
+                    = page.humanize.singularize rescue nil
+                  -else
+                    No
+                    = page.humanize == "E kits" ? page.humanize.gsub(" ","-") : page.humanize rescue nil
+                - if true #@event.present? and @event.multi_lng_parent_id.blank?
+                  = render :partial => 'admin/layouts/add_link' 
+            .mdl-typography--text-center.BlnkTxt
+              - features = ["speakers", "invitees", "agendas", "polls", "conversations", "faqs", "qnas", "awards", "feedbacks", "e_kits", "images"]
+              - if features.include? page
+                - event_feature = @event.event_features.where(:name => page)
+                - page = page.titleize
+                - if event_feature.blank? and params[:from] != "microsites"
+                  = "This feature is not available you need to "
+                  - if @event.mobile_application.present?
+                    = link_to "Enable it.", edit_admin_event_mobile_application_path(:event_id => @event.id, :id => @event.mobile_application.id,:type => "event_edit") ,:class => " centerAlign"
+                  - else
+                    = link_to "Enable It.", new_admin_client_mobile_application_path(:client_id => @event.client_id) ,:class => " centerAlign"
+                - else
+                  .sequence_update
+                    = render :partial => 'index', :locals => {:objs => objs}
+              - else
+                .sequence_update
+                  - if page == "manage_mobile_apps" and params[:action] == "index"
+                    = render :partial => 'index', :locals => {:objs => objs, :objs_paginate => objs_paginate}
+                  -else
+                    = render :partial => 'index', :locals => {:objs => objs}

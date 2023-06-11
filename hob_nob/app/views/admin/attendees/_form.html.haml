@@ -1,0 +1,22 @@
+.save_button.mdl-card
+  = form_for [:admin, @event, @attendee], :builder => CustomFormBuilder do |f|
+    .mdl-grid
+      = f.custom_text_field :attendee_name, "Full Name *"
+      = f.custom_text_field :email_address, "Email id *"
+      = f.custom_text_field :company_name, "Company Name *"
+      = f.custom_text_field :designation, "Designation *"
+      = f.custom_text_field :phone_number, "Phone No *"
+      = f.hidden_field :event_id, :value => params[:event_id]
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+
+
+
+
+
+
+
+

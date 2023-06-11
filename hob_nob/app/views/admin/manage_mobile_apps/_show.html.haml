@@ -1,0 +1,31 @@
+.save_button.mdl-card.agendaHeight
+  = form_for(@manage_mobile_app, url: "javascript:void();", :html => {:class =>'form-horizontal' }, :builder => CustomFormBuilder) do |f|
+    = f.custom_text_field_manage_mobile_app :mobile_application_id, "Mobile Application Id  "
+    = f.custom_text_field_manage_mobile_app :is_android_app, "Is Android App  "
+    = f.custom_text_field_manage_mobile_app :is_ios_app, "Is IOS App  "
+    = f.custom_text_field_manage_mobile_app :android_app_type, "Android App Type  "
+    = f.custom_text_field_manage_mobile_app :android_category, "Android Category  "
+    = f.custom_text_field_manage_mobile_app :android_country_list, "Android Country List  "
+    = f.custom_text_field_manage_mobile_app :android_contains_ads, "Android Contains ads  "
+    = f.custom_text_field_manage_mobile_app :android_content_guideline, "Android Content Guideline  "
+    = f.custom_text_field_manage_mobile_app :android_us_export_laws, "Android US Export Laws  "
+    = f.custom_text_field_manage_mobile_app :android_title, "Title  "
+    = f.custom_text_field_manage_mobile_app :android_full_desc, "Full Description  "
+    = f.custom_text_field_manage_mobile_app :android_email, "Email  "
+    = f.custom_text_field_manage_mobile_app :android_phone, "Phone  "
+    = f.custom_text_field_manage_mobile_app :android_short_desc, "Short Description  "
+    = f.custom_text_field_manage_mobile_app :android_website, "Website  "
+    = f.custom_text_field_manage_mobile_app :android_policy_url, "Privacy Url  "
+    = f.custom_text_field_manage_mobile_app :ios_support_url, "Support Url  "
+    = f.custom_text_field_manage_mobile_app :ios_copyright, "Copyright  "
+    = f.custom_text_field_manage_mobile_app :ios_keyword, "Keywords  "
+    = f.custom_text_field_manage_mobile_app :ios_contact_first_name, "Contact First Name  "
+    
+    = f.custom_text_field_manage_mobile_app :ios_contact_last_name, "Contact Last Name  "
+    
+    = f.custom_text_field_manage_mobile_app :ios_demo_email, "Demo Email  "
+    
+    = f.custom_text_field_manage_mobile_app :ios_password, "Demo Password  "
+    
+    = f.custom_file_browser_field_app :app_icon, "App Icon", :value => "#{@mobile_application.app_icon.present? ? @mobile_application.app_icon.url(:thumb) : "Image not present." }"
+    =# link_to 'download', new_admin_download_path(:url => f.object.android_app_icon.url(:thumb)), :target => '_blank' 

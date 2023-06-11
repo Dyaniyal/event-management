@@ -1,0 +1,14 @@
+.mdl-typography--text-center.BlnkTxt
+  - page = params[:controller].split("/").second
+  - features = ["speakers", "invitees", "agendas", "polls", "conversations", "faqs", "qnas", "awards", "feedbacks", "e_kits", "contacts", "images"]
+  - if page == 'e_kits'
+    - page = 'E-Kits'
+  - if features.include? page
+    - event_feature = @event.event_features.where(:name => page)
+    - page = page.titleize
+    - if event_feature.blank?
+      = "This feature is not available you need to "
+      - if @event.mobile_application.present?
+        = link_to "Enable it.", edit_admin_event_mobile_application_path(:event_id => @event.id, :id => @event.mobile_application.id,:type => "event_edit") ,:class => " centerAlign"
+      - else
+        = link_to "Enable It.", new_admin_event_mobile_application_path(:event_id => @event.id) ,:class => " centerAlign"

@@ -1,0 +1,24 @@
+%section.loginwrap.loginwrap-newsign
+  .loginBlog
+    %center.BlnkTxt.p-t-10
+    .formInfo.z-depth-1
+      .LoginLogo
+        = image_tag("logo-new.png")
+      .row
+        .col.s12.loginFrom
+          = form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: 'form-horizontal' }) do |f|
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+              .bs-component
+                .form-group
+                  .col-lg-12
+                    = f.email_field :email, autofocus: true, class: "form-control", autocomplete: "off", placeholder: "Email"
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        - error_msg = resource.errors.messages
+                        - if error_msg.keys.present? and error_msg.keys.any? { |k| [:activate_mobilapp, :activate_ems].include? k}
+                          = 'Your account is deactive, Please contact admin.'
+                        - elsif session[:date_error].present?
+                          = 'Your account has been expired, Please contact admin.'
+                          = session[:date_error] = nil
+            .logbtn
+              %button.mdl-button.mdl-js-button.mdl-js-ripple-effect.newSignTxt{name: "action", type: "submit"} Send reset password

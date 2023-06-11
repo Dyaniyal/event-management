@@ -1,0 +1,64 @@
+- if !objs.present? and !params[:admin_search].present? and params[:type].nil?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = index_nodata_message("conversations")
+-elsif !objs.present? and params[:admin_search].present?and params[:type].nil?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("conversations")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.favblog.converblog{"template-pagination" => "custom/pager"}
+    %tr
+      %th Image 
+      %th Description 
+      %th User Name
+      / %th Company
+      %th Date
+      %th Comment Count
+      %th Like Count
+      %th 
+        Status
+        %a{:href =>'javascript:void(0);', :class =>'headerDownimg BlackDownimg', :id => 'demo-menu-top-left'}
+        %ul.mdl-menu.mdl-menu--bottom-left.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-top-left"}
+          %li.mdl-menu__item 
+            = link_to "approved", admin_event_conversations_path(:event_id => params[:event_id], :type => "approved")
+          %li.mdl-menu__item 
+            = link_to "rejected", admin_event_conversations_path(:event_id => params[:event_id], :type => "rejected")
+          %li.mdl-menu__item 
+            = link_to "all", admin_event_conversations_path(:event_id => params[:event_id])
+      %th On Wall
+      %th
+    - if objs.length == 0   
+      %tr
+        %td.full_width{:colspan => '4'}
+          %p
+            ="There are no conversations for your selection."  
+    - objs.each do |conversation|
+      %tr
+        - if conversation.image_url != ""
+          %td.font16= image_tag conversation.image_url(:thumb)
+        -else
+          %td.font16= ""
+        %td.font16= conversation.description  
+        %td.font16= conversation.user_name
+        %td.font16= formatted_time(conversation.created_at_with_event_timezone, "%Y-%m-%d %H:%M")
+        %td.font16= conversation.comments.count
+        %td.font16= conversation.likes.count
+        %td.font16= conversation.status.capitalize rescue nil
+        %td.font16
+          - if conversation.on_wall == "yes" and conversation.status != "rejected" 
+            = "Pushed on Wall"
+          - else 
+            = ""
+        %td.IconDrp
+          - if (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+            = more_vert_button(conversation.id)
+            %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{conversation.id}"}
+              = edit_link(params, conversation.id)
+              = delete_link(params, conversation.id)
+              - if conversation.on_wall == "yes" and conversation.status == "approved" 
+                = link_to "Remove From Wall",{:action=>"update", :controller=>"admin/conversations", :id => conversation.id, :on_wall => "no",:page => params[:page]}, :method => "patch", :data => { confirm: 'Are you sure, you want Remove From Wall.'},:class => "mdl-menu__item" 
+              - elsif ((conversation.on_wall == "no" or conversation.on_wall.blank?) and (conversation.status == "approved"))
+                = link_to "Push To Wall",{:action=>"update", :controller=>"admin/conversations", :id => conversation.id, :on_wall => "yes",:page => params[:page]}, :method => "patch", :data => { confirm: 'Are you sure, you want Push To Wall.'},:class => "mdl-menu__item" 
+              - conversation.aasm.events.each do |eve|
+                = link_to "#{eve.name.to_s.titlecase}".html_safe,{:action=>"update", :controller=>"admin/conversations", :id => conversation.id, :status => eve.name.to_s,:page => params[:page]}, :method => "patch", :data => { confirm: 'Are you sure, you want to change the status.'},:class => "mdl-menu__item" 
+  = will_paginate objs 
+  

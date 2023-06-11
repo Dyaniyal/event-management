@@ -1,0 +1,103 @@
+%ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect.mdl-color--blue-grey-900.droplisttab.Mangeuserdroplisttab{:for => page_id} 
+  - if current_user.has_role? :licensee_admin
+    %li.mdl-menu__item
+      - if @event.present?
+        = link_to new_admin_event_user_path(:event_id => @event.id, :feature => 'users', :role => 'db_manager',:page_id => "#{page_id}" || params[:page_id], :get_role => params["role"]), :class => "mdl-color-text--white" do
+          Add DB Manager
+      - elsif params[:client_id].present?
+        = link_to admin_client_events_path(:client_id => params[:client_id], :role => 'db_manager', :feature => 'users', :redirect_page => 'new',:page_id => "#{page_id}" || params[:page_id], :event_level => true), :class => "mdl-color-text--white" do
+          Add DB Manager(event level)        
+      - else
+        = link_to admin_clients_path(:feature => 'users', :role => 'db_manager'), :class => "mdl-color-text--white" do
+          Add DB Manager (event level)        
+    - if params[:controller] == 'admin/dashboards'
+      %li.mdl-menu__item
+        = link_to admin_clients_path(:feature => 'users', :role => 'db_manager', :dashboard_client_level => true), :class => "mdl-color-text--white" do
+          Add DB Manager (client level)
+    - if params[:controller] == 'admin/dashboards'
+      %li.mdl-menu__item
+        = link_to admin_clients_path(:feature => 'users', :role => 'client_response_manager', :dashboard_client_level => true), :class => "mdl-color-text--white" do
+          Add Response Manager (client level)
+    - if params[:client_id].present?
+      %li.mdl-menu__item
+        = link_to new_admin_client_user_path(:client_id => params[:client_id], :role => 'db_manager', :client_level => true), :class => "mdl-color-text--white" do
+          Add DB Manager(client level)        
+    - if (params[:client_id].present? and params[:action] != "show") #(params[:client_id].present? or @event.present?) and params[:action] != "show" 
+      %li.mdl-menu__item
+        - @client = @event.client if @event.present?
+        = link_to new_admin_client_user_path(:client_id => @client.id, :role => 'client_admin'), :class => "mdl-color-text--white" do
+          Add Client Admin
+    - elsif (params[:action] != "show" and params[:event_id].blank?)
+      %li.mdl-menu__item
+        = link_to admin_clients_path(:feature => 'users', :role => 'client_admin'), :class => "mdl-color-text--white" do
+          Add Client Admin
+  - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin
+    %li.mdl-menu__item
+      - if @event.present?
+        = link_to new_admin_event_user_path(:event_id => @event.id, :feature => 'users', :role => 'event_admin',:page_id => "#{page_id}" || params[:page_id], :get_role => params["role"]), :class => "mdl-color-text--white" do
+          Add Event Admin
+      - elsif params[:client_id].present?
+        = link_to admin_client_events_path(:client_id => params[:client_id], :role => 'event_admin', :feature => 'users', :redirect_page => 'new',:page_id => "#{page_id}" || params[:page_id]), :class => "mdl-color-text--white" do
+          Add Event Admin
+      - else
+        = link_to admin_clients_path(:feature => 'users', :role => 'event_admin'), :class => "mdl-color-text--white" do
+          Add Event Admin  
+  -if false
+    - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin
+      %li.mdl-menu__item
+        - if @event.present?
+          = link_to new_admin_event_user_path(:event_id => @event.id, :role => 'module_admin',:page_id => "#{page_id}" || params[:page_id]), :class => "mdl-color-text--white" do
+            Add Module Admin
+        - elsif params[:client_id].present?
+          = link_to admin_client_events_path(:client_id => params[:client_id], :feature => 'users', :role => 'module_admin', :redirect_page => 'new',:page_id => "#{page_id}" || params[:page_id]), :class => "mdl-color-text--white" do
+            Add Module Admin
+        - else
+          = link_to admin_clients_path(:feature => 'users', :role => 'module_admin'), :class => "mdl-color-text--white" do
+            Add Module Admin
+  - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin
+    %li.mdl-menu__item
+      - if @event.present?
+        = link_to new_admin_event_user_path(:event_id => @event.id, :feature => 'users', :role => 'moderator',:page_id => "#{page_id}" || params[:page_id], :get_role => params['role']), :class => "mdl-color-text--white" do
+          Add Moderator
+      - elsif params[:client_id].present? and (current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin)
+        = link_to admin_client_events_path(:client_id => params[:client_id], :feature => 'users', :role => 'moderator', :redirect_page => 'new',:page_id => "#{page_id}" || params[:page_id]), :class => "mdl-color-text--white" do
+          Add Moderator
+      - elsif (current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin)
+        = link_to admin_clients_path(:feature => 'users', :role => 'moderator'), :class => "mdl-color-text--white" do
+          Add Moderator
+    - if true #!Rails.env.production?
+      %li.mdl-menu__item
+        - if @event.present?
+          = link_to new_admin_event_telecaller_path(:event_id => @event.id, :get_role => params['role'],:from_event => "true"), :class => "mdl-color-text--white" do
+            Add Telecaller
+        - elsif params[:client_id].present? and (current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin)
+          = link_to admin_client_events_path(:client_id => params[:client_id], :feature => 'users', :role => 'telecaller', :redirect_page => 'new',:page_id => "#{page_id}" || params[:page_id]), :class => "mdl-color-text--white" do
+            Add Telecaller
+        - elsif (current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin)
+          = link_to admin_clients_path(:feature => 'users', :role => 'telecaller'), :class => "mdl-color-text--white" do
+            Add Telecaller
+      - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin
+        %li.mdl-menu__item
+          - if @event.present?
+            = link_to new_admin_event_user_path(:event_id => @event.id, :feature => 'users', :role => 'response_manager',:page_id => "#{page_id}" || params[:page_id], :get_role => params['role']), :class => "mdl-color-text--white" do
+              Add Response Manager
+          - elsif params[:client_id].present? and (current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin)
+            = link_to admin_client_events_path(:client_id => params[:client_id], :feature => 'users', :role => 'response_manager', :redirect_page => 'new',:page_id => "#{page_id}" || params[:page_id]), :class => "mdl-color-text--white" do
+              Add Response Manager  (event level)
+          - elsif (current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin)
+            = link_to admin_clients_path(:feature => 'users', :role => 'response_manager'), :class => "mdl-color-text--white" do
+              Add Response Manager  (event level) 
+      - if params[:client_id].present?
+        %li.mdl-menu__item
+          = link_to new_admin_client_user_path(:client_id => params[:client_id], :role => 'client_response_manager', :client_level => true), :class => "mdl-color-text--white" do
+            Add Response Manager (client level)
+      %li.mdl-menu__item
+        - if @event.present?
+          = link_to new_admin_event_user_path(:event_id => @event.id, :feature => 'users', :role => 'executive',:page_id => "#{page_id}" || params[:page_id], :get_role => params['role']), :class => "mdl-color-text--white" do
+            Add Executive
+        - elsif params[:client_id].present? and (current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin)
+          = link_to admin_client_events_path(:client_id => params[:client_id], :feature => 'users', :role => 'executive', :redirect_page => 'new',:page_id => "#{page_id}" || params[:page_id]), :class => "mdl-color-text--white" do
+            Add Executive
+        - elsif (current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin)
+          = link_to admin_clients_path(:feature => 'users', :role => 'executive'), :class => "mdl-color-text--white" do
+            Add Executive    

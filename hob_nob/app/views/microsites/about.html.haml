@@ -1,0 +1,9 @@
+.main-container{:style => "font-size: 20px;color: #333;"}
+  / Main Content Start
+  .main-content.about-content
+    .container
+      .text-center
+        - about = @microsite.get_active_features.where(:name => "abouts")
+        %h1{:style => "font-size:50px;"} #{about.first.page_title}
+        %p #{@event.about}
+  .clear

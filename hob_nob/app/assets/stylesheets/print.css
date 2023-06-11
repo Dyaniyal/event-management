@@ -1,0 +1,35 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,100,300,300italic,100italic,400italic,500,500italic,700,700italic,900,900italic);
+/*reset css*/
+*{margin:0;padding:0;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;-o-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;list-style:none;}
+/*body{font-family: 'Calibri';}*/
+
+/*main css*/
+.salary-table{margin:30px auto 0 auto;font-family: 'Roboto', sans-serif;}
+.logo{width:50%;float:right;margin-bottom:30px;text-align: right;margin-right:35px;}
+.logo img{width:50%;}
+.address{width:100%;float:left;text-align:center;}
+.address h1{font-weight:bold;margin-bottom:5px;font-size:12px;text-transform:uppercase;}
+.address p{font-size:12px;margin-bottom:2px;font-size:11px;}
+.emp-details{/*border:solid 1px #000;*/padding:10px;}
+.emp-details p{width:50%;float:left;padding:0;margin:0;margin-bottom:7px;font-size:12px;}
+.earning-wrapper{border:1px solid #000;/*border-top:0;*/}
+.right-side{width:50%;float:left;border-right:solid 1px #000;}
+.right-side:last-child{border-right:0px;}
+.earning{width:72.9%;float:left;}
+.earning h2{font-weight:bold;font-size:12px;padding:10px;}
+.earning-list li, .deduction-list li{margin-bottom:25px;font-size:12px;}
+.earning-list{padding:10px;}
+.amount{width:27.1%;float:left;}
+.amount h2{padding:10px;font-weight:bold;font-size:12px;}
+.deduction-list{padding-right:0px;}
+/*.deduction-list li:nth-child(3){height:59px;}*/
+.payslip-month{/*border:solid 1px #000;*/padding:10px;text-align:center;margin-bottom:5px;}
+.payslip-month span{display:inline-block;font-weight:bold;font-size:16px;text-transform:uppercase;}
+.txtbold{font-weight:bold;font-size:12px;}
+.borTop{border-top:solid 1px #000;padding:10px;}
+.borTop li{margin-bottom:15px;}
+.tlt-deduction li{margin-bottom:0px;}
+.note{margin-top:100px;font-size:11px;text-align:center;}
+.total{height:100px;}
+.tlearning{height:50px;}
+.text-right{text-align: right;padding-right:18px;}

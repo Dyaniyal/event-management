@@ -1,0 +1,64 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope               
+  .menus
+    .relative.clear
+      - page = params[:controller].split("/").second 
+      = render :partial => "/admin/dashboards/breadcumb_links",:locals => {:name => params[:controller],:page => page}
+      - if !@event.microsite.microsite_features.present? 
+        .mdl-typography--text-center.BlnkTxt.featureCreatePage
+          = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => 'microsite_features', :url => "/admin/events/#{params[:event_id]}/microsite/#{params[:microsite_id]}/microsite_features/new", :msg => 'test'} 
+      - else
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.p-t-75
+          .p-40.ml-card-holder
+            .mdl-card.mdl-color--grey-100
+              .p-b-40.p-r-40.p-l-40
+                .save_button.sequence_update
+                  %section#accordion
+                    = render :partial => "index"
+               
+:javascript
+  $(document).on('click','.menuSubCard',function (e) {
+    if($(e.target).is('.uparrow, .downarrow')){
+      e.stopPropagation();
+      return;
+    }
+
+    $(this).children('.menuEventList').find('.CardClick').trigger('click');
+   
+  })
+  $(document).on('click','.MenuCardHide',function (e) {
+    e.stopPropagation();
+  });
+  
+  $(window).load(function(){
+    $(document).on('change','.gui-file',function(){ 
+      filename = $(this)[0].files[0].name;
+      file_id = $(this).attr("id")
+      $("#1" + file_id).val(filename);
+      });
+    $('.prevent_button').click(function(microsite){
+      microsite.preventDefault();
+    });
+
+  $(document).on('click','.CardClick',function(e){
+    e.stopPropagation();
+    var carddisplay = $(this).parent().parent('.menuEventList').parent('.agendaheight').children('.MenuCardHide').css('display')
+
+    if(carddisplay == 'none'){
+    $('.CardClick').html('show');
+    $('.MenuCardHide').css('display', 'none');
+    $('.menuEventList').css('margin-bottom','0px');
+    $(this).parent().parent('.menuEventList').css('margin-bottom','20px');
+    $(this).parent().parent('.menuEventList').parent('.agendaheight').children('.MenuCardHide').css('display', 'flex');
+    $(this).html('hide')
+
+    }
+    else{
+      $('.MenuCardHide').css('display', 'none');
+      $('.menuEventList').css('margin-bottom','0px');
+      $(this).html('show')
+    }
+  })  
+  })
+
+  
+  

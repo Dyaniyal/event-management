@@ -1,0 +1,104 @@
+= stylesheet_link_tag 'new-card'
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  - if params["history"] != "true"
+    %section.menus
+      .eventDetailSection.relative.clear
+        - page =  @event.event_name
+        = render :partial => "/admin/dashboards/breadcumb_links",:locals => {:name => params[:controller],:page => page}
+        - if true
+          %section#content.table-layout.animated.fadeIn
+            .chute.chute-center
+              .row.smallCard
+                -if false
+                  .col-sm-3.col-xl-3
+                    .panel.panel-tile
+                      .panel-body
+                        .row.pv5
+                          .col-xs-5.ph10
+                            = image_tag("coloured_icons/mobile-app.png")
+                          .col-xs-7.pl5
+                            - if @event.mobile_application.blank?
+                              %h6.text-muted.truncate
+                                = 'Mobile App'
+                              %h2.fs30.mt5.mbn 
+                                = "0"
+                            - else
+                              %h6.text-muted= (@event.mobile_application.present? and @event.mobile_application.marketing_app_event_id.blank? ? "Mobile App" : "Landing Page")
+                              %h2.fs40.mt5.mbn
+                                = link_to "1", admin_event_mobile_application_path(:event_id => @event.id, :id => @event.mobile_application.id)
+                        .row.pv5.AddmoreCard{:style => "margin-bottom : #{(check_curent_user_role("mobile_application") and @event.status != "pending") ? "23px" : "0px"}" }
+                          .col-xs-12.ph5
+                            - if @event.mobile_application.blank? and @event.status != "pending"
+                              = link_to 'Add New', new_admin_event_mobile_application_path(:event_id => @event.id, :old_one => true), :class => 'displayBlock'
+                              - if @multi_mobile_applications.present?
+                                = link_to 'Add To Existing Multi-Event app', admin_client_mobile_applications_path(:client_id => @event.client_id, :feature => 'events', :event_id => @event.id)
+                            -elsif @event.mobile_application.present?
+                              = link_to "Manage Mobile Application",admin_event_mobile_application_path(:event_id => @event.id, :id => @event.mobile_application.id) 
+
+                  .col-sm-3.col-xl-3.userdrop
+                    .panel.panel-tile
+                      .panel-body
+                        .row.pv5
+                          .col-xs-5.ph10
+                            = image_tag("coloured_icons/user_3.png")
+                          .col-xs-7.pl5
+                            - event_users = User.get_users_based_on_resource(@event)
+                            - if event_users.blank?
+                              %h6.text-muted.truncate
+                                = 'Manage Users'
+                              %h2.fs30.mt5.mbn 
+                                = "0"
+                            - else
+                              - total_users = event_users.count
+                              %h6.text-muted Users
+                              %h2.fs30.mt5.mbn
+                                = link_to "#{total_users}", admin_event_users_path(:event_id => @event.id)
+                        .row.pv5.AddmoreCard
+                          - if user_signed_in? and (current_user.has_any_role?(:super_admin,:licensee_admin, :client_admin, :event_admin))
+                            .col-xs-12.ph5
+                              = link_to 'javascript:void(0);', :class =>"displayBlock" ,:id => 'event_show_card' do
+                                New User
+                              = render :partial => '/admin/users/add_user_with_role', :locals => {:page_id => 'event_show_card'}
+              .row.smallCard.eventShowCard
+                - if @check_mo_app_status and (!current_user.has_role_for_event?("executive",@event.id,session[:current_user_role])) and !(current_user.has_role? :client_response_manager) 
+                  = render :partial => 'admin/events/new_event_card', :locals => {:image_path => "coloured_icons/mobile-app.png", :card_title => ((@event.mobile_application.blank? ? "Mobile App" : (@event.mobile_application.present? and @event.mobile_application.marketing_app_event_id.blank?) ? "Mobile App" : "Hub Space")), :feature_count => @event.mobile_application.blank? ? '0' : '1', :manage_link => @event.mobile_application.blank? ? 'javascript:void(0)' : admin_event_mobile_application_path(:event_id => @event.id, :id => @event.mobile_application.id), :new_link => @event.mobile_application.blank? ? new_admin_event_mobile_application_path(:event_id => @event.id, :old_one => true) : admin_event_mobile_application_path(:event_id => @event.id, :id => @event.mobile_application.id), :new_label => (@event.mobile_application.blank? ? 'Add New' : (@event.mobile_application.present? and @event.mobile_application.marketing_app_event_id.blank? ? 'Manage Mobile Application' : "Manage Hub Space"))}
+
+                -# if (@event.present? and @event.mobile_application.present? )
+                - if (@event.present? and @event.mobile_application.present? and !(current_user.has_role_for_event?("executive",@event.id,session[:current_user_role]) or current_user.has_role_for_event?("db_manager",@event.id,session[:current_user_role]))) and @check_mo_app_status and !(current_user.has_role? :client_response_manager)
+                  - if Rails.env.production?
+                    = render :partial => 'admin/events/new_event_card', :locals => {:image_path => "coloured_icons/analytics.png", :card_title => "Analytics", :feature_count => nil, :manage_link => admin_client_event_path(:client_id => params[:client_id], :id => @event.id, :analytics => true), :new_link => admin_client_event_path(:client_id => params[:client_id], :id => @event.id, :analytics => true), :new_label => 'View Analytics'}
+                  - else
+                    = render :partial => 'admin/events/new_event_card', :locals => {:image_path => "coloured_icons/analytics.png", :card_title => "Analytics", :feature_count => nil, :manage_link => admin_client_event_path(:client_id => params[:client_id], :id => @event.id, :analytics => true), :new_link => admin_event_analytics_path(:event_id => @event.id), :new_label => 'View Analytics Html'}
+
+                - if !(current_user.has_role_for_event?("moderator",@event.id,session[:current_user_role])) and @ems_acess and !(current_user.has_role? :client_response_manager)
+                  = render :partial => 'admin/events/new_event_card', :locals => {:image_path => "coloured_icons/database.png", :card_title => "Database", :feature_count => @event.invitee_structures.present? ? '1' : '0', :manage_link => @event.invitee_structures.present? ? admin_event_invitee_structures_path(:event_id => @event.id) : new_admin_event_invitee_structure_path(:event_id => @event.id), :new_link => @event.invitee_structures.present? ? admin_event_invitee_structures_path(:event_id => @event.id) : new_admin_event_invitee_structure_path(:event_id => @event.id), :new_label => @event.invitee_structures.present? ? 'Manage Database' : 'Add New'}
+
+                - if Rails.env.development? or Rails.env.staging? or Rails.env.production?
+                  - if !(current_user.has_role_for_event?("moderator",@event.id,session[:current_user_role]) or current_user.has_role_for_event?("executive",@event.id,session[:current_user_role]) or current_user.has_role_for_event?("db_manager",@event.id,session[:current_user_role]))and @ems_acess#(current_user.has_any_role?(:licensee_admin,:response_manager))
+                    = render :partial => 'admin/events/new_event_card', :locals => {:image_path => "coloured_icons/registration.png", :card_title => "Registration", :feature_count => @event.user_registrations.present? ? @event.user_registrations.count : '0', :manage_link => (admin_event_user_registrations_path(:event_id => @event.id)), :new_link => (admin_event_user_registrations_path(:event_id => @event.id)), :new_label =>'Manage Registration'}
+
+                  - if (!(current_user.has_any_role?(:moderator,:telecaller,:db_manager) and ["db_manager", "telecaller", "moderator"].include? session[:current_user_role]))  and  @event.marketing_app != true and (!current_user.has_role_for_event?("executive",@event.id,session[:current_user_role])) and @ems_acess and !(current_user.has_role? :client_response_manager)
+                    = render :partial => 'admin/events/new_event_card', :locals => {:image_path => "coloured_icons/telecaller.png", :card_title => "Telecaller", :feature_count => User.joins(:roles).where('roles.resource_type = ? and resource_id = ? and roles.name = ?', "Event", @event.id, "telecaller").count, :manage_link => admin_event_telecallers_path(:event_id => params[:id],:from_telecaller => "true"), :new_link => new_admin_event_telecaller_path(:event_id => params[:id]), :new_label => 'Add New'}
+            
+                  - if @event.registrations.present? and !(current_user.has_role_for_event?("db_manager",@event.id,session[:current_user_role])) and @ems_acess
+                    = render :partial => 'admin/events/new_event_card', :locals => {:image_path => "coloured_icons/qr_scanner.png", :card_title => "Onsite Registration Tool", :feature_count => @event.registrations.present? ? '1' : '0', :manage_link => admin_event_onsite_registrations_path(:event_id => @event.id)}
+                  
+                  - if (current_user.has_any_role?(:licensee_admin,:client_admin,:event_admin,:response_manager)) and (!current_user.has_role_for_event?("executive",@event.id,session[:current_user_role]))  and (!current_user.has_role_for_event?("moderator",@event.id,session[:current_user_role])) and @ems_acess  and !(current_user.has_role? :client_response_manager)
+                    = render :partial => 'admin/events/new_event_card', :locals => {:image_path => "coloured_icons/communication.png", :card_title => "Communication", :feature_count => @event.campaigns.present? ? @event.campaigns.where('id !=?',0).count : '0', :manage_link => @event.campaigns.present? ? admin_event_campaigns_path(:event_id => @event.id) :  new_admin_event_campaign_path(:event_id => @event.id), :new_link => @event.campaigns.present? ? admin_event_campaigns_path(:event_id => @event.id) :  new_admin_event_campaign_path(:event_id => @event.id), :new_label => @event.campaigns.present? ? 'Manage Campaign' : 'Add New'}
+                  
+                  - if (@event.present? and @event.mult_lng_events and !(current_user.has_role_for_event?("executive",@event.id,session[:current_user_role]) or current_user.has_role_for_event?("db_manager",@event.id,session[:current_user_role]))) and @check_mo_app_status and !(current_user.has_role? :client_response_manager)
+                    - multilang_events = Event.where("parent_id =?",@event.id)
+                    - multilang_mob_url = multilang_events.last.mobile_application.present? ? admin_event_mobile_application_path(:event_id => multilang_events.last.id, :id => multilang_events.last.mobile_application.id) : admin_client_event_path(multilang_events.last.client_id,multilang_events.last.id) if multilang_events.present?
+                    = render :partial => 'admin/events/new_event_card', :locals => {:image_path => "coloured_icons/user_3.png", :card_title => "Multi-lingual App", :feature_count => multilang_events.count, :manage_link => multilang_events.count > 1 ? admin_event_multi_lng_events_path(:event_id => @event.id) : multilang_mob_url, :new_link => multilang_events.count > 1 ? admin_event_multi_lng_events_path(:event_id => @event.id) : multilang_mob_url, :new_label => 'Multi-lingual App'}
+
+
+                  - if (current_user.has_any_role?(:licensee_admin,:client_admin,:event_admin,:response_manager)) and (!current_user.has_role_for_event?("executive",@event.id,session[:current_user_role]))  and (!current_user.has_role_for_event?("moderator",@event.id,session[:current_user_role])) and @ems_acess  and !(current_user.has_role? :client_response_manager)
+                    = render :partial => 'admin/events/new_event_card', :locals => {:image_path => "coloured_icons/microsite.png", :card_title => "Microsite", :feature_count => @event.microsite.blank? ? '0' : '1', :manage_link => @event.microsite.blank? ? new_admin_event_microsite_path(:event_id => @event.id, :old_one => true) : admin_event_microsite_path(:event_id => @event.id, :id => @event.microsite.id), :new_link => @event.microsite.blank? ? new_admin_event_microsite_path(:event_id => @event.id, :old_one => true) : admin_event_microsite_path(:event_id => @event.id, :id => @event.microsite.id), :new_label => (@event.microsite.blank? ? 'Add New' : (@event.microsite.present?  ? 'Manage Microsite' : ""))}
+
+              - if @check_mo_app_status and !(current_user.has_role? :client_response_manager)
+                - if params[:analytics].present? and @event.mobile_application.present? 
+                  = render :partial => 'mobile_app_analytics'
+                - elsif params[:detailed_analytics].present? and @event.mobile_application.present?
+                  = render :partial => 'mobile_app_detailed_analytics'
+  -else 
+    = render :partial => 'layouts/changes_history'

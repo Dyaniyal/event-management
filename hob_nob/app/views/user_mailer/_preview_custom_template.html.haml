@@ -1,0 +1,19 @@
+- if @edm.opt_for_unsubscribe == true
+  .p{:style => 'text-align: center;'}
+    = link_to "#{APP_URL}/admin/events/#{@event.id}/campaigns/#{@edm.campaign_id}/edms/#{@edm.id}?user_email=#{@email}&preview=true", :target => "_blank",:style => "color: #C0C0C0;" do
+      Click here
+    if you cannot view this email correctly.
+    - if @email.present?
+      = link_to "#{APP_URL}/admin/events/#{@event.id}/campaigns/#{@edm.campaign_id}/edms/#{@edm.id}?user_email=#{@email}&unsubscribe=true&preview=true",:style => "color: #C0C0C0;" do
+        Unsubscribe
+    - else
+      %span{:style => "color: #C0C0C0;"}
+        Unsubscribe
+- if @email.present?
+  - if (@db_data.present? || @user_registration.present?) and @database_email_field.present?
+    - db_record = @db_data.present? ? @db_data.where("#{@database_email_field} =?","#{@email}").first : @user_registration
+    - edm_custom_code = @edm.custom_code
+    - if db_record.present?
+      = hash_val(db_record).inject(edm_custom_code) { |m, (k,v)| m.gsub(k, v.nil? ? '' : v) }.html_safe
+- else
+  = @edm.custom_code.html_safe

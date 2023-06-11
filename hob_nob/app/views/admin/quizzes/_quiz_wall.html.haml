@@ -1,0 +1,267 @@
+%html{:lang => "en"}
+  %head
+    %title Hobnob
+    = favicon_link_tag 'fevicon.png'
+    %meta{:charset => "utf-8"}
+    %meta{'http-equiv'=>'refresh', :content => '60'}
+    %meta{:content => "IE=edge", "http-equiv" => "X-UA-Compatible"}
+    %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}
+    %meta{:content => "", :name => "description"}
+    %title Polls Wall
+    = stylesheet_link_tag "theme.css"
+    = stylesheet_link_tag "css/bootstrap_polls.min.css"
+  - @quiz_wall = QuizWall.find_by_event_id(params[:event_id])
+  - if @quiz_wall.present? and @quiz_wall.background_image.present?
+    %body.main-events{:style=>"background-image: url(#{@quiz_wall.background_image.url(:large)});background-size:cover;background-repeat: no-repeat;"}    
+      .container.poll-container{:role => "main"}
+        .col-xs-12.col-lg-12
+          .row
+            .col-lg-8.col-lg-offset-2
+              .row
+                .col-sm-12
+                  .row.heightpoll
+                    .col-xs-4.col-sm-12.col-md-12.col-lg-12.pollHeading
+                      - if @quiz_wall.logo.present? 
+                        %img.logo.img-responsive.center-block{:src => "#{@quiz_wall.logo.url(:large)}"}
+                    / .col-xs-8.col-sm-10.col-md-10.col-lg-10.pollHeading
+                    /   %h3 Polls
+                  %hr
+                    - bar_color = @quiz_wall.bar_color
+                    - @quizzes.each do |quiz|
+                      %p.poll-question{:style=>"color:#{@quiz_wall.font_color};"} 
+                        %strong
+                          = quiz.question
+                      - if quiz.option1.present?
+                        %p{:style=>"color:#{@quiz_wall.font_color};"}  
+                          = quiz.option1
+                          / - percentage = get_user_poll_percentage("option1",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option1")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-2{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "50", :role => "progressbar", :style => "width: #{percentage}%; background-color:#{bar_color};"}
+                          %span{:style=>"color:#{@quiz_wall.font_color};"}
+                            = "#{percentage}%"
+                        - bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0
+                      - if quiz.option2.present?
+                        %p{:style=>"color:#{@quiz_wall.font_color};"} 
+                          = quiz.option2
+                          / - percentage = get_user_poll_percentage("option2",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option2")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-1.progress-bar-striped.active{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "40", :role => "progressbar", :style => "width: #{percentage}%; background-color:#{bar_color};"}
+                          %span{:style=>"color:#{@quiz_wall.font_color};"}
+                            = "#{percentage}%"
+                        - bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0                          
+                      - if quiz.option3.present?
+                        %p{:style=>"color:#{@quiz_wall.font_color};"}  
+                          = quiz.option3
+                          / - percentage = get_user_poll_percentage("option3",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option3")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-2{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "50", :role => "progressbar", :style => "width: #{percentage}%; background-color:#{bar_color};"}
+                          %span{:style=>"color:#{@quiz_wall.font_color};"}
+                            = "#{percentage}%"                      
+                        - bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0
+                      - if quiz.option4.present?
+                        %p{:style=>"color:#{@quiz_wall.font_color};"}  
+                          = quiz.option4
+                          / - percentage = get_user_poll_percentage("option4",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option4")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-1.progress-bar-striped.active{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "40", :role => "progressbar", :style => "width: #{percentage}%; background-color:#{bar_color};"}
+                          %span{:style=>"color:#{@quiz_wall.font_color};"}
+                            = "#{percentage}%"
+                        - bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0                      
+                      - if quiz.option5.present?
+                        %p{:style=>"color:#{@quiz_wall.font_color};"} 
+                          = quiz.option5
+                          / - percentage = get_user_poll_percentage("option5",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option5")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-1.progress-bar-striped.active{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "40", :role => "progressbar", :style => "width: #{percentage}%; background-color:#{bar_color};"}
+                          %span{:style=>"color:#{@quiz_wall.font_color};"}
+                            = "#{percentage}%"
+                        - bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0   
+                      %span{:style=>"color:#{@quiz_wall.font_color};"}  
+                        = show_field("Total responses: ", quiz.user_quizzes.count) rescue nil
+                    
+      %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"}
+      %script{:src => "js/bootstrap.min.js"}
+      %script{:src => "js/docs.min.js"}
+      / IE10 viewport hack for Surface/desktop Windows 8 bug
+      %script{:src => "js/ie10-viewport-bug-workaround.js"}
+      %script{:src => "js/base.min.js"}
+
+  - elsif @quiz_wall.present? and @quiz_wall.background_color.present?
+    %body.main-events{:style=>"background-color: #{@quiz_wall.background_color}"}       
+      .container.poll-container{:role => "main"}
+        .col-xs-12.col-lg-12
+          .row
+            .col-lg-8.col-lg-offset-2
+              .row
+                .col-sm-12
+                  .row.heightpoll
+                    .col-xs-4.col-sm-12.col-md-12.col-lg-12.pollHeading
+                      - if @quiz_wall.logo.present? 
+                        %img.logo.img-responsive.center-block{:src => "#{@quiz_wall.logo.url(:large)}"}
+                    / .col-xs-8.col-sm-10.col-md-10.col-lg-10.pollHeading
+                    /   %h3 Polls
+                  %hr
+                    - bar_color = @quiz_wall.bar_color
+                    - @quizzes.each do |quiz|
+                      %p.poll-question{:style=>"color:#{@quiz_wall.font_color};"} 
+                        %strong
+                          = quiz.question
+                      - if quiz.option1.present?
+                        %p{:style=>"color:#{@quiz_wall.font_color};"}  
+                          = quiz.option1
+                          / - percentage = get_user_poll_percentage("option1",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option1")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-2{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "50", :role => "progressbar", :style => "width: #{percentage}%; background-color:#{bar_color};"}
+                          %span{:style=>"color:#{@quiz_wall.font_color};"}
+                            = "#{percentage}%"
+                        - bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0
+                      - if quiz.option2.present?
+                        %p{:style=>"color:#{@quiz_wall.font_color};"} 
+                          = quiz.option2
+                          / - percentage = get_user_poll_percentage("option2",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option2")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-1.progress-bar-striped.active{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "40", :role => "progressbar", :style => "width: #{percentage}%; background-color:#{bar_color};"}
+                          %span{:style=>"color:#{@quiz_wall.font_color};"}
+                            = "#{percentage}%"
+                        - bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0                          
+                      - if quiz.option3.present?
+                        %p{:style=>"color:#{@quiz_wall.font_color};"}  
+                          = quiz.option3
+                          / - percentage = get_user_poll_percentage("option3",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option3")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-2{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "50", :role => "progressbar", :style => "width: #{percentage}%; background-color:#{bar_color};"}
+                          %span{:style=>"color:#{@quiz_wall.font_color};"}
+                            = "#{percentage}%"                      
+                        - bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0
+                      - if quiz.option4.present?
+                        %p{:style=>"color:#{@quiz_wall.font_color};"}  
+                          = quiz.option4
+                          / - percentage = get_user_poll_percentage("option4",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option4")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-1.progress-bar-striped.active{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "40", :role => "progressbar", :style => "width: #{percentage}%; background-color:#{bar_color};"}
+                          %span{:style=>"color:#{@quiz_wall.font_color};"}
+                            = "#{percentage}%"
+                        - bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0                      
+                      - if quiz.option5.present?
+                        %p{:style=>"color:#{@quiz_wall.font_color};"} 
+                          = quiz.option5
+                          / - percentage = get_user_poll_percentage("option5",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option5")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-1.progress-bar-striped.active{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "40", :role => "progressbar", :style => "width: #{percentage}%; background-color:#{bar_color};"}
+                          %span{:style=>"color:#{@quiz_wall.font_color};"}
+                            = "#{percentage}%"
+                        - bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0   
+                      %span{:style=>"color:#{@quiz_wall.font_color};"}
+                        = show_field("Total responses: ", quiz.user_quizzes.count) rescue nil
+                    
+      %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"}
+      %script{:src => "js/bootstrap.min.js"}
+      %script{:src => "js/docs.min.js"}
+      / IE10 viewport hack for Surface/desktop Windows 8 bug
+      %script{:src => "js/ie10-viewport-bug-workaround.js"}
+      %script{:src => "js/base.min.js"} 
+  - else
+    %body.main-events{:style=>"background-color: #808080"}       
+      .container.poll-container{:role => "main"}
+        .col-xs-12.col-lg-12
+          .row
+            .col-lg-8.col-lg-offset-2
+              .row
+                .col-sm-12
+                  .row.heightpoll
+                    .col-xs-4.col-sm-12.col-md-12.col-lg-12.pollHeading
+                      / - if @quiz_wall.logo.present? 
+                      /   %img.logo.img-responsive.center-block{:src => "#{@quiz_wall.logo.url(:large)}"}
+                    / .col-xs-8.col-sm-10.col-md-10.col-lg-10.pollHeading
+                    /   %h3 Polls
+                  %hr
+                    -# bar_color = @quiz_wall.bar_color
+                    - @quizzes.each do |quiz|
+                      %p.poll-question{:style=>""} 
+                        %strong
+                          = quiz.question
+                      - if quiz.option1.present?
+                        %p{:style=>""}  
+                          = quiz.option1
+                          / - percentage = get_user_poll_percentage("option1",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option1")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-2{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "50", :role => "progressbar", :style => "width: #{percentage}%;"}
+                          %span{:style=>""}
+                            = "#{percentage}%"
+                        -# bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0
+                      - if quiz.option2.present?
+                        %p{:style=>""} 
+                          = quiz.option2
+                          / - percentage = get_user_poll_percentage("option2",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option2")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-1.progress-bar-striped.active{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "40", :role => "progressbar", :style => "width: #{percentage}%;"}
+                          %span{:style=>""}
+                            = "#{percentage}%"
+                        -# bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0                          
+                      - if quiz.option3.present?
+                        %p{:style=>""}  
+                          = quiz.option3
+                          / - percentage = get_user_poll_percentage("option3",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option3")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-2{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "50", :role => "progressbar", :style => "width: #{percentage}%; background-color:#{bar_color};"}
+                          %span{:style=>""}
+                            = "#{percentage}%"                      
+                        -# bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0
+                      - if quiz.option4.present?
+                        %p{:style=>""}  
+                          = quiz.option4
+                          / - percentage = get_user_poll_percentage("option4",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option4")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-1.progress-bar-striped.active{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "40", :role => "progressbar", :style => "width: #{percentage}%;"}
+                          %span{:style=>""}
+                            = "#{percentage}%"
+                        -# bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0                      
+                      - if quiz.option5.present?
+                        %p{:style=>""} 
+                          = quiz.option5
+                          / - percentage = get_user_poll_percentage("option5",poll)
+                          - percentage = correct_user_quizzes_for_percentile_for_wall(quiz,"option5")
+                        .progress
+                          .pollwidth{:style => "width: 90%"}
+                            .progress-bar.progress-bar-1.progress-bar-striped.active{"aria-valuemax" => "", "aria-valuemin" => "0", "aria-valuenow" => "40", :role => "progressbar", :style => "width: #{percentage}%;"}
+                          %span{:style=>""}
+                            = "#{percentage}%"
+                        -# bar_color = ((bar_color == @quiz_wall.bar_color)? @quiz_wall.bar_color1 : @quiz_wall.bar_color) if percentage.present? and percentage != 0   
+                      %span{:style=>""}
+                        = show_field("Total responses: ", quiz.user_quizzes.count) rescue nil
+                    
+      %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"}
+      %script{:src => "js/bootstrap.min.js"}
+      %script{:src => "js/docs.min.js"}
+      / IE10 viewport hack for Surface/desktop Windows 8 bug
+      %script{:src => "js/ie10-viewport-bug-workaround.js"}
+      %script{:src => "js/base.min.js"}            
+  

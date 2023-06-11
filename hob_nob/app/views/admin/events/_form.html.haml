@@ -1,0 +1,145 @@
+.overlayBg
+  / %img{:src => "/assets/loader.gif", :class =>"loader-img"}/
+  .spinner
+    .rect1
+    .rect2
+    .rect3
+    .rect4
+    .rect5
+.save_button.mdl-card.eventExceedLimit
+  = form_for [:admin, @client, @event], :html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+    - if params[:copy_event].blank? #true #params[:type] == "general" or (params["controller"] == "admin/events" and params["action"] == "create")
+      .mdl-grid.mdl-card.mdl-shadow--1dp
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            General Information
+            / %a{:href => '/whats_this/event/general_information/event_generalInfo.jpg', :class =>'helpTag testhelp fancybox'}
+            /   what's this?
+        = #render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "event_generalInfo.jpg", :section_id => "event_general_section"}
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .form-group
+              .col-lg-4 
+              .col-lg-7
+                = f.hidden_field_tag :event_limit
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = f.object.errors.messages[:event_limit].join("") rescue nil
+        - if not f.object.errors.messages[:event_limit].present?
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            .bs-component
+              .form-group
+                .col-lg-4 
+                .col-lg-7
+                  = f.hidden_field_tag :event_date_limit
+                  .field_with_errors
+                    .span{:class => "errorMessage"}
+                      = f.object.errors.messages[:event_date_limit].join("") rescue nil
+        = f.custom_text_field :primary_language, "Primary Language *" 
+        = f.custom_text_field :event_name, "Event Name *"
+        =# f.custom_text_field :event_code, "Event Code"
+        - marketing_app = params[:marketing_app] || @event.marketing_app 
+        - if f.object.new_record? and params[:mobile_application_id].present?
+          = f.hidden_field :mobile_application_id, :value => "#{params[:mobile_application_id].to_i rescue nil}"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .form-group.timeZoneP-l-0
+              %label.col-lg-4.control-label{:for => "_Event Start Date"}="#{marketing_app.present? ? "Start Date" : "Start Date *"}"
+              = f.custom_text_field_date :start_event_date, "Event Start Date", :id =>  @event.is_parent? ? "date-start" : "", :value => f.object.start_event_date.present? ? f.object.start_event_date.strftime('%d/%m/%Y') : '', :readonly => @event.is_parent? ? false : true
+              .col-lg-3.timeDropdown
+                .timeTab
+                  = f.custom_text_field_date :start_time_hour, " ", :class => @event.is_parent? ? "hours inputs is-focused" : "inputs is-focused", :placeholder => 'HH ', :value => "#{([345, 360, 367, 173, 165, 168, 364, 365,368,333].include? f.object.id) ? (f.object.start_event_time.strftime('%l').strip.rjust(2, '0') rescue nil) : (get_hour_minute_second_ampm(f.object.start_event_time, 'hour'))}", :col => '2',:maxlength => "2", :readonly => @event.is_parent? ? false : true
+                  
+                  = f.custom_text_field_date :start_time_minute, " ", :class =>  @event.is_parent? ? "minutes inputs is-focused" : "inputs is-focused", :placeholder => 'MM ', :value => "#{([345, 360, 367, 173, 165, 168, 364, 365, 368, 333].include? f.object.id) ? (f.object.start_event_time.strftime('%M').strip.rjust(2, '0') rescue nil) : (get_hour_minute_second_ampm(f.object.start_event_time, 'minute'))}", :col => '2',:maxlength => "2", :readonly => @event.is_parent? ? false : true
+                  = f.custom_text_field_date :start_time_am, " ", :class =>  @event.is_parent? ? "ampm inputs is-focused" : "inputs is-focused", :placeholder => 'AM/PM', :value => "#{([345, 360, 367, 173, 165, 168, 364, 365, 368, 333].include? f.object.id) ? (f.object.start_event_time.strftime('%p').strip.rjust(2, '0') rescue nil) : (get_hour_minute_second_ampm(f.object.start_event_time, 'ampm'))}", :col => '3',:maxlength => "2", :readonly => @event.is_parent? ? false : true      
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .form-group.timeZoneP-l-0
+              %label.col-lg-4.control-label{:for => "_Event End Date"}="#{marketing_app.present? ? "End Date" : "End Date *"}"
+              = f.custom_text_field_date :end_event_date, "Event End Date", :id =>  @event.is_parent? ? "date-end" : "", :value => f.object.end_event_date.present? ? f.object.end_event_date.strftime('%d/%m/%Y') : '', :readonly => @event.is_parent? ? false : true
+              .col-lg-3.timeDropdown
+                .timeTab  
+                  = f.custom_text_field_date :end_time_hour, " ", :class =>  @event.is_parent? ? "hours inputs" : "inputs", :placeholder => 'HH ', :value => "#{([345, 360, 367, 173, 165, 168, 364, 365, 368, 333].include? f.object.id) ? (f.object.end_event_time.strftime('%l').strip.rjust(2, '0') rescue nil) : (get_hour_minute_second_ampm(f.object.end_event_time, 'hour'))}", :col => '2',:maxlength => "2", :readonly => @event.is_parent? ? false : true
+                  = f.custom_text_field_date :end_time_minute, " ", :class =>  @event.is_parent? ? "minutes inputs" : "inputs", :placeholder => 'MM ', :value => "#{([345, 360, 367, 173, 165, 168, 364, 365, 368, 333].include? f.object.id) ? (f.object.end_event_time.strftime('%M').strip.rjust(2, '0') rescue nil) : (get_hour_minute_second_ampm(f.object.end_event_time, 'minute'))}", :col => '2',:maxlength => "2", :readonly => @event.is_parent? ? false : true
+                  = f.custom_text_field_date :end_time_am, " ", :class =>  @event.is_parent? ? "ampm inputs" : "inputs", :placeholder => 'AM/PM', :value => "#{([345, 360, 367, 173, 165, 168, 364, 365, 368, 333].include? f.object.id) ? (f.object.end_event_time.strftime('%p').strip.rjust(2, '0') rescue nil) : (get_hour_minute_second_ampm(f.object.end_event_time, 'ampm'))}", :col => '3',:maxlength => "2", :readonly => @event.is_parent? ? false : true
+        = f.custom_text_field :cities, "City *", :readonly => @event.is_parent? ? false : true
+        - if @event.is_parent?
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8  
+            .form-group.set_highlight_select
+              %label.col-lg-4.control-label.ml-color--shades-white
+                Country *
+              .col-lg-7
+                = f.select :event, :country_name, Event::COUNTRIES,{:prompt => "Please select the country" ,:selected => (@event.country_name)}, {:class =>  'select2-single form-control'}
+                - if @event.errors.present? and @event.errors[:country_name].present?
+                  .field_with_errors
+                    %span.errorMessage{:for => "event_country_name"} This field is required.
+        - else
+          = f.custom_text_field :country_name, "Country *", :readonly => true
+        - if @event.is_parent?
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8  
+            .form-group.set_highlight_select
+              %label.col-lg-4.control-label.ml-color--shades-white
+                Time Zone *
+              .col-lg-7
+                - if @event.start_event_time.present?
+                  - @zones = ActiveSupport::TimeZone.all.uniq{|e| ["GMT#{e.at(@event.start_event_time).formatted_offset}"]}
+                  = f.select :event, :timezone, @zones.map{|e| ["GMT#{e.at(@event.start_event_time).formatted_offset}", e.name]}.sort,{:prompt => "Please select the Time Zone" ,:selected => (@event.timezone)}, {:class => 'select2-single form-control'}
+                  - if @event.errors.present? and @event.errors[:timezone].present?
+                    .field_with_errors
+                      %span.errorMessage{:for => "event_timezone"} This field is required.  
+                - else
+                  - @zones = ActiveSupport::TimeZone.all.uniq{|e| ["GMT#{e.now.formatted_offset}"]}
+                  = f.select :event, :timezone, @zones.map{|e| ["GMT#{e.now.formatted_offset}", e.name]}.sort,{:prompt => "Please select the Time Zone" ,:selected => (@event.timezone)}, {:class => 'select2-single form-control'}
+                  - if @event.errors.present? and @event.errors[:timezone].present?
+                    .field_with_errors
+                      %span.errorMessage{:for => "event_timezone"} This field is required. 
+        - else
+          = f.custom_text_field :timezone, "Time Zone *", :readonly => true
+        = f.custom_text_field :pax, "Nbr. of people", :readonly => @event.is_parent? ? false : true
+        = f.custom_text_field :venues, "Venue", :readonly => @event.is_parent? ? false : true
+        = f.custom_text_field :google_map_link, "Google Map", :readonly => @event.is_parent? ? false : true
+        = f.custom_text_field :microsite_map, "Map(Provide Embed Google Link only for microsite)"
+        - if @event.is_parent?
+          = f.custom_text_area_field :remarks, "Remarks"
+        - else
+          = f.custom_text_field :remarks, "Remarks", :readonly => true
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .form-group.timeZoneP-l-0
+              %label.col-lg-4.control-label{:for => "_Event Expiry Date"}="Expiry Date"
+              = f.custom_text_field_for_date :expiry_date, "Event Start Date", :id =>  @event.is_parent? ? "date-start" : "", :value => f.object.expiry_date.present? ? f.object.expiry_date.strftime('%d/%m/%Y') : '', :readonly => @event.is_parent? ? false : true      
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-10
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Registration type? *
+            .col-lg-3.p-h-12   
+              - er = f.object.errors.messages[:event_type_for_registration].join(',') rescue nil
+              - f.object.errors.messages[:event_type_for_registration].clear if f.object.errors.messages[:event_type_for_registration].present?
+              = f.custom_radio_button_menu :event_type_for_registration, "open","Open", :id => @event.is_parent? ?  "event_type_open" : "", :default_checked => (f.object.event_type_for_registration == 'open') ? 'checked' : '', :readonly => @event.is_parent? ? false : true
+              = f.custom_radio_button_menu :event_type_for_registration, "close","Close", :id =>  @event.is_parent? ? "event_type_close" : "", :default_checked => (f.object.event_type_for_registration == 'close') ? 'checked' : '', :readonly => @event.is_parent? ? false : true
+              .field_with_errors
+                .span{:class => "errorMessage"}
+                  = er
+        = f.hidden_field :marketing_app, :value => marketing_app if (params[:marketing_app].present? or @event.marketing_app.present?)                      
+    - elsif params[:copy_event].present? and params[:copy_event] == "true"
+      = render :partial => 'module_listing'#, :locals => {:page => 'New Event'}
+    .fixed-activon-btn-new
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+
+:javascript
+  $(document).on('change', '#add_event_features', function(){
+    var event_name = $(this).find("option:selected").text();
+    var parent_event_id = $(this).val();
+    $.ajax({
+      type: "GET",
+      url: "/admin/clients/#{params[:client_id]}/eventfeatures_contents",
+      data: {event_name, parent_event_id}
+    });
+  });
+- if params[:action] == 'edit' or params[:action] == 'update' or @event.errors[:parent_event_id].present? or @event.errors[:copy_content].present?
+  :javascript
+    $('.select-eventDiv').css('display','block');
+    $('.select-eventDiv').next().css('display','block'); 

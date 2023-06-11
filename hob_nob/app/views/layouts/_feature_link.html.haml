@@ -1,0 +1,7 @@
+- hsh = {'speakers' => 'mic', 'attendees' => 'verified_user', 'invitees' => 'email', 'agendas' => 'view_agenda', 'polls' => 'build', 'conversations' => 'eject', 'faqs' => 'error_outline', 'images' => 'perm_media', 'sponsors' => 'perm_media', 'awards' => 'perm_media', 'qnas' => 'question_answer','feedbacks' => 'comment', 'e_kits' => 'verified_user','contacts' => 'comment', 'event_highlights' => 'mic', 'abouts' => 'mic', 'notifications' => 'add_alert', 'emergency_exits' => 'mic', 'event_features' => 'perm_media', 'highlight_images' => 'build'}
+%li{:class => (params["controller"] == "admin/#{feature}" ? " active" : "")}
+  - if feature != "winners"
+    = link_to get_feature_url(feature, params), :class=>"mdl-navigation__link"  do
+      %i.mdl-color-text--blue-grey-400.material-icons
+        = hsh[feature]
+      = "Manage #{Client.display_hsh[feature]}"

@@ -1,0 +1,33 @@
+%section.setting
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.m-b-20
+    %h4.heading-borderCard.m-l-10
+      Settings / Notifications
+  .row
+    - constant_features = {"themes" => "themes.png","event_features"=>"menu.png","notifications" => "notification.png", 'percent_completed' => 'percentage.png'}
+    - constant_features.each do |feature|
+      - if params[:event_id].present?
+        - @event = Event.get_event_by_id(params[:event_id].to_i)
+        = render :partial => "constant_feature_card", :locals => {:feature => feature}
+%section.content
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.m-b-20
+    %h4.heading-borderCard.m-l-10
+      Content
+    - features = @event.event_features.pluck(:name)
+    - features += ['contacts', 'emergency_exit', 'event_highlights', 'highlight_images']
+    - features.each do |feature|
+      - feature = 'images' if feature == 'galleries'
+      - condition = @event.association(feature).count <= 0 if !(feature == 'abouts' or feature == 'notes' or feature == 'event_highlights') and feature != 'emergency_exit'
+
+      - condition, feature = @event.association(feature).blank?, 'emergency_exits' if feature == 'emergency_exit'
+      - if (condition or (feature == 'abouts' and @event.about.blank? or ((feature == 'event_highlights' and @event.description.blank?) or (feature == 'event_highlights' and @event.summary.blank?) ))) and ['qnas', 'conversations'].exclude? feature
+        .mdl-typography--text-center.BlnkTxt.p-t-10
+          = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => feature, :url => "/admin/events/#{params[:event_id]}/#{feature}/new", :msg => 'test'}
+          - break
+  .row
+    - constant_features = {"event_highlights"=>"event_highlights.png","highlight_images"=>"gallery.png","contacts"=>"contact_us.png","emergency_exits"=>"emergency_exit.png"}
+    - constant_features.each do |feature|
+      - if params[:event_id].present?
+        - @event = Event.get_event_by_id(params[:event_id].to_i)
+        = render :partial => "constant_feature_card", :locals => {:feature => feature}
+
+  / - constant_features = ['themes','event_features','event_highlights', 'highlight_images', 'abouts', 'contacts', 'emergency_exits', 'notifications']

@@ -1,0 +1,27 @@
+- @images.each_with_index do |image,index|
+  - if params[:from] == "microsites" 
+    .mdl-cell--2-col.mdl-cell--4-col-tablet.imggallery
+      = link_to admin_event_image_path(:event_id => image.imageable_id, :id => image.id, :from => "microsites"), :method => 'delete',data: { confirm: 'Are you sure?' }, :class => "galleryImg" do
+        %span.galleryclose
+          X
+      = image_tag(image.image_url(:small), :size => "200x200")
+      .orderseq
+        - if index != 0
+          %span.fleft
+            = link_to "",admin_event_sequence_path(:event_id => image.imageable_id, :id => image.id, :seq_type => "up", :feature_type => "images", :from => "microsites"),:class => "gallerydownarrow", :method => "put", :remote => true
+        - if image.sequence.to_i != 0 and (@images.length - 1) != index
+          %span
+            = link_to "",admin_event_sequence_path(:event_id => image.imageable_id, :id => image.id, :type => "down", :feature_type => "images", :from => "microsites"),:class => "galleryuparrow", :method => "put", :remote => true
+  - else @event.is_parent?
+    .mdl-cell--2-col.mdl-cell--4-col-tablet.imggallery
+      = link_to admin_event_image_path(:event_id => image.imageable_id, :id => image.id), :method => 'delete',data: { confirm: 'Are you sure?' }, :class => "galleryImg" do
+        %span.galleryclose
+          X
+      = image_tag(image.image_url(:small), :size => "200x200")
+      .orderseq
+        - if index != 0
+          %span.fleft
+            = link_to "",admin_event_sequence_path(:event_id => image.imageable_id, :id => image.id, :seq_type => "up", :feature_type => "images"),:class => "gallerydownarrow", :method => "put", :remote => true
+        - if image.sequence.to_i != 0 and (@images.length - 1) != index
+          %span
+            = link_to "",admin_event_sequence_path(:event_id => image.imageable_id, :id => image.id, :type => "down", :feature_type => "images"),:class => "galleryuparrow", :method => "put", :remote => true

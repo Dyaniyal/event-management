@@ -1,0 +1,338 @@
+- page = (params[:controller].split("/").second).singularize
+- case page
+  - when 'client'
+    - if current_user.has_role? :licensee_admin
+      = link_to new_admin_client_path, :class => "rightBtn hvr-sweep-to-right" do
+        New Client
+  - when 'event'
+    - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin
+      - if params[:feature] == "mobile_application" and params[:mobile_application_id].present?
+        - url = new_admin_client_event_path(:client_id => @client.id, :mobile_application_id => params[:mobile_application_id]) 
+      - else   
+        - url = new_admin_client_event_path(:client_id => @client.id)
+      - if !(current_user.has_role? :moderator)
+        = link_to url,:class => "rightBtn hvr-sweep-to-right" do
+          New Event
+  - when 'event_group'
+    - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin
+      = link_to new_admin_client_event_group_path(:client_id => @client.id, :type => "general"),:class => "rightBtn hvr-sweep-to-right" do
+        New Event Group
+  - when 'about'
+    - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin
+      =link_to new_admin_event_about_path(:event_id => @event.id),:class=>"rightBtn hvr-sweep-to-right" do
+        New About 
+  - when 'event_highlight'
+    - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin
+      =link_to new_admin_event_event_highlight_path(:event_id => @event.id),:class=>"rightBtn hvr-sweep-to-right" do
+        New Highlight 
+  - when 'mobile_application'
+    - if !(current_user.has_any_role? :moderator, :db_manager)
+      = link_to admin_client_events_path(:client_id => @client.id, :feature => 'mobile_applications'), :class => "rightBtn hvr-sweep-to-right" do
+        New Mobile Application 
+  - when 'invitee_structure'
+    - if @event.invitee_structures.present?
+      = link_to admin_event_imports_path(event_id: @event.id), :class => "rightBtn hvr-sweep-to-right" do
+        Excel Imports
+      = link_to admin_event_log_changes_path(:event_id => @event.id, :from => "db"), :class => "rightBtn hvr-sweep-to-right" do
+        Delete Logs
+      = link_to edit_admin_event_invitee_structure_path(:event_id => @event.id, :id => @invitee_structure.id, :setting => "true") , :class => "rightBtn hvr-sweep-to-right" do
+        DB Settings
+      - if @event.invitee_structures.first.invitee_datum.present?
+        = link_to "javascript:void(0)", :class => "rightBtn hvr-sweep-to-right", data: { confirm: 'Please delete or archive the data first before modifying the DB structure.' } do
+          Edit DB Structure
+      -else
+        = link_to edit_admin_event_invitee_structure_path(:event_id => @event.id, :id => @invitee_structure.id), :class => "rightBtn hvr-sweep-to-right" do
+          Edit DB Structure
+      = link_to new_admin_event_grouping_path(:event_id => @event.id), :class => "rightBtn hvr-sweep-to-right" do
+        Create Group
+      / = link_to admin_event_invitee_datas_path(:event_id => @event.id,:stats => true), :class => "rightBtn hvr-sweep-to-right" do
+      /   Stats
+    - else
+      = link_to new_admin_event_invitee_structure_path(:event_id => @event.id), :class => "rightBtn hvr-sweep-to-right" do
+        New Database
+  - when 'theme'
+    = link_to new_admin_theme_path ,:class => "rightBtn hvr-sweep-to-right" do
+      New Theme
+  - when 'speaker'
+    - if params[:from] == "microsites"
+      = link_to new_admin_event_speaker_path(:event_id => @event.id, :from => "microsites"),:class => "rightBtn hvr-sweep-to-right" do
+        New Speaker
+    - elsif @event.present? and @event.is_parent? and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])) #!(current_user.has_role? :db_manager)
+      = link_to new_admin_event_speaker_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Speaker
+  - when 'invitee_group'
+    - if @event.present? and (current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))#(current_user.has_role? :db_manager)
+      = link_to new_admin_event_invitee_group_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Invitee Group
+    - if @event.present? and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))#!(current_user.has_role? :db_manager)
+      = link_to new_admin_event_notification_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Notification
+  - when 'attendee'
+    = link_to new_admin_event_attendee_path(:event_id => @event.id) ,:class => " rightBtn hvr-sweep-to-right" do
+      New Attendee
+  - when 'agenda'
+    - if @event.present? and @event.is_parent? and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])) and params[:from] == "microsites"#!(current_user.has_role? :db_manager)
+      = link_to new_admin_event_agenda_path(:event_id => @event.id, :from => "microsites"),:class => "rightBtn hvr-sweep-to-right" do
+        New Session
+    - else @event.present? and @event.is_parent? and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+      = link_to new_admin_event_agenda_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Session
+      = link_to new_admin_event_event_feature_path(:event_id => @event.id, :feature => "my_calender"),:class => "rightBtn hvr-sweep-to-right" do
+        Calendar Settings  
+  - when 'invitee'
+    - if @event.present? and @event.is_parent?
+      = link_to admin_event_invitee_groups_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        Invitee Groups
+      = link_to new_admin_event_invitee_path(:event_id => @event.id) ,:class => "rightBtn hvr-sweep-to-right" do
+        New Invitee
+      = link_to new_admin_event_manage_invitee_field_path(:event_id => @event.id) ,:class => "rightBtn hvr-sweep-to-right" do
+        Manage Invitee Fields
+      = link_to 'javascript:void(0);' ,:class => "rightBtn hvr-sweep-to-right send-password-confirm" do
+        Send Password To All
+  - when 'user'
+    = link_to 'javascript:void(0);',:class => "rightBtn hvr-sweep-to-right", :id => 'add_user_popup' do
+      New User
+    = render :partial => '/admin/users/add_user_with_role', :locals => {:page_id => 'add_user_popup'}
+  - when 'licensee'
+    = link_to new_admin_licensee_path ,:class => "rightBtn hvr-sweep-to-right" do
+      New Licensee
+  - when 'conversation'
+    - if @event.conversation_auto_approve == "true" and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))#(!current_user.has_role? :db_manager)
+      = link_to admin_event_conversations_path(:event_id => @event.id, :auto_approve => "false", :feature => "Conversation"),:class => "rightBtn hvr-sweep-to-right" do
+        Disable Auto Approve
+    -elsif @event.conversation_auto_approve == "false" and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])) #(!current_user.has_role? :db_manager)
+      = link_to admin_event_conversations_path(:event_id => @event.id, :auto_approve => "true", :feature => "Conversation"),:class => "rightBtn hvr-sweep-to-right" do
+        Enable Auto Approve
+  - when 'telecaller'
+    - if @event.invitee_structures.present?
+      = link_to new_admin_event_telecaller_path(:event_id => params[:event_id]) ,:class => "rightBtn hvr-sweep-to-right" do
+        Add Telecaller
+    - if @event.invitee_structures.present?
+      = link_to new_admin_event_telecaller_accessible_column_path(:event_id => params[:event_id]) ,:class => "rightBtn hvr-sweep-to-right" do
+        Manage Data Access
+    - if (session[:current_user_role] == "response_manager" or session[:current_user_role] == "licensee_admin" or session[:current_user_role] == "client_admin" or session[:current_user_role] == "event_admin") 
+      = link_to admin_event_consent_questions_path(:event_id => params[:event_id]) ,:class => "rightBtn hvr-sweep-to-right" do
+        Consent Questions
+    - if session[:current_user_role] == "response_manager"
+      = link_to attended_records_admin_event_telecallers_path(@event), class: "rightBtn hvr-sweep-to-right" do
+        Database Records
+  - when 'my_travel'
+    = link_to new_admin_event_my_travel_path(:event_id => params[:event_id]) ,:class => "rightBtn hvr-sweep-to-right" do
+      New My Travel
+
+    / = link_to admin_event_manage_feature_status_index_path(:event_id => @event.id, :status => "approved", :feature => "Conversation"),:class => "rightBtn hvr-sweep-to-right" do
+    /   Approve All
+    / = link_to admin_event_manage_feature_status_index_path(:event_id => @event.id, :status => "rejected", :feature => "Conversation"),:class => "rightBtn hvr-sweep-to-right" do
+    /   Reject All
+  - when 'faq'
+    -if @event.present? and @event.is_parent?
+      / - if params[:from] == "microsites"
+      /   = link_to new_admin_event_microsite_microsite_feature_path(:microsite_id => @event.microsite.id, :type => "faq_setting"),:class => "rightBtn hvr-sweep-to-right" do
+      /     FAQ Settings
+      / - else
+      /   = link_to new_admin_event_event_feature_path(:event_id => @event.id, :type => "faq_setting"),:class => "rightBtn hvr-sweep-to-right" do
+      /     FAQ Setting
+      - if params[:from] == "microsites"    
+        = link_to new_admin_event_faq_path(:event_id => @event.id, :from => "microsites"),:class => "rightBtn hvr-sweep-to-right" do
+          New FAQ
+      - else
+        = link_to new_admin_event_faq_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+          New FAQ
+  - when 'feedback' 
+    - if (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])) and @event.present? and @event.is_parent?#!(current_user.has_role? :db_manager)
+      / = link_to new_admin_event_feedback_form_feedback_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+      - if params[:feedback_form_id].present? 
+        = link_to new_admin_event_feedback_path(:event_id => @event.id,:feedback_form_id=>params[:feedback_form_id]),:class => "rightBtn hvr-sweep-to-right" do      
+          New Question
+        = link_to admin_event_feedback_forms_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do      
+          Back to Feedback form         
+      - else 
+        = link_to new_admin_event_feedback_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do      
+          New Question
+        = link_to admin_event_feedback_forms_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do      
+          Back to Feedback form          
+  - when 'feedback_form'  
+    - if @event.present? and @event.is_parent?
+      = link_to new_admin_event_feedback_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Feedback Form
+  - when 'image'   
+    - if @event.present? and @event.is_parent?
+      - if params[:from] == "microsites"
+        = link_to new_admin_event_microsite_microsite_feature_path(:microsite_id => @event.microsite.id, :type => "image_setting"),:class => "rightBtn hvr-sweep-to-right" do
+          Image Settings
+      - else
+        = link_to new_admin_event_event_feature_path(:event_id => @event.id, :type => "image_setting"),:class => "rightBtn hvr-sweep-to-right" do
+          Image Settings 
+      - if @event.present?
+        = link_to  new_admin_event_image_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+          New Image 
+  - when 'folder'
+    - if @event.present? and @event.is_parent?
+      - if params[:action] == "index"
+        - if params[:from] == "microsites"
+          = link_to new_admin_event_microsite_microsite_feature_path(:microsite_id => @event.microsite.id, :type => "image_setting"),:class => "rightBtn hvr-sweep-to-right" do
+            Image Settings   
+        - else   
+          = link_to new_admin_event_event_feature_path(:event_id => @event.id, :type => "image_setting"),:class => "rightBtn hvr-sweep-to-right" do
+            Image Settings 
+      - if params[:action] == "index"
+        - if params[:from] == "microsites"
+          = link_to new_admin_event_folder_path(:event_id => @event.id, :from => "microsites"),:class => "rightBtn hvr-sweep-to-right" do
+            New Folder
+        - else
+          = link_to new_admin_event_folder_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+            New Folder
+      - if params[:action] == "show"
+        - if params[:from] == "microsites"
+          = link_to new_admin_event_image_path(:event_id => @event.id ,:folder_id => @folder.id, :from => "microsites"),:class => "rightBtn hvr-sweep-to-right" do
+            New Image 
+        - else 
+          = link_to new_admin_event_image_path(:event_id => @event.id ,:folder_id => @folder.id),:class => "rightBtn hvr-sweep-to-right" do
+            New Image 
+  - when 'highlight_image'
+    - if @event.present?
+      = link_to  new_admin_event_highlight_image_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Highlight Image        
+  - when 'poll'
+    - if @event.present? and @event.is_parent? and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])) #!(current_user.has_role? :db_manager)
+      = link_to new_admin_event_poll_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Question
+  - when 'sponsor'
+    - if @event.present? and @event.is_parent?
+      = link_to new_admin_event_sponsor_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Sponsor
+  - when 'award'
+    - if @event.present? and @event.is_parent?
+      = link_to new_admin_event_award_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Award
+  - when 'emergency_exit'
+    - if @event.present? and @event.is_parent? and @event.emergency_exit.nil?
+      = link_to new_admin_event_emergency_exit_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Emergency Exit
+
+  - when 'winner'
+    - if @event.present? and @event.is_parent?
+      = link_to new_admin_event_award_winner_path(:event_id => @event.id,:award_id => @award.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Winner
+  - when 'e_kit'
+    - if @event.present? and @event.is_parent?
+      = link_to new_admin_event_e_kit_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New e-KIT 
+  - when 'contact'
+    - if @event.present? and @event.is_parent? and params[:from] == "microsites"
+      = link_to new_admin_event_contact_path(:event_id => @event.id, :from => "microsites"),:class => "rightBtn hvr-sweep-to-right" do
+        New Contact Us   
+    - else @event.present? and @event.is_parent?
+      = link_to new_admin_event_contact_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Contact Us          
+  - when 'notification'
+    - if @event.present? and @event.is_parent?
+      -if (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])) #!(current_user.has_role? :db_manager)
+        = link_to new_admin_event_notification_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+          New Notification
+  - when 'qna'
+    - if !(current_user.has_any_role? :moderator, :db_manager)
+      = link_to admin_event_panels_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        Manage Panel
+    - if @event.present? and @event.is_parent? and (current_user.has_role? :moderator)
+      = link_to new_admin_event_qna_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        Add Question
+    - if @event.present? and @event.is_parent?
+      -url = (@event.present?) ? (@event.qna_settings.present?) ? edit_admin_event_qna_setting_path(:event_id => @event.id,:id => @event.qna_settings.first.id) : new_admin_event_qna_setting_path(:event_id => @event.id) : new_admin_event_qna_setting_path(:event_id => @event.id)
+      = link_to url,:class => "rightBtn hvr-sweep-to-right" do
+        Manage Settings
+    - if @event.present? and @event.is_parent? and @event.qna_auto_approve == "true" and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])) #(!current_user.has_role? :db_manager)
+      = link_to admin_event_qnas_path(:event_id => @event.id, :auto_approve => "false", :feature => "QNA"),:class => "rightBtn hvr-sweep-to-right" do
+        Disable Auto Approve
+    -elsif @event.present? and @event.is_parent? and @event.qna_auto_approve == "false" and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])) #(!current_user.has_role? :db_manager)
+      = link_to admin_event_qnas_path(:event_id => @event.id, :auto_approve => "true", :feature => "QNA"),:class => "rightBtn hvr-sweep-to-right" do
+        Enable Auto Approve
+  - when 'panel'
+    - if @event.present? and @event.is_parent?
+      = link_to new_admin_event_panel_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Panel
+  - when 'grouping'
+    = link_to new_admin_event_grouping_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+      New Grouping
+  - when 'quiz'
+    -if @event.present? and @event.is_parent? and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])) #!(current_user.has_role? :db_manager)
+      = link_to new_admin_event_quiz_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Quiz    
+  - when 'registration'
+    - if @event.present? and @event.registrations.count == 0
+      = link_to new_admin_event_registration_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Registration
+    - else
+      = link_to edit_admin_event_registration_path(:event_id => @event.id, :id =>@event.registrations.first.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Registration
+  - when 'exhibitor'
+    - if @event.present? and @event.is_parent?
+      = link_to new_admin_event_exhibitor_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Exhibitor
+  - when 'registration_setting'
+    - if @event.present? and @registration_settings.present? and @registration_settings.first.registration == 'hobnob'
+      = link_to admin_event_user_registrations_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        Registered Users
+  - when 'campaign'
+    - if @event.present? and @event.is_parent?
+      = link_to new_admin_event_campaign_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        New Campaign
+      = link_to admin_unsubscribes_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        Unsubscribe List
+  - when 'edm'
+    - if params[:email_setting].blank? and (@event.present? and @event.is_parent?)
+      = link_to new_admin_event_campaign_edm_path(:event_id => @event.id,:campaign_id => @campaign.id),:class => "rightBtn hvr-sweep-to-right" do
+        New eDM
+  - when 'marketing_app'
+    -if (!current_user.has_role_without_event("db_manager", params[:client_id],session[:current_user_role]))
+      = link_to new_admin_client_event_path(:client_id => params[:client_id],:marketing_app => true),:class => "rightBtn hvr-sweep-to-right" do
+        New Hub Space
+  - when 'icon_library'
+    = link_to new_admin_icon_library_path,:class => "rightBtn hvr-sweep-to-right" do
+      New Icon Library 
+  - when 'user_registration'
+    - if !(current_user.has_role? :client_response_manager)
+      - if @event.present? and @event.is_parent?
+        = link_to admin_event_campaign_edms_path(:event_id => @event.id, :campaign_id => 0, :email_setting => true),:class => "rightBtn hvr-sweep-to-right" do
+          Email Setting
+      = link_to new_admin_event_registration_setting_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+        Registration Settings
+      - if @event.registration_settings.present?
+        = link_to new_admin_event_registration_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+          Registration form
+      - if @event.registration_settings.present? and @event.registrations.present?
+        = link_to new_admin_event_registration_look_and_feel_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+          Registration Look & feel
+      = link_to admin_event_log_changes_path(:event_id => @event.id, :from => "user_registration"), :class => "rightBtn hvr-sweep-to-right" do
+        Delete Logs
+  - when 'onsite_registration'
+    - if !(current_user.has_role? :client_response_manager)
+      = link_to new_admin_event_onsite_accessible_column_path(:event_id => params[:event_id]) ,:class => "rightBtn hvr-sweep-to-right" do
+        Select Visible Fields
+      - if @badge_pdf.present?
+        = link_to edit_admin_event_badge_pdf_path(:event_id => @event.id, :id =>@badge_pdf.id),:class => "rightBtn hvr-sweep-to-right" do
+          Settings
+      - else
+        = link_to new_admin_event_badge_pdf_path(:event_id => @event.id),:class => "rightBtn hvr-sweep-to-right" do
+          Settings 
+  - when 'log_change'
+    - if params[:from] != "db" and params[:invitee].blank? and params[:from] != "user_registration"
+      = link_to admin_clients_path(:feature => "log_changes"),:class => "rightBtn hvr-sweep-to-right" do
+        Change Client
+      = link_to 'javascript:void(0);',:class => "rightBtn hvr-sweep-to-right", :id => 'add_user_select_popup' do
+        Filter by User
+      = render :partial => '/admin/log_changes/add_user_popup', :locals => {:page_id => 'add_user_select_popup'}
+      / =# link_to admin_log_changes_path ,:class => "rightBtn hvr-sweep-to-right" do
+      #SelectAll
+  - when 'consent_question'     
+    - if @event.consent_questions.count < 10
+      = link_to new_admin_event_consent_question_path(:event_id => params[:event_id]),:class => "rightBtn hvr-sweep-to-right" do
+        New Consent Question
+  - when 'mobile_consent_question'
+    - if @mobile_application.mobile_consent_questions.count < 10
+      = link_to new_admin_event_mobile_application_mobile_consent_question_path(:event_id => params[:event_id], :mobile_application_id => params[:mobile_application_id]),:class => "rightBtn hvr-sweep-to-right" do
+        New Consent Question        
+    = link_to new_admin_event_mobile_application_consent_question_look_and_feel_path(:event_id => params[:event_id], :mobile_application_id => params[:mobile_application_id]),:class => "rightBtn hvr-sweep-to-right" do
+      Look And Feels               
+  - when 'font'
+    = link_to 'Add New Font', new_admin_client_font_path, class: 'rightBtn hvr-sweep-to-right', id: 'add_font'

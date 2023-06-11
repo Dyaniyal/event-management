@@ -1,0 +1,7 @@
+- if params[:option] == "partial"
+  = render :partial => 'go_to_wall_polls'
+- elsif params[:type] != "public_wall" and not params[:wall_type].present?
+  = render :partial => 'admin/layouts/index_header', :locals => {:objs => @polls}
+  = render :partial => 'admin/layouts/more_links'
+- else
+  = render :partial => 'poll_wall', :locals => {:objs => @polls}

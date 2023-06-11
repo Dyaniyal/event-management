@@ -1,0 +1,20 @@
+-if !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("notifications")  
+- else
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      %th Name
+      %th Url 
+    %tr
+      %td.font16
+        Manual search / Walkin
+        %td.font16
+          -@base_url = "#{APP_URL.gsub('http','https')}"
+          = link_to "#{@base_url}/admin/events/#{@event.id}/invitee_searches", admin_event_invitee_searches_path(:event_id => @event.id),:target => "_blank"
+    %tr
+      %td.font16
+        Qr code scanner
+      %td.font16
+        = link_to "#{@base_url}/admin/events/#{@event.id}/qr_code_scanners", admin_event_qr_code_scanners_path(:event_id => @event.id,:page=>"scanning",:qr_code_preview=>"") ,:target => "_blank"       
+  =# will_paginate objs

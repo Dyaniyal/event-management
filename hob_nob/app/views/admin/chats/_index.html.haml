@@ -1,0 +1,17 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "chats", :url => "/admin/events/#{params[:event_id]}/chats/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("chats")
+- else 
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      %th Type
+      %th Sender
+      %th Members
+    - objs.each do |chat|
+      %tr
+        %td.font16= chat.chat_type
+        %td.font16= chat.get_sender_name(chat.sender_id)
+        %td.font16= chat.get_member_name(chat.member_ids)

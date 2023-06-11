@@ -1,0 +1,12 @@
+.form-group
+  %label.col-lg-4.control-label.ml-color--shades-white
+    Select Screen
+  .col-lg-7 
+    - data = data.collect{|p| [ p.title, p.id ]} if params[:feature_name] == "Agenda"
+    - data = data.collect{|p| [ p.speaker_name, p.id ]} if params[:feature_name] == "Speakers"
+    - data = data.collect{|p| [ p.question, p.id ]} if params[:feature_name] == "Polls"
+    - data = data.collect{|p| [ p.question, p.id ]} if params[:feature_name] == "Quiz"
+    - data = data.collect{|p| [ p.name, p.id ]} if params[:feature_name] == "E-Kit"
+    - data = data.collect{|p| [ p.title, p.id ]} if params[:feature_name] == "Feedback"
+    %i.arrow.single
+    = select_tag "notification[actionable_id]", options_for_select(data), :prompt => 'Select Screen', :class =>"select2-single form-control"

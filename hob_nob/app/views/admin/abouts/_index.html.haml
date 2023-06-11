@@ -1,0 +1,18 @@
+- if objs.about.nil? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => 'abouts', :url => "/admin/events/#{params[:event_id]}/abouts/new"} 
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("abouts")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    - if true #objs.about.present?
+      %tr
+        %th About
+        %th
+        %tr
+          %td.font16= objs.about rescue nil 
+          %td.IconDrp
+            = more_vert_button(objs.id)
+            %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{objs.id}"}
+              = edit_link(params, objs.id)

@@ -1,0 +1,29 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "themes", :url => "/admin/themes/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("themes")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16{"template-pagination" => "custom/pager"}
+    %tr
+      %th Theme Name
+      %th Created By
+      %th Admin Theme
+      %th
+      - objs.each do |f|
+        %tr
+          %td.font16= link_to "#{f.name.capitalize}", edit_admin_theme_path(:id=>f.id)
+          %td.font16
+            = f.created_user.first_name rescue nil
+          %td.font16
+            = f.admin_theme ? true : false
+          %td.IconDrp
+            = more_vert_button(f.id)
+            %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{f.id}"}
+              - if f.licensee_id.present? or current_user.is_super_admin?
+                = link_to edit_admin_theme_path(:id=>f.id),:class => "mdl-menu__item" do 
+                  Edit
+              = link_to new_admin_theme_path(:id=>f.id),:class => "mdl-menu__item" do 
+                Copy
+  = will_paginate objs

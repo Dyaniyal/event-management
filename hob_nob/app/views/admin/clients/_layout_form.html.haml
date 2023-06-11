@@ -1,0 +1,14 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section.menus
+    .mdl-color--light-blue-800.eventDetailSection.relative.clear
+      .p-20.height150
+        .eventLogoDiv
+          = image_tag(@event.logo_url(:large)) rescue nil
+        .displayInlineBlock.m-l-20
+          %h3.mdl-color-text--white.m-t-20.m-b-5 
+            = page
+      .mdl-cell--13-col.mdl-cell--13-col-tablet.mdl-cell--13-col-phone
+        .p-40.ml-card-holder.mdl-card
+          .mdl-card
+            .p-b-40.p-r-40.p-l-40
+              = render :partial => 'form'

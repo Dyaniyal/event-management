@@ -1,0 +1,37 @@
+- if @event.present? and @event.parent_id.blank?
+  .row
+    .CreateDashLayout
+      %h2
+        - if params[:controller] == "admin/events" and params[:feature] == "mobile_application" and params[:mobile_application_id].present? 
+          All Event Added in Mobile App, create New to Add
+        - elsif params[:controller] == "admin/campaigns" and params[:action] == "index"
+          Create your first Campaign
+        - elsif params[:controller] == "admin/microsite_menus" and params[:action] == "index"
+          Create Your First Microsite Feature
+        - else
+          Create Your first
+          %span.AppName
+            -if title == "registation_setting"
+              = (@event.present? and @event.registration_settings.present? ? (@event.registrations.present? ? (@event.registration_look_and_feels.present? ? "User Registration" : Client::No_Data_Hash["registration_look_and_feels"]) : Client::No_Data_Hash["registrations"]) : Client::No_Data_Hash[title])
+              - redirect_name = (@event.present? and @event.registration_settings.present? ? (@event.registrations.present? ? (@event.registration_look_and_feels.present? ? "user_registrations" : "registration_look_and_feels") : "registrations") : "registration_settings")
+              - if redirect_name.present? and redirect_name == "user_registrations"
+                - regi_setting = @event.registration_settings.first
+                - regi_setti_url = (regi_setting.registration == "hobnob" ? regi_setting.reg_url : regi_setting.external_reg_url) rescue nil
+                - url = regi_setti_url
+              -elsif redirect_name.present? and redirect_name != "user_registrations"
+                - url = "/admin/events/#{params[:event_id]}/#{redirect_name}/new"
+            -else
+              = Client::No_Data_Hash[title]
+      %p
+      .appBtn
+        %a{:href => url , :class => 'DashAddIcon mdl-color--light-blue-600 appsize', :id => "add_user_popup_index"}
+          %i.material-icons
+            added
+          - if "#{Client::No_Data_Hash[title]}" == "Poll"  
+            = "New Question"
+          -elsif title == "registation_setting"
+            = "New #{(@event.present? and @event.registration_settings.present? ? (@event.registrations.present? ? (@event.registration_look_and_feels.present? ? "User Registration" : Client::No_Data_Hash["registration_look_and_feels"]) : Client::No_Data_Hash["registrations"]) : Client::No_Data_Hash[title])}"
+          - else
+            = "New #{Client::No_Data_Hash[title]}"
+        - if title == "users"
+          = render :partial => '/admin/users/add_user_with_role' , :locals => {:page_id => 'add_user_popup_index'}

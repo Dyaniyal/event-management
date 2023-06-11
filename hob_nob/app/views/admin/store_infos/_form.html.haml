@@ -1,0 +1,192 @@
+.save_button
+  = form_for [:admin, @event, @mobile_application, @store_info],:html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+    
+    - if @store_info.new_record?
+      .mdl-grid.agendaheight.mdl-shadow--1dp.mdl-card.p-b-15
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.displaybolck.p-t-10
+            Store Information
+            / %a{:href => 'javascript:void(0);', :class =>'helpTag'}
+            /   what's this?
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "event_generalInfo.jpg", :section_id => "event_general_section"}
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.p-b-15
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Do you want Hobnob to publish this app?
+            .col-lg-7.p-h-12   
+              = f.custom_radio_button :published_by_hobnob, "yes","Yes", :id => "option1"
+              = f.custom_radio_button :published_by_hobnob, "no", "No", :id => "option2"
+      .mdl-grid.agendaheight.mdl-shadow--1dp.mdl-card.p-b-15.m-t-15.selectedYes{:style => "display: none; "}       
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.p-b-15
+          .mdl-grid.p-v-5
+            .col-lg-12.mdl-typography--text-right
+              %p.multicitytxt.storeTxt 
+                = "Please enter the following information required by the Google Play and iTunes stores. We would use the data provided by you to upload your App to the respective stores. Please contact us at "
+                = mail_to "info@hobnobspace.com", "info@hobnobspace.com"
+                = "for more details regarding the App upload process."
+                
+      .mdl-grid.agendaheight.mdl-shadow--1dp.mdl-card.p-b-15.m-t-15.selectedNo{:style => "display: none;"}         
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.p-b-15
+          .mdl-grid.p-v-5
+            .col-lg-12.mdl-typography--text-right
+              %p.multicitytxt.storeTxt
+                = "Thank you for using Hobnob to build your event mobile app. We would be sending you the executable files for both Google Play Store (.apk file) and iTunes store (.ipa file) in the next 2 working days. Please contact us at"
+                = mail_to "info@hobnobspace.com", "info@hobnobspace.com"
+                = " for more details regarding the App upload process."      
+
+
+
+    .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15{:class => 'storeinfoform', :style => 'display:none;'}
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+        %h4.heading-border.displaybolck.p-t-10
+          Information by Apple & Play store
+          / %a{:href => 'javascript:void(0);', :class =>'helpTag'}
+          /   what's this?
+      = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "event_generalInfo.jpg", :section_id => "event_general_section"}
+      = f.hidden_field :mobile_application_id, :value => @mobile_application.id
+      = f.hidden_field :is_android_app, :value => 'Yes'
+      = f.hidden_field :is_ios_app, :value => 'Yes'
+
+      = f.hidden_field :android_app_type, :value => 'Application'
+      = f.hidden_field :android_category, :value => 'Business'
+      =# f.hidden_field :android_content_rating, :value => 'Content Rating'
+      = f.hidden_field :android_country_list, :value => 'All'
+      = f.hidden_field :android_contains_ads, :value => 'No'
+      = f.hidden_field :android_content_guideline, :value => 'Yes'
+      = f.hidden_field :android_us_export_laws, :value => 'Yes'
+      
+      / = f.label "Title/Name *"
+      / = f.text_field :android_title
+      = f.custom_text_field :android_title, "Title/Name *", :value => @mobile_application.name , :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "android_title", :title => "Android Title"}
+      = f.custom_text_area_field :android_full_desc, 'Full Description(max. 4000 char) *', :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "android_full_desc", :title => "Android Title"}
+      = f.custom_text_field :android_email, 'Email *', :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "email", :title => "Email"}
+      = f.custom_text_field :android_phone, 'Phone *', :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "phone", :title => "Phone"}
+      / = f.new_custom_file_browser_field :android_app_icon, "App Icon *", :id => "splash_screen_uploadBtn", :value => f.object.android_app_icon_file_name, :action=> params[:action]
+      = f.custom_text_area_field :android_short_desc, 'Short Description(max. 80 char) *', :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "android_short_desc", :title => "Short Description"}
+      = f.custom_text_field :android_website, 'Website *', :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "android_website", :title => "Website"}
+      = f.hidden_field :ios_language, :value => 'English'
+      =# f.hidden_field :android_app_type, :value => 'Application'
+      =# f.hidden_field :android_category, :value => 'Business'
+      =# f.hidden_field :android_content_rating, :value => 'Content Rating'
+      =# f.hidden_field :android_country_list, :value => 'All'
+      =# f.hidden_field :android_contains_ads, :value => 'No'
+      =# f.hidden_field :android_content_guideline, :value => 'Yes'
+      =# f.hidden_field :android_us_export_laws, :value => 'Yes'
+      
+      =# f.custom_text_field :ios_title, "Ios Title *"
+      =# f.custom_text_field :ios_bundle_id, "Bundle Id *"
+      =# f.custom_text_field :ios_sku, 'Sku *'
+      = f.custom_text_field :android_policy_url, 'Privacy Url *', :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "android_policy_url", :title => "Privacy Url"}
+      = f.custom_text_field :ios_support_url, 'Support Url *', :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "ios_support_url", :title => "Support Url"}
+      = f.custom_text_field :ios_copyright, 'Copyright *', :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "ios_copyright", :title => "Copyright"}
+      = f.custom_text_field :ios_keyword, 'Keywords *', :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "ios_keyword", :title => "Keywords"}
+
+      = f.custom_text_field :ios_contact_first_name, 'Contact First Name *', :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "ios_contact_first_name", :title => "Contact First Name"}
+      = f.custom_text_field :ios_contact_last_name, 'Contact Last Name *', :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "ios_contact_last_name", :title => "Contact Last Name"}
+      =# f.custom_text_field :ios_contact_email, 'Contact Email *'
+      =# f.custom_text_field :ios_contact_phone, 'Phone *'
+      = f.custom_text_field :ios_demo_email, 'Demo Email *', :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "ios_demo_email", :title => "Demo Email"}
+      = f.custom_text_field :ios_password, 'Demo Password *', :view_popup => {:image_path => "app_info/menu/demo.jpg", :rel=> "ios_password", :title => "Demo Password"}
+      =# f.custom_text_area_field :ios_notes, 'Notes *'
+      =# f.new_custom_file_browser_field :ios_app_icon, "App Icon *", :id => "splash_screen_uploadBtn1", :value => f.object.ios_app_icon_file_name, :action=> params[:action]
+
+    - if false
+      .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15{:class => 'storeinfoform', :style => 'display:none;'}
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+          %h4.heading-border.displaybolck.p-t-10
+            Android Screen Shot
+            / %a{:href => 'javascript:void(0);', :class =>'helpTag'}
+            /   whats this?
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "event_generalInfo.jpg", :section_id => "store_info_screenshot"}
+        - count = 0
+        = f.fields_for :store_screenshots, @store_info.store_screenshots.first(16) do |image_field|
+          - count += 1
+          - if count == 1 ? 'Phone' : (count == 9)
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+              %h4.heading-border.displaybolck.p-t-10
+                = count == 1 ? 'Phone' : (count == 9) ? 'Tablet' : ''
+          = image_field.hidden_field :platform, :value => 'Android'
+          = image_field.hidden_field :screen_type, :value => count <= 8 ? 'Phone' : 'Tablet'
+          = image_field.new_custom_file_browser_field :screen, "Screen #{count <= 2 ? '*' : ''}", :value => image_field.object.present? ? image_field.object.screen_file_name : '', :id => "store_#{count}", :action=> params[:action]
+    - if false
+      .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15{:class => 'storeinfoform', :style => 'display:none;'}
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+          %h4.heading-border.displaybolck.p-t-10
+            IOS Information
+            / %a{:href => 'javascript:void(0);', :class =>'helpTag'}
+            /   what's this?
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "event_generalInfo.jpg", :section_id => "event_general_section"}
+        = f.hidden_field :ios_language, :value => 'English'
+        = f.hidden_field :android_app_type, :value => 'Application'
+        = f.hidden_field :android_category, :value => 'Business'
+        = f.hidden_field :android_content_rating, :value => 'Content Rating'
+        = f.hidden_field :android_country_list, :value => 'All'
+        = f.hidden_field :android_contains_ads, :value => 'No'
+        = f.hidden_field :android_content_guideline, :value => 'Yes'
+        = f.hidden_field :android_us_export_laws, :value => 'Yes'
+        
+        = f.custom_text_field :ios_title, "Ios Title *"
+        = f.custom_text_field :ios_bundle_id, "Bundle Id *"
+        = f.custom_text_field :ios_sku, 'Sku *'
+        = f.custom_text_field :ios_support_url, 'Ios Support Url *'
+        = f.custom_text_field :ios_copyright, 'ios_copyright *'
+        = f.custom_text_field :ios_keyword, 'Keywords *'
+
+        = f.custom_text_field :ios_contact_first_name, 'Contact First Name *'
+        = f.custom_text_field :ios_contact_last_name, 'Contact Last Name *'
+        = f.custom_text_field :ios_contact_email, 'Contact Email *'
+        = f.custom_text_field :ios_contact_phone, 'Phone *'
+        = f.custom_text_field :ios_demo_email, 'Demo Email *'
+        = f.custom_text_field :ios_password, 'Demo Password *'
+        = f.custom_text_area_field :ios_notes, 'Notes *'
+        = f.new_custom_file_browser_field :ios_app_icon, "App Icon *", :id => "splash_screen_uploadBtn1", :value => f.object.ios_app_icon_file_name, :action=> params[:action]
+ 
+    - if false
+      .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15{:class => 'storeinfoform', :style => 'display:none;'}
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+          %h4.heading-border.displaybolck.p-t-10
+            Ios Screen Shot
+            %a{:href => 'javascript:void(0);', :class =>'helpTag'}
+              whats this?
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "event_generalInfo.jpg", :section_id => "store_info_screenshot"}
+        - screen_type_arr = ['3.5-Inch', '4-Inch', '4.7-Inch', '5.5-Inch', 'iPad', 'iPad Pro']
+        - count = 0
+        = f.fields_for :store_screenshots, @store_info.store_screenshots.last(30) do |image_field|
+          - if count % 5 == 0
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+              %h4.heading-border.displaybolck.p-t-10
+                = screen_type_arr[count/5] if count % 5 == 0
+          = image_field.hidden_field :platform, :value => 'IOS'
+          = image_field.hidden_field :screen_type, :value => screen_type_arr[(count / 5)]
+          = image_field.new_custom_file_browser_field :screen, "Screen *", :value => image_field.object.present? ? image_field.object.screen_file_name : '', :class => "new", :id => "storeApp_#{count}", :action=> params[:action]
+          - count += 1
+    .fixed-activon-btn-new
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+
+- if @store_info.id.present?
+  :javascript
+    $(".storeinfoform").show();
+- if @store_info.errors.present?
+  :javascript
+    $(".storeinfoform").show();
+:javascript
+  $(window).load(function(){
+    $('.gui-file').change(function(){
+      filename = $(this)[0].files[0].name;
+      file_id = $(this).attr("id")
+      $("#1" + file_id).val(filename);
+    });
+  })
+  $("#option1").click(function(){
+    $(".storeinfoform").show();
+    $(".selectedYes").show();
+    $(".selectedNo").hide();
+  });
+  $("#option2").click(function(){
+    $(".storeinfoform").hide();
+    $(".selectedYes").hide();
+    $(".selectedNo").show();
+  });

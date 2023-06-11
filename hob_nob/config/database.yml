@@ -1,0 +1,63 @@
+development:
+  adapter: mysql2
+  encoding: utf8mb4
+  collation: utf8mb4_unicode_ci
+  database: shobiz_development
+  pool: 5
+  username: root
+  password: password
+  socket: /var/run/mysqld/mysqld.sock
+
+staging:
+  adapter: mysql2
+  encoding: utf8mb4
+  collation: utf8mb4_unicode_ci
+  host: dbhobnobspace.c6yiaaaxxz5r.ap-southeast-1.rds.amazonaws.com
+  reconnect: false
+  database: hobnob_beta
+  username: dbusrhobnob
+  password: pwdusrhobnob
+
+
+#staging:
+# adapter: mysql2
+# host: 54.251.34.140 #dbinstanonymous.cy9evftloyct.ap-southeast-1.rds.amazonaws.com
+# reconnect: false
+# database: dbshobiz_staging
+# username: usrstaging
+# password: 'Staging#123'  
+
+# mysqldump -h 54.251.34.140 -u usrstaging -pStaging#123 dbshobiz_staging > 8_jan_shobiz_stag.sql
+# mysql -u root -ppassword
+
+# use shobiz_development;
+# source 8_jan_shobiz_stag.sql
+#beta
+#mysql -h dbshobiz.c6yiaaaxxz5r.ap-southeast-1.rds.amazonaws.com -u dbusrshobiz -ppwdshobiz
+#mysql -h dbhobnobspace.c6yiaaaxxz5r.ap-southeast-1.rds.amazonaws.com -u dbusrhobnob -ppwdusrhobnob
+#mysqldump -h dbhobnobspace.c6yiaaaxxz5r.ap-southeast-1.rds.amazonaws.com -u dbusrhobnob -ppwdusrhobnob hobnob_beta microsites> microsite.sql
+#beta
+#mysql -h dbhobnobspace.c6yiaaaxxz5r.ap-southeast-1.rds.amazonaws.com -u dbusrhobnob -ppwdusrhobnob
+
+#live
+#mysql -h dbhobnobspace.c6yiaaaxxz5r.ap-southeast-1.rds.amazonaws.com -u dbusrhobnob -ppwdusrhobnob 
+
+production:
+  adapter: mysql2
+  encoding: utf8mb4
+  collation: utf8mb4_unicode_ci
+  host: dbhobnobspace.c6yiaaaxxz5r.ap-southeast-1.rds.amazonaws.com
+  reconnect: false
+  database: hobnob_production
+  username: dbusrhobnob
+  password: pwdusrhobnob
+  
+production_us:
+  adapter: mysql2
+  encoding: utf8mb4
+  collation: utf8mb4_unicode_ci
+  host: dbhobnobspaceus.c3pl1g0po4tb.us-west-1.rds.amazonaws.com
+  reconnect: false
+  database: hobnob_production
+  username: dbusrhobnob
+  password: pwdusrhobnob

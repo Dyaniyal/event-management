@@ -1,0 +1,114 @@
+- if params[:import].present?
+  = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+- else
+  = javascript_include_tag "jquery.fancybox"
+  .save_button.mdl-card.feedbackFormPage 
+    = form_for [:admin, @event ,@speaker], :builder => CustomFormBuilder do |f|
+      .mdl-grid.mdl-shadow--1dp
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            Visibility Settings
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            .mdl-grid.p-v-5
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt Show this data element to:
+              .col-lg-3.p-h-12  
+                = f.custom_radio_button_menu :show_speaker_feature, "all","All", :id => "feature_option_1#{f.object.id}", :default_checked => "#{f.object.show_speaker_feature =="all" || f.object.show_speaker_feature.blank? ? "checked" : ""}",:class => "show_speaker_feature"
+                = f.custom_radio_button_menu :show_speaker_feature, "group", "Group", :id => "feature_option_2#{f.object.id}", :default_checked => "#{f.object.show_speaker_feature == "group" ? "checked" : ""}",:class => "show_speaker_feature"
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8{:style => ((f.object.show_speaker_feature == 'all' or f.object.show_speaker_feature.blank?)? 'margin-top:30px;display:none;' : 'margin-top:30px'), :id => 'group_check_boxes'}
+              .form-group
+                %label.col-lg-4.control-label.ml-color--shades-white
+                  Select Groups *
+                  %br
+                  / %a{:href => admin_event_invitee_groups_path(:event_id => @event.id), :class =>'', :title => "Invitee Groups", :target => '_blank'}
+                  /   (View Available Groups)
+                - er = f.object.errors.messages[:group_ids].join(',') rescue nil
+                .col-lg-7.notification
+                  - default_group_list = [['No Polls taken', 'No Polls taken'], ['No Feedback given', 'No Feedback given'], ['No Quiz taken', 'No Quiz taken'], ['No Q&A', 'No Q&A'], ['NO QR code scanned', 'NO QR code scanned'], ['No Chat', 'No Chat']]
+                  - default_group_list = @default_groups.collect{|group| [ group.name, group.id ]}
+                  - default_group_list.each_with_index do |group, index|
+                    - if index == 0
+                      .usersep
+                        Default Groups
+                    .md-checkbox
+                      %label
+                        %span.checkbox 
+                        = group[0]
+                  - default_group_list = @other_groups.collect{|group| [ group.name, group.id ]}
+                  - default_group_list.each_with_index do |group, index|
+                    - if index == 0
+                      .usersep
+                        Groups created by you
+                    .md-checkbox
+                      %label
+                        = f.check_box :group_ids, {:multiple => true, :class => "myclass", :style => "mystyle", include_hidden: false}, group[1].to_s
+                        %span.checkbox 
+                        = group[0] 
+                .clear
+                .field_with_errors.marginErrMgs
+                  .span{:class => "errorMessage"}
+                    = er 
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10
+            General Information
+            / %a{:href => '/whats_this/speaker/general_information/speaker_generalInfo.jpg', :class =>'helpTag testhelp fancybox'}
+            /   what's this?
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "speaker_generalInfo.jpg", :section_id => "speaker_general_section"}
+        =# f.custom_text_field :speaker_name, "Full Name *","background" => "false"
+        = f.custom_text_field :first_name, "First Name *","background" => "false"
+        = f.custom_text_field :last_name, "Last Name *","background" => "false"
+        = f.custom_text_field :designation, "Designation *","background" => "false"
+        = f.custom_text_field :company, "Company","background" => "false"
+        = f.new_custom_file_browser_field :profile_pic, "Profile picture (400x400px) (png/jpg) only", :id => "uploadBtn", :value => f.object.profile_pic_file_name, :action=> params[:action], "background" => "false"
+        = f.custom_text_field :phone_no, "Phone No","background" => "false"
+        = f.custom_text_field :email_address, "Email Address","background" => "false"
+        = f.custom_text_field :twitter_id, "Twitter link ","background" => "false"
+        = f.custom_text_field :linkedin_id, "LinkedIn link ","background" => "false"
+        = f.custom_text_field :facebook_id, "Facebook link ","background" => "false"
+        = f.custom_text_field :google_id, "Google+ link ","background" => "false"        
+        =# f.custom_text_field :sequence, "Sequence"
+        = f.custom_text_area_field :speaker_info, "Speaker bio", "background" => "false"
+        =# f.custom_text_area_field :address, "address"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Speaker rating *
+            .col-lg-3.p-h-12    
+              = f.custom_radio_button :rating_status, "active","Active", :id => "option-1"
+              = f.custom_radio_button :rating_status, "deactive", "Deactive", :id => "option-2"
+            .col-lg-1.speaker_Help
+              = link_to "?" ,"/whats_this/speaker/general_information/Help_speaker_speakerRating.jpg", rel: "speaker_image", title: "Speaker rating", :class =>'fancybox whatsImg appwhatsthis'
+        - if @event.present? and @event.parent_id.present?
+          .mdl-grid.p-v-5.form-group{:style=>"width:32%;"}
+            .md-checkbox
+              %label
+                = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+                %span.checkbox 
+                Is language updated
+        = hidden_field_tag "type","#{params[:type]}" if params[:type].present?
+        = hidden_field_tag "from","#{params[:from]}" if params[:from].present? 
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)
+  = render :partial => 'admin/layouts/more_links'   
+:javascript
+  $(window).load(function(){
+    $('.gui-file').change(function(){
+      filename = $(this)[0].files[0].name;
+      $(".gui-input").val(filename);
+    });
+  }) 
+:javascript
+  $(window).load(function(){
+    $(".show_speaker_feature").change(function(){
+      selected_value = $(this).val();
+      if (selected_value == "group"){
+        $("#group_check_boxes").show();
+      }else{
+        $("#group_check_boxes").hide();
+      }  
+    });
+  })  

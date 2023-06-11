@@ -1,0 +1,36 @@
+%table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.pollstab{"template-pagination" => "custom/pager"}
+  %tr
+    - if obj.user_polls.present?
+      %center.BlnkTxt.p-t-10 Options in Percentile(%)
+      - 6.times do |index|
+        - index += 1
+        - if obj.attribute_present? "option#{index}"
+          %tr 
+            %td="option#{index}"
+            %td= correct_user_polls(obj,"option#{index}")
+
+      
+-if false
+  %tr 
+    %th="option1" 
+    %th= correct_user_polls(obj,obj.option1)if obj.option1.present?
+  %tr
+    %th="option2"
+    %th= correct_user_polls(obj,obj.option2)if obj.option2.present?
+  %tr
+    %th="option3"
+    %th= correct_user_polls(obj,obj.option3)if obj.option3.present?
+  %tr
+    %th="option4"
+    %th= correct_user_polls(obj,obj.option4)if obj.option4.present?
+  %tr
+    %th="option5"
+    %th= correct_user_polls(obj,obj.option5)if obj.option5.present?
+  %tr
+    %th="option6"
+    %th= correct_user_polls(obj,obj.option6)if obj.option6.present?
+
+     
+      
+
+   

@@ -1,0 +1,165 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section#content_wrapper
+    = render :partial => "admin/dashboards/breadcumb_links",:locals => {:page => "Registration Statistics",:name => params[:controller]}
+    %section#content.table-layout.animated.fadeIn
+      .chute.chute-center
+        .row.DashPage.eventShowCard
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted  Total Invites Sent
+                    %h2.fs30.mt5.mbn
+                      =# 0 #@total_invitees
+                      = @total_invitees
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Target number of registrations
+                    %h2.fs30.mt5.mbn
+                      = @target_registrations.present? ? @target_registrations : 0#@target_attendee #link_to objs.count, "#"
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Total Registrations
+                    %h2.fs30.mt5.mbn
+                      - if @total_registrations != 0
+                        =link_to @total_registrations,admin_event_registration_detail_path(:id => 1,:type => "total")
+                      - else
+                        = @confirmed_registrations
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Pending registrations
+                    %h2.fs30.mt5.mbn
+                      - if @pending_registrations != 0 
+                        = link_to @pending_registrations,admin_event_registration_detail_path(:id => 1,:type => "pending")#, :remote => true
+                      - else
+                        = @pending_registrations
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted On hold registrations
+                    %h2.fs30.mt5.mbn
+                      - if @on_hold_registrations != 0
+                        =link_to @on_hold_registrations,admin_event_registration_detail_path(:id => 1,:type => "on_hold")
+                      - else
+                        = @on_hold_registrations  
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Dropout registrations
+                    %h2.fs30.mt5.mbn
+                      - if @drop_out_registrations != 0
+                        =link_to @drop_out_registrations,admin_event_registration_detail_path(:id => 1,:type => "drop_out")
+                      - else
+                        = @drop_out_registrations   
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Approved Registrations
+                    %h2.fs30.mt5.mbn
+                      - if @approved_registrations != 0
+                        =link_to @approved_registrations,admin_event_registration_detail_path(:id => 1,:type => "approved")
+                      - else
+                        = @approved_registrations                          
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Confirmed registrations
+                    %h2.fs30.mt5.mbn
+                      - if @confirmed_registrations != 0
+                        =link_to @confirmed_registrations,admin_event_registration_detail_path(:id => 1,:type => "confirmed")
+                      - else
+                        = @confirmed_registrations
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Rejected registrations
+                    %h2.fs30.mt5.mbn
+                      - if @rejected_registrations != 0
+                        =link_to @rejected_registrations,admin_event_registration_detail_path(:id => 1,:type => "rejected")
+                      - else
+                        = @rejected_registrations
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Email sent in Registration
+                    %h2.fs30.mt5.mbn
+                      = @total_edm_sent.present? ? @total_edm_sent : "0"
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Email open in Registration
+                    %h2.fs30.mt5.mbn
+                      = @total_edm_open.present? ? @total_edm_open : "0"    
+
+        / #tab5.panel
+        /   .panel.attendees-panel
+        /     %span
+        /       Target Attendees :  100  Attendees:  #{@total_attendees}
+        /   .panel-body.pn
+        /     .progress.progress-bar-xl.br4.mdl-color--grey-500
+        /       - percentage = "#{(("#{@total_attendees}".to_i / 100.to_f) * 100).to_i}"
+        /       .progress-bar.progress-bar-system{"aria-valuemax" => "100", "aria-valuemin" => "0", "aria-valuenow" =>"#{percentage}", :role => "progressbar", :style => "width: #{percentage}%;"}
+        /         .pull-left.ph10.gauge
+        /           = "attendees"
+        /           - if true#((feature[1] / @event_features[0].to_
+        /             %span.pull-right.ph10.gaugevalue
+        /               = "#{(("#{@total_attendees}".to_i / 100.to_f) * 100).round} %" rescue "0 %"

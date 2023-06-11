@@ -1,0 +1,12 @@
+/ .mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.newsearchlaypout.HideTabularData
+/   = form_tag admin_event_polls_path(:event_id => @event.id), :method => :get do
+/     .mdl-js-textfield.mdl-textfield--floating-label.mdl-grid.f-right.m-r-20.m-t-10 
+/       #select-container.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell--6-col.mdl-cell--5-col-tablet.mdl-cell--12-col-phone  
+/         = text_field_tag "question", params[:question], :class => "mdl-textfield__input", :id => "select", :autofocus => "",  :type => "text"
+/         %label.mdl-textfield__label{:for => "select"} Search by e_Kit
+/         = hidden_field_tag :admin_search, "true"
+/       .mdl-cell--3-col.mdl-cell--1-col-tablet.mdl-cell--2-col-phone.m-10
+/         = submit_tag "Search", :class => "mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-color--light-blue-600"
+/       / .mdl-cell--3-col.mdl-cell--1-col-tablet.mdl-cell--2-col-phone.m-l-15.moreBtn.mdl-typography--text-right
+/       /   %a.adminClick{:href => "javascript:void(0);"}
+/       /     Search More

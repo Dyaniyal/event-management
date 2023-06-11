@@ -1,0 +1,13 @@
+- if @social_feeds.present?
+  - social_feeds.each do |post|
+    - if post.first.first == :facebook_frames
+      - ids =  post.first.second.split('_')
+      <div class="fb-post" data-href="https://www.facebook.com/#{ids.first}/posts/#{ids.second}/" data-width="350" data-show-text="true"></div>
+      <br />
+    - elsif post.first.first == :twitter_frame
+      = post[:twitter_frame].to_s.html_safe
+    - elsif post.first.first == :insta_frame
+      = post[:insta_frame].to_s.html_safe
+
+:javascript
+  $('iframe').find('#facebook').css("word-wrap", "break-word");

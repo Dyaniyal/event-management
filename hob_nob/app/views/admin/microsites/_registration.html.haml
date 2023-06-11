@@ -1,0 +1,20 @@
+.mdl-grid.mdl-shadow--1dp
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+    %h4.heading-border.p-t-10.m-b-15
+      Registration Url
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+    = f.custom_text_field :registration_url, "Registration Url *",placeholder: "Include http:// or https:// in front of the url", "background" => "false"
+    = f.hidden_field :get, :value => "registrations"
+  .fixed-activon-btn-new  
+    = f.custom_submit_button "SAVE"
+    .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+        = back_button(:back)
+:javascript
+  $("#url_type").click(function(){
+    $(".registration_url").show()
+  });
+
+  $("#build_new_type").click(function(){
+    $(".registration_url").hide()
+  });

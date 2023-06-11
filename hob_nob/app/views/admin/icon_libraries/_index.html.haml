@@ -1,0 +1,19 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => 'icon_libraries', :url => "/admin/icon_libraries/new", :msg => " "} 
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+    %tr
+      %th Name
+      %th  
+    - objs.each_with_index do |icon_library,index|
+      %tr
+        %td
+          = icon_library.icon_library_name rescue nil
+        %td.IconDrp
+          = more_vert_button(icon_library.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{icon_library.id}"}
+            = link_to edit_admin_icon_library_path(:id => icon_library.id), :class =>"mdl-menu__item" do
+              Edit
+            = link_to admin_icon_library_path(:id => icon_library.id),:method => :DELETE, :class =>"mdl-menu__item" do
+              Delete

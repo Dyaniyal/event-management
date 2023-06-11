@@ -1,0 +1,113 @@
+%html
+  %head
+    %title Hobnob
+    = favicon_link_tag 'fevicon.png'
+    = stylesheet_link_tag "application", :media => 'all'
+    = csrf_meta_tags
+    = javascript_include_tag  "application","ckeditor/init", :media => 'all' #{}"jquery-1.11.3.min", "vendors-min", "demo-min" ,"material" ,"common"
+    
+  %body.loaded
+    - if session[:licensee_expired].present?
+      .account-popup
+        %p.heading
+          Note
+        %p.content
+          = session[:licensee_expired]# if session[:licensee_expired].present?
+        %p.okButton
+          %button
+            OK
+    .demo-layout.mdl-layout.mdl-layout--fixed-drawer.mdl-layout--fixed-header.ng-scope.mdl-js-layout.has-drawer.is-upgraded
+      %header.demo-header.mdl-layout__header.mdl-color--white.mdl-color--grey-100.mdl-color-text--grey-600.is-casting-shadow
+       
+        .mdl-layout__header-row.mdl-color--light-blue-900
+          = render :partial => 'layouts/admin_top_header'
+
+          / {:style => 'text-align:center;font-size:14px;color:#fff'}
+          .mdl-layout-spacer{:style => ''}
+            
+          -if false
+            %span.mdl-layout-title.mdl-color-text--white.HeaderUserName
+              - if get_current_user_role
+                = link_to 'Manage Clients', admin_clients_path, :class=>'mdl-color-text--white headerfont hvr-underline-from-center'
+                |
+                - if !current_user.has_role? "super_admin"     
+                  - if params[:client_id].present?
+                    - url = "/admin/clients/#{params[:client_id]}/events"
+                  - elsif params[:event_id].present?
+                    - @event = Event.get_event_by_id(params[:event_id]) rescue nil
+                    - url = "/admin/clients/#{@event.client_id}/events"
+                  - else
+                    - url = "/admin/clients?feature=events"
+                  = link_to 'Manage Events', url, :class=>'mdl-color-text--white headerfont hvr-underline-from-center'
+                  |
+                  - if params[:client_id].present?
+                    - url = admin_client_users_path(:client_id => @client.id)
+                  - elsif params[:event_id].present? or (params[:controller] == "admin/events" and params[:id])
+                    - url = admin_event_users_path(:event_id => params[:event_id])
+                  - else 
+                    - url = admin_users_path
+                  = link_to 'Manage Users', url, :class=>'mdl-color-text--white headerfont hvr-underline-from-center'
+
+            = link_to destroy_user_session_path, :method => :get, :class =>'logoutwieght mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon', :id => 'hdrbtn' do
+              %i.material-icons.mdl-color-text--white power_settings_new
+
+
+            %a.mdl-color-text--white.m-t-5.no-m-b{:href => "javascript:void(0);"}
+              =current_user.first_name
+
+          .mdl-color-text--white.f12.mailtxt.m-t-8.m-r-15.fontuserWeight
+            %span.displayBlock.UserLisencee
+              =current_user.first_name  
+            = current_user.email
+          = link_to 'javascript:void(0);',:class =>'logoutwieght mdl-button mdl-js-button mdl-button--icon', :id => 'demo-menu-lower-right' do
+            %i.material-icons.mdl-color-text--white group_work 
+
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect.RightLinks{:for => "demo-menu-lower-right"}
+            %li.mdl-menu__item.mdl-menu__item--full-bleed-divider
+              %a{:href =>"/admin/profiles/#{current_user.id}/edit?change_password=true", :class => "logoutwieght"}
+                Change Password
+            %li.mdl-menu__item.mdl-menu__item--full-bleed-divider
+              %a{:href =>"/admin/profiles/#{current_user.id}/edit", :class => "logoutwieght"}
+                My Profile
+            - if (current_user.has_role? "licensee_admin" or current_user.has_role? "client_admin" or current_user.has_role? "event_admin" and session[:current_user_role] != "client_response_manager")
+              %li.mdl-menu__item.mdl-menu__item--full-bleed-divider
+                = link_to "Smtp Setting", new_admin_smtp_setting_path(),:class =>'logoutwieght'
+                / %a{:href =>"/admin/smtp_settings/new",:class => "logoutwieght"}
+                /   Smtp Setting
+            - if current_user.roles.pluck(:name).uniq.count > 1
+              %li.mdl-menu__item.mdl-menu__item--full-bleed-divider
+                = link_to "Change Role", "/admin/change_roles/new", :class =>'logoutwieght', :id => 'change_role_btn'
+            %li.mdl-menu__item.mdl-menu__item--full-bleed-divider
+              = link_to "Logout", destroy_user_session_path, :method => :get, :class =>'logoutwieght', :id => 'hdrbtn' 
+            
+
+
+      .demo-drawer.mdl-layout__drawer.mdl-color-text--blue-grey-50.mdl-color--grey-800
+        .wrapper
+          = render :partial => 'layouts/admin_header'
+      #selectclientpopup
+      = yield
+      = render :partial => 'layouts/footer'              
+
+- if params[:adv_search].present?
+  :javascript
+    $(document).ready(function(){
+      $('.adminClick').trigger('click');
+    });    
+:javascript
+    $( window ).load(function() {
+    if ("#{params[:action]}" == "edit"){  
+      $(".set_highlight_select").each(function(){
+        input_value = $(this).closest(".form-control").val();
+        if (input_value == "" || input_value == "there is no Attachment Available !"){
+          $(this).closest(".form-group").addClass("has-warning");
+        }else{
+          $(this).closest(".form-group").addClass("has-success");
+        }
+      });
+    }  
+    error_class = $("#option2, #option-2").next().attr("class")
+    if (error_class == "field_with_errors"){
+      $("#option2, #option-2").next().hide();
+    }
+  });

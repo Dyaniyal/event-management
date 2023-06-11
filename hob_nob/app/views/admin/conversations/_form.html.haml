@@ -1,0 +1,16 @@
+- if params[:import].present?
+  = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+- else
+  .save_button.mdl-card.agendaheight 
+    = form_for [:admin, @event, @conversation], :builder => CustomFormBuilder do |f|
+      .mdl-grid.convergence.p-b-35
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10
+            General Information
+        = f.custom_text_area_field :description, "Description *", "background" => "false"
+        = f.new_custom_file_browser_field :image, "Image (png/jpg)only", :id => "uploadBtn", :value => f.object.image_file_name, :action=> params[:action], "background" => "false"
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)

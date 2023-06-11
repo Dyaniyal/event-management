@@ -1,0 +1,34 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => 'my_travels', :url => "/admin/events/#{params[:event_id]}/my_travels/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("my_travels")
+- else 
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      %th Invitee Name
+      %th Invitee Email Id
+      %th Attach File Name
+      %th 
+        - objs.each do |my_travel|
+          %tr
+            %td.font16= Invitee.get_invitee_name(my_travel.invitee_id) rescue nil 
+            %td.font16= Invitee.get_invitee_email(my_travel.invitee_id) rescue nil
+            %td.font16.eventNameLink
+              -if my_travel.attach_file.present?
+                = link_to "#{my_travel.attach_file_1_name}", "#{my_travel.attach_file.url})}",:target => "_blank"
+              -if my_travel.attach_file_2.present?
+                = link_to "#{','+(my_travel.attach_file_2_name.present? ? my_travel.attach_file_2_name : "Attachment2")}", "#{my_travel.attach_file_2.url})}",:target => "_blank"
+              -if my_travel.attach_file_3.present?
+                = link_to "#{','+(my_travel.attach_file_3_name.present? ? my_travel.attach_file_3_name : "Attachment3")}", "#{my_travel.attach_file_3.url})}",:target => "_blank"
+              -if my_travel.attach_file_4.present?
+                = link_to "#{','+(my_travel.attach_file_4_name.present? ? my_travel.attach_file_4_name : "Attachment4")}", "#{my_travel.attach_file_4.url})}",:target => "_blank"
+              -if my_travel.attach_file_5.present?
+                = link_to "#{','+(my_travel.attach_file_5_name.present? ? my_travel.attach_file_5_name : "Attachment5")}", "#{my_travel.attach_file_5.url})}",:target => "_blank"
+            %td.IconDrp
+              = more_vert_button(my_travel.id)
+              %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{my_travel.id}"}
+                = edit_link(params, my_travel.id)
+                = delete_link(params, my_travel.id)
+  = will_paginate objs

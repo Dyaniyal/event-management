@@ -1,0 +1,138 @@
+- if params[:page] == 'print_preview'
+  = render :partial => "/admin/qr_code_scanners/badge_pdf"
+- else
+  %body{:class => (params[:qr_code_preview].present? ? "" : "qr-scanner-page")}
+  - if params[:page] == 'manual_search'
+    - if true
+      .container
+        .wrapper.submitWrapper
+          .textDiv.qrcodetextDiv
+            = form_tag(admin_event_invitee_searches_path(:event_id => @event.id), method: :get) do |f|
+              %span Search:
+              = hidden_field_tag :qr_code_preview, params[:qr_code_preview]
+              = hidden_field_tag :page, params[:page].present? ? params[:page] : 'manual_search'
+              = hidden_field_tag :search, 'manual'
+              = text_field_tag :email, params[:email], placeholder: 'Enter your email or name', :class => 'inputType'
+              %input.submitBtn{:type => "submit", :value => "Search"}/
+              .back
+                = link_to "Back", admin_event_invitee_searches_path(:event_id => @event.id,:page=>"manual_search")
+          - if @invitee_searches.present?# and params[:qr_code_preview].blank?
+            .searchDiv.tab3
+              %table.table-grid{:align => "center", :border => "0", :width => "100%"}
+                %thead
+                  %tr.tableHeading
+                    %th Name
+                    %th Company Name
+                    %th Designation
+                    %th Email
+                    %th
+                %tbody{:align => "center"}
+                  - @invitee_searches.each do |invitee|
+                    %tr
+                      %td=invitee.name_of_the_invitee
+                      %td=invitee.company_name
+                      %td=invitee.designation
+                      %td=invitee.email
+                      %td
+                        %a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => invitee.id, :page => 'print_preview'), :onclick => "window.open('#{admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => invitee.id, :page => 'print_preview')}','Print','width=1000,height=800'); return false;", :target => "popup"} Print
+              %table.table-grid-foot{:border => "0", :style => "border-collapse:collapse;", :width => "100%"}
+                %tbody
+                  %tr
+                    %td.foot{:align => "left", :style => "text-align:center;padding-top:5px;padding-bottom:5px;"}
+                      = will_paginate @invitee_searches, :param_name => 'qr_scanner_page'
+                    %td{:style => "text-align:right;padding-right:5px;", :width => "80"}   
+          - elsif @invitees.blank? and params[:search] == 'manual'
+            %p.bottomText Can't find yourself? Please contact the helpdesk for more assistance. Thank you.
+          .btnDiv.newScanBtn
+            %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/invitee_searches?page=invitee_search_qr"} New Scan
+  - elsif params[:page] == 'thank_you'
+    .container
+      .wrapper.thankYouWrapper
+        .thankyou-text
+          %p.thanktest 
+            = "Thank you for visiting #{@event.event_name}"
+        .tableDiv
+          - if @invitee.present?
+            %table
+              %thead
+                %tr
+                  - if false
+                    %th Id
+                  %th Name
+                  %th Company Name
+                  %th Designation
+                  %th Email
+              %tbody
+                %tr
+                  - if false
+                    %td
+                      = @invitee.id
+                  %td
+                    = @invitee.name_of_the_invitee
+                  %td
+                    = @invitee.company_name
+                  %td
+                    = @invitee.designation
+                  %td
+                    = @invitee.email
+            .btnDiv.thankyouPage
+              - if @invitee.present?
+                %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview]), :onclick => "window.open('#{admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview])}','Print','width=1000,height=800'); return false;", :target => "popup"} Print Badge
+              %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/invitee_searches?qr_code_preview=#{params[:qr_code_preview]}&page=home_qr_scanner"} New Scan
+            .searchManuallyDiv
+              %a{:href => admin_event_invitee_searches_path(:event_id => @event.id, :page => 'manual_search', :qr_code_preview => params[:qr_code_preview])} Search Manually 
+          - else
+            %p.subText
+              = "We are sorry, we couldn’t verify your QR code."
+            .btnDiv.thankyouPage
+              - if @invitee.present?
+                %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview]), :target => '_blank'} Preview Badge
+              %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/qr_code_scanners?qr_code_preview=#{params[:qr_code_preview]}"} New Scan
+            .searchManuallyDiv
+              %a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :page => 'manual_search', :qr_code_preview => params[:qr_code_preview])} Search Manually 
+  - elsif params[:page] == 'scanning'
+    .container
+      #header
+        %div{:style => "position:relative;top:+20px;left:0px;"}
+          %g:plusone{:size => "medium"}
+        %ul
+      #mainbody
+        %table.tsel{:border => "0", :width => "100%"}
+          %tr.camera
+            %td{:align => "center", :valign => "top"}
+              %table.tsel{:border => "0"}
+                %tr
+                  %td{:align => "center", :colspan => "2"}
+                    #outdiv
+          %tr
+            %td{:align => "center", :colspan => "3"}
+          %tr
+            %td{:align => "center", :colspan => "3"}
+              #result
+              %a{:id => 'btnPrint', :style => 'float:center;display:none', :href => 'javascript:void(0)'} Print
+      .searchManuallyDiv.searchManuallyBtn
+        %a{:href => admin_event_invitee_searches_path(:event_id => @event.id, :page => 'manual_search', :qr_code_preview => params[:qr_code_preview])} Search Manually 
+    %canvas#qr-canvas{:height => "600", :width => "800"}
+    :javascript
+      load();
+      var APP_URL = "#{SAPP_URL}"
+      var EVENT_ID = "#{@event.id}"
+      $("#btnPrint").on("click", function () {
+        var divContents = $("#result").html();
+        var printWindow = window.open('', '', 'height=400,width=800');
+        printWindow.document.write('<html><head><title>Invitee Profile</title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+      });
+  - else
+    .container
+      .title     
+      .description
+        %p.welcomeText 
+          = "Welcome to #{@event.event_name}."
+        %p.subText Please scan your QR Code from the My Profile feature in the App to continue.
+      .scanbtn
+        %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/invitee_searches?page=scanning&qr_code_preview=#{params[:qr_code_preview]}"} Scan

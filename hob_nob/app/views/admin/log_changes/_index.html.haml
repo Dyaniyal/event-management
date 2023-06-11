@@ -1,0 +1,60 @@
+- if params[:from] == "db" or  params[:invitee] == "true"
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+    %tr
+      %th Email id
+      %th Deleted by 
+      %th TimeStamp
+      / %th Status
+      %th
+    - objs.each do |log_change|
+      %tr
+        %td.font16= log_change.email
+        %td.font16= log_change.user_email
+        %td.font16= log_change.updated_at.in_time_zone('Kolkata')
+  = will_paginate objs
+- else
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+    %tr
+      %th= params[:from] == 'user_registration' ? 'Record Name' : 'Module / Table' 
+      / %th Event Name
+      / %th Client Name
+      %th= params[:from] == 'user_registration' ? 'Action Name' : 'Action Type'
+      %th Action Taken By 
+      %th TimeStamp
+      / %th Status
+      %th
+    - objs.each do |log_change|
+      %tr
+        %td.font16= params[:from] == 'user_registration' ? log_change.email : log_change.resourse_type
+        / %td.font16= Event.find(log_change.event_id).event_name.humanize if log_change.event_id.present?
+        / %td.font16= Client.find(log_change.client_id).name.humanize if log_change.client_id.present?
+        %td.font16= log_change.action.humanize
+        - if log_change.user_email.present?
+          %td.font16= log_change.user_email.humanize
+        - else
+          %td.font16= User.find(log_change.user_id).email.humanize if log_change.user_id.present?
+        %td.font16= log_change.updated_at.in_time_zone('Kolkata')
+  = will_paginate objs
+/ - elsif params[:invitee] == "true"
+/   %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+/     %tr
+/       %th Email Id
+/       %th Event Name
+/       %th Client Name
+/       %th Action Name
+/       %th Action Taken By 
+/       %th TimeStamp
+/       / %th Status
+/       %th
+/     - objs.each do |log_change|
+/       %tr
+/         %td.font16= log_change.email 
+/         %td.font16= Event.find(log_change.event_id).event_name.humanize if log_change.event_id.present?
+/         %td.font16= Client.find(log_change.client_id).name.humanize if log_change.client_id.present?
+/         %td.font16= log_change.action.humanize
+/         - if log_change.user_email.present?
+/           %td.font16= log_change.user_email.humanize
+/         - else
+/           %td.font16= User.find(log_change.user_id).email.humanize if log_change.user_id.present?
+/         %td.font16= log_change.updated_at.in_time_zone('Kolkata')
+/   = will_paginate objs

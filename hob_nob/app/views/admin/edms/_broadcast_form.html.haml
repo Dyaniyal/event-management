@@ -1,0 +1,133 @@
+.mdl-grid.mdl-shadow--1dp
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+    %h4.heading-border.p-t-10
+      Broadcast
+  = f.custom_text_field :sender_name, "Sender Name *", :value => session[:sender_name].present? ? nil : @edm.sender_name,"background" => "false" ,:style => "margin-bottom:10px;"
+  = f.hidden_field :next, :value => "NEXT"
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8l-8.mr-6.m-b-10{:style=>"margin-left:1%;"}
+    .form-group
+      %label.col-lg-4.control-label.ml-color--shades-white
+        Select Group
+      .col-lg-7
+        - default_grouping = @event.groupings.collect{|p| [ p.name, p.id ]}
+        %i.arrow.single
+        = f.select("edm", "group_id", default_grouping, {:selected => f.object.group_id,:prompt => "#{(f.object.group_id.present?) ? f.object.group_id : "Select Group" }"}, {include_blank: 'None',:class=> 'select2-single form-control'})
+        .field_with_errors
+          .span{:class => "errorMessage"}
+            = f.object.errors.messages[:group_id].join("") rescue nil
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+    .mdl-grid.p-v-5.form-group.mobiappstype
+      .col-lg-4.mdl-typography--text-right 
+        %p.displayInlineBlock.multicitytxt  Send to
+      .col-lg-7.p-h-12.notific 
+        = f.custom_radio_button_edm :group_type, "all", "All", :id => "group_type_all_option", :width => 'width:70px;'
+        = f.custom_radio_button :group_type, "apply filter", "Apply Filter", :id => "group_type_group_option"
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess.apply_filterCls{:style => "display: #{(f.object.group_type.present? and f.object.group_type == "group") ? "" : "none"}"}
+    .mdl-grid.p-v-5.form-group.mobiappstype
+      .col-lg-4.mdl-typography--text-right 
+        %p.displayInlineBlock.multicitytxt Email sent 
+      .col-lg-7.p-h-12.notific 
+        = f.custom_radio_button_edm :email_sent, "yes", "Yes", :id => "email_sent_group_type_yes_option", :width => 'width:70px;'
+        = f.custom_radio_button_edm :email_sent, "no", "No", :id => "email_sent_group_type_no_option", :width => 'width:70px;'
+        =# f.custom_radio_button :email_sent, "all", "All", :id => "email_sent_group_type_all_option"
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess.apply_filterCls{:style => "display: #{(f.object.group_type.present? and f.object.group_type == "group") ? "" : "none"}"}
+    .mdl-grid.p-v-5.form-group.mobiappstype
+      .col-lg-4.mdl-typography--text-right 
+        %p.displayInlineBlock.multicitytxt Registered
+      .col-lg-7.p-h-12.notific 
+        = f.custom_radio_button_edm :registered, "yes", "Yes", :id => "registered_group_type_yes_option", :width => 'width:70px;'
+        = f.custom_radio_button_edm :registered, "no", "No", :id => "registered_group_type_no_option", :width => 'width:70px;'
+        =# f.custom_radio_button :registered, "all", "All", :id => "registered_group_type_all_option"
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess.apply_filterCls{:style => "display: #{(f.object.group_type.present? and f.object.group_type == "group") ? "" : "none"}"}
+    .mdl-grid.p-v-5.form-group.mobiappstype
+      .col-lg-4.mdl-typography--text-right 
+        %p.displayInlineBlock.multicitytxt Approved Registrant Users
+      .col-lg-7.p-h-12.notific 
+        = f.custom_radio_button_edm :registration_approved, "yes", "Yes", :id => "registration_approved_group_type_yes_option", :width => 'width:70px;'
+        = f.custom_radio_button_edm :registration_approved, "no", "No", :id => "registration_approved_group_type_no_option", :width => 'width:70px;'
+        =# f.custom_radio_button :registration_approved, "all", "All", :id => "registration_approved_group_type_all_option"
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess.apply_filterCls{:style => "display: #{(f.object.group_type.present? and f.object.group_type == "group") ? "" : "none"}"}
+    .mdl-grid.p-v-5.form-group.mobiappstype
+      .col-lg-4.mdl-typography--text-right 
+        %p.displayInlineBlock.multicitytxt  Rejected Registred Users
+      .col-lg-7.p-h-12.notific 
+        = f.custom_radio_button_edm :registration_rejected, "yes", "Yes", :id => "registration_rejected_group_type_yes_option", :width => 'width:70px;'
+        = f.custom_radio_button_edm :registration_rejected, "no", "No", :id => "registration_rejected_group_type_no_option", :width => 'width:70px;'
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess.apply_filterCls{:style => "display: #{(f.object.group_type.present? and f.object.group_type == "group") ? "" : "none"}"}
+    .mdl-grid.p-v-5.form-group.mobiappstype
+      .col-lg-4.mdl-typography--text-right 
+        %p.displayInlineBlock.multicitytxt  Pending Registered Users
+      .col-lg-7.p-h-12.notific 
+        = f.custom_radio_button_edm :registration_pending, "yes", "Yes", :id => "registration_pending_group_type_yes_option", :width => 'width:70px;'
+        = f.custom_radio_button_edm :registration_pending, "no", "No", :id => "registration_pending_group_type_no_option", :width => 'width:70px;'
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess.apply_filterCls{:style => "display: #{(f.object.group_type.present? and f.object.group_type == "group") ? "" : "none"}"}
+    .mdl-grid.p-v-5.form-group.mobiappstype
+      .col-lg-4.mdl-typography--text-right 
+        %p.displayInlineBlock.multicitytxt Confirmed Registred Users
+      .col-lg-7.p-h-12.notific 
+        = f.custom_radio_button_edm :confirmed, "yes", "Yes", :id => "confirmed_group_type_yes_option", :width => 'width:70px;'
+        = f.custom_radio_button_edm :confirmed, "no", "No", :id => "confirmed_group_type_no_option", :width => 'width:70px;'
+        =# f.custom_radio_button :confirmed, "all", "All", :id => "confirmed_group_type_all_option"
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess.apply_filterCls{:style => "display: #{(f.object.group_type.present? and f.object.group_type == "group") ? "" : "none"}"}
+    .mdl-grid.p-v-5.form-group.mobiappstype
+      .col-lg-4.mdl-typography--text-right 
+        %p.displayInlineBlock.multicitytxt  Attendees
+      .col-lg-7.p-h-12.notific 
+        = f.custom_radio_button_edm :attended, "yes", "Yes", :id => "attended_group_type_yes_option", :width => 'width:70px;'
+        = f.custom_radio_button_edm :attended, "no", "No", :id => "attended_group_type_no_option", :width => 'width:70px;'
+        =# f.custom_radio_button :attended, "all", "All", :id => "attended_group_type_all_option"
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess.apply_filterCls{:style => "display: #{(f.object.group_type.present? and f.object.group_type == "group") ? "" : "none"}"}
+    .mdl-grid.p-v-5.form-group.mobiappstype
+      .col-lg-4.mdl-typography--text-right 
+        %p.displayInlineBlock.multicitytxt  Email Opened
+      .col-lg-7.p-h-12.notific 
+        = f.custom_radio_button_edm :email_opened, "yes", "Yes", :id => "email_opened_group_type_yes_option", :width => 'width:70px;'
+        = f.custom_radio_button_edm :email_opened, "no", "No", :id => "email_opened_group_type_no_option", :width => 'width:70px;'
+        =# f.custom_radio_button :email_opened, "all", "All", :id => "email_opened_group_type_all_option"
+  - if false
+    .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.m-t-15{:style => "display: #{(f.object.group_type.present? and f.object.group_type == "group") ? "" : "none"}"}
+      .form-group
+        %label.col-lg-4.control-label.ml-color--shades-white
+          Assign Grouping
+        .col-lg-7
+          - default_grouping = @event.groupings.collect{|p| [ p.name, p.id ]}
+          %i.arrow.single
+          = f.select("edm", "group_id", default_grouping, {:selected => f.object.group_id,:prompt => "#{(f.object.group_id.present?) ? f.object.group_id : "Select Group" }"}, {include_blank: 'None',:class=> 'select2-single form-control'})
+          .field_with_errors
+            .span{:class => "errorMessage"}
+              = f.object.errors.messages[:group_id].join("") rescue nil
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+    .mdl-grid.p-v-5
+      .col-lg-4.mdl-typography--text-right
+        %p.displayInlineBlock.multicitytxt eDM Broadcast Time
+      .col-lg-3.p-h-12   
+        /= f.custom_radio_button_edm :edm_broadcast_value, "now","Now", :id => "edm_broadcast_time_now", :default_checked => (f.object.edm_broadcast_value == 'now' or f.object.edm_broadcast_time.blank?) ? 'checked' : '',:width => 'width:70px;'
+        = f.custom_radio_button_menu :edm_broadcast_value, "scheduled","Schedule", :id => "edm_broadcast_time_scheduled", :default_checked => (f.object.edm_broadcast_value == 'scheduled') ? 'checked' : ''
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-b-8.m-l-8.m-r-8.Regiserror{:style => "display: #{(f.object.edm_broadcast_value == 'scheduled') ? "" : "none"}"}
+    .bs-component
+      .form-group
+        %label.col-lg-4.control-label{:for => "Start EDM Date"} Schedule Date
+        = f.custom_text_field_date :start_date_time, "Start EDM Date", :id => "date-start",:value => f.object.edm_broadcast_time.present? ? (f.object.sent == "yes" ? f.object.edm_broadcast_time.to_time.in_time_zone('Kolkata').strftime('%d/%m/%Y') : f.object.edm_broadcast_time.strftime('%d/%m/%Y')) : ''
+        .col-lg-3.timeDropdown
+          .timeTab
+            = f.custom_text_field_date :start_time_hour, " ", :class => "hours inputs is-focused", :placeholder => 'HH ', :value => "#{get_hour_minute_second_ampm((f.object.sent == "yes" ? f.object.edm_broadcast_time.to_time.in_time_zone('Kolkata') : f.object.edm_broadcast_time), 'hour')}", :col => '2',:maxlength => "2"
+            = f.custom_text_field_date :start_time_minute, " ", :class => "minutes inputs is-focused", :placeholder => 'MM ', :value => "#{get_hour_minute_second_ampm((f.object.sent == "yes" ? f.object.edm_broadcast_time.to_time.in_time_zone('Kolkata') : f.object.edm_broadcast_time), 'minute')}", :col => '2',:maxlength => "2"
+            = f.custom_text_field_date :start_time_am, " ", :class => "ampm inputs is-focused", :placeholder => 'AM/PM', :value => "#{get_hour_minute_second_ampm((f.object.sent == "yes" ? f.object.edm_broadcast_time.to_time.in_time_zone('Kolkata') : f.object.edm_broadcast_time), 'ampm')}", :col => '3',:maxlength => "2"  
+            = f.hidden_field_tag :broadcast_date, "true"
+
+  = f.custom_text_area_field :rejected_domain, "Rejected Domains ", "background" => "false"
+.mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40.feedbackFormPage  
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+    %h4.heading-border.p-t-10
+      Cc and Bcc
+  = f.custom_text_area_field :cc, "Cc ",:value => session[:cc].present? ? nil : @edm.cc, "background" => "false"
+  = f.custom_text_area_field :bcc, "Bcc ",:value => session[:bcc].present? ? nil : @edm.bcc, "background" => "false"
+.fixed-activon-btn-new  
+  = f.custom_submit_button "SEND"
+  .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+    .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn.registcancel
+      = back_button(:back)
+
+
+:css
+  .customError{padding-left:35%;}

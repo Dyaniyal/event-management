@@ -1,0 +1,25 @@
+%table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+  %tr
+    %th File Name
+    %th Rows
+    %th Uploaded On
+    %th Created Rows
+    %th Updated Rows
+    %th Error Rows
+    %th Status
+    %th Log Files
+
+  - objs.each do |import|
+    %tr
+      %td.font16= link_to import.import_file_file_name, import.import_file.expiring_url, target: '_blank'
+      %td.font16= import.row_count
+      %td.font16= import.created_at.in_time_zone('Chennai').strftime("%d/%m/%Y %I:%M %p")
+      %td.font16= import.created_count
+      %td.font16= import.updated_count
+      %td.font16= import.error_count
+      %td.font16= import.status
+      %td.font16
+        - if ['Completed', 'Failed'].include? import.status
+          = link_to 'log', import.log_file.expiring_url, target: '_blank'
+
+= will_paginate objs

@@ -1,0 +1,24 @@
+.save_button.mdl-card
+  = form_for [:admin, @event], :builder => CustomFormBuilder do |f|
+    = hidden_field_tag "set_activity_feed_bool", true
+    = hidden_field_tag "client_id", @event.client_id
+    .mdl-grid.mdl-card.mdl-shadow--1dp.p-b-35
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          Social
+        .mdl-grid.p-v-5.form-group
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Social Feed 
+          .col-lg-3.p-h-12   
+            = f.custom_radio_button :show_social_feeds, true, "Yes", :id => "social-option-1"
+            = f.custom_radio_button :show_social_feeds, false, "No", :id => "social-option-2"  
+          %span.editThemelinks
+      %p.OrTxt
+      = f.custom_text_field :facebook_social_tags, "Fb page name"
+      = f.custom_text_field :twitter_social_tags, "Twitter hashtags(comma seperated)"
+      = f.custom_text_field :twitter_handle, "Twitter handle"
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)

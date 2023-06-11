@@ -1,0 +1,42 @@
+- if false#!objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "edms", :url => "/admin/events/#{params[:event_id]}/campaigns/#{params[:campaign_id]}/edms/new", :msg => 'test'}
+- elsif params[:email_setting].present?
+  = render :partial => 'admin/edms/add_edms_for_registration', :locals => {:id => "_add_edms_for_registration"}
+
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("edms")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      %th Subject
+      %th Template
+      %th eDM Broadcast Date
+      %th eDM Url
+      %th
+    - objs.each do |edm|
+      %tr
+        %td.font16= edm.subject_line
+        %td.font16= (edm.template_type == "default_template" ? "Default Template" : "Custom Template")
+        %td.font16= time_with_zone(edm.edm_broadcast_time, (edm.sent == "yes" ? "IST" : ''))
+        %td.font16= link_to "#{APP_URL}/admin/events/#{@event.id}/campaigns/#{edm.campaign_id}/edms/#{edm.id}", admin_event_campaign_edm_path(:event_id => @event.id,:campaign_id => edm.campaign_id,:id => edm.id,:preview => true),:target => "_blank"
+        %td.IconDrp
+          = more_vert_button(edm.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{edm.id}"}
+            = link_to edit_admin_event_campaign_edm_path(@event.id,edm.campaign_id,edm.id),:class => "mdl-menu__item" do
+              Edit
+            / = link_to edit_admin_event_campaign_edm_path(edm.campaign.event_id,edm.campaign_id,edm.id, :next => 'NEXT'), :class => "mdl-menu__item" do
+            /   Broadcast
+            = link_to admin_event_campaign_edm_path(@event.id, edm.campaign_id,edm.id),method: :delete,data: { confirm: 'Are you sure?' },:class =>"mdl-menu__item" do
+              Delete
+            = link_to admin_event_campaign_edm_path(edm.campaign.event_id,edm.campaign_id,edm.id,:preview=>"true"),target:"_blank", :class => "mdl-menu__item" do
+              Preview
+            = link_to edit_admin_event_campaign_edm_path(edm.event_id,edm.campaign_id,edm.id, :next => 'NEXT'), :class => "mdl-menu__item" do
+              Broadcast 
+            = link_to admin_event_campaign_details_path(:event_id => @event.id, :edm_id => edm.id), :class => "mdl-menu__item" do
+              Statistics 
+            = link_to toggle_tele_assigned_admin_event_campaign_edm_path(@event, edm.campaign_id, edm.id, :telecaller => 'assigned'), method: :put, class: "mdl-menu__item" do
+              = edm.telecaller_assigned ? 'Remove From Telecaller' : 'Assign To Telecaller'
+  = will_paginate objs
+

@@ -1,0 +1,181 @@
+.col-sm-3.col-xl-3
+  .panel.panel-tile
+    .panel-body
+      .row.pv5
+        .col-xs-5.ph10
+          / %img.img-responsive.mauto{:alt => "", :src =>"/assets/clipart0.png"}/
+          - if icon.present?
+            %i.mdl-color-text--blue-grey-400.material-icons.firstimg{:class => "incards"}> 
+              = image_tag("black_&_white_icons/#{img}")
+          - else
+            = image_tag("coloured_icons/#{img}")
+        .col-xs-7.pl5
+          %h6.text-muted.truncate
+            = Client::display_hsh[url]  
+          - page = params[:controller].split("/").second
+          - features = ["speakers", "invitees", "agendas", "polls", "conversations", "faqs", "qnas", "awards", "feedbacks", "e_kits", "images", "abouts", "sponsors", "my_profile", "qr_code","my_calendar", "favourites", 'leaderboard','custom_page1s','custom_page2s','custom_page3s','custom_page4s','custom_page5s','custom_page6s','custom_page7s','custom_page8s','custom_page9s','custom_page10s','map']
+          - if ["poll_walls","conversation_walls","qna_walls"].exclude? url and show_card_except_event_features(url)
+            - event_feature = @event.event_features.where(:name => page)
+            - page = page.titleize
+          - else
+            %h2.fs40.mt5.mbn
+              - if ["abouts", "event_highlights","maps"].include?(url)
+                - count = @event.about.present? ? 1 : 0 if url == "abouts"
+                - count = (@event.map.present?) ? 1 : 0 if url == "maps"
+                - count = (@event.highlight_saved.present? or @event.images.present?) ? 1 : 0 if url == "event_highlights"
+                - redirection = (count == 1 ? "/#{@event.id}/edit" : "/new")
+                - redirection = (count == 1 ? "/#{@event.map.id}/edit" : "/new") if url == "maps"
+              - elsif url == "venue"
+                - count = (@event.emergency_exit.present?) ? 1 : 0
+                - redirection = (count == 1 ? "/#{@event.emergency_exit.id}/edit" : "/new")
+              - elsif ["notes","qr_code","my_profile","my_calendar", "favourites","chats","social_sharings"].include? (url)
+              - elsif url == "leaderboard"
+                - count = Invitee.get_leaderboard_count(@event)
+              - elsif ["poll_walls","conversation_walls","qna_walls"].include? (url)
+                - count = objs.count  
+                - redirection = "?conversations_wall=true" if url == "conversation_walls"
+                - redirection = "?type=public_wall" if url == "poll_walls"
+                - redirection = "?qnas_wall=true" if url == "qna_walls"
+              - elsif ['custom_page1s',"custom_page2s",'custom_page3s','custom_page4s','custom_page5s','custom_page6s','custom_page7s','custom_page8s','custom_page9s','custom_page10s'].include? (url)
+                - count = objs.present? ? 1 : 0
+                - redirection = (count == 0 ? "/new?type=dashboard_new" : "") 
+              - else
+                - count = objs.count if url != "activity_feeds"
+                - count = @count if url == "activity_feeds"
+                - if @event.present? and @event.is_parent?
+                  - redirection = (count == 0 ? "/new?type=dashboard_new" : "")
+                - redirection = "" if (count == 0 and url == 'qnas' and (!current_user.has_role_for_event?("moderator", @event.id,session[:current_user_role])))# !current_user.has_role? :moderator)
+              
+              - if ["poll_walls","conversation_walls","qna_walls"].include? (url)
+                - url1 = "polls" if url == "poll_walls"
+                - url1 = "conversations" if url == "conversation_walls"
+                - url1 = "qnas" if url == "qna_walls"
+                = link_to "#{count}","/admin/events/#{@event.id}/#{url1}#{redirection}", :target => "_blank"
+                / - elsif url == "faqs"
+                /   - event_feature = @event.event_features.where("name = ?", "faqs").first
+                /   - if event_feature.present? and event_feature.faq_setting.blank? and @event.is_parent?
+                /     = link_to "#{count}", new_admin_event_event_feature_path(:event_id => @event.id, :type => "faq_setting")
+                /   - else
+                /     - url1 = "faqs"
+                /     = link_to "#{count}","/admin/events/#{@event.id}/#{url1}#{redirection}"
+              - elsif url == "feedbacks"
+                - url1 = "feedback_forms"
+                =# link_to "#{count}","/admin/events/#{@event.id}/#{url1}#{redirection}"
+                = link_to "#{count}","/admin/events/#{@event.id}/#{url1}"
+              - elsif url == "images"
+                - event_feature = @event.event_features.where("name = ?", "galleries").first
+                - if event_feature.present? and event_feature.image_setting.blank? and @event.is_parent?
+                  = link_to "#{count}", new_admin_event_event_feature_path(:event_id => @event.id, :type => "image_setting")
+                - elsif event_feature.present? and event_feature.image_setting.present? and event_feature.image_setting.downcase == 'yes'
+                  - url1 = "folders" if url == "images" and gallery_folder_enable(@event)
+                  = link_to "#{count}","/admin/events/#{@event.id}/#{url1}#{redirection}"
+                - else
+                  - url1 = "images"
+                  = link_to "#{count}","/admin/events/#{@event.id}/#{url1}#{redirection}"
+              - elsif url != "notes"
+                - url1 = "emergency_exits" if url == "venue"
+                - url1 = url if url != "venue"
+                - url1 = "leaderboards" if url == "leaderboard"
+                - if ((url =="abouts" or url == "venue") and count.present? and count == 0 and @event.parent_id.present?)
+                  = link_to "#{count}","javascript:void(0);"
+                - else
+                  = link_to "#{count}","/admin/events/#{@event.id}/#{url1}#{redirection}"
+
+      - if show_card(url) and (@resource_role.blank? or @resource_role.present?) and url == "qr_code" and (current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+        - if url == "qr_code" and @event.analytics.select('distinct invitee_id, viewable_url').where.not(viewable_url: [nil, ""]).present?
+          .row.pv5.AddmoreCard
+            .col-xs-12.ph5
+              = link_to "Export", admin_event_export_qr_codes_path(:export => 'export', :format => 'xls')
+
+      - if show_card(url) and (@resource_role.blank? or @resource_role.present?) and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))#!(current_user.has_role? :db_manager)
+        .row.pv5.AddmoreCard
+          .col-xs-12.ph5
+            - single_associated = ["qnas","conversations"]
+            - redirect_link = single_associated.include?(url) ? "" : "/new" 
+            - asso_manage_keyword = ["qnas","conversations","abouts","my_calendar"]
+            - display_title = (asso_manage_keyword.include?(url) ? "Manage" : "Add") 
+            - if (url == "venue" and @event.emergency_exit.blank?) 
+              - display_title = "Add"
+            - elsif (url == "venue" and @event.emergency_exit.present?)
+              - display_title = "Manage"
+            - elsif url == "qr_code"
+              - display_title = "Export"
+            - elsif ["leaderboard", "activity_feeds"].include?(url)
+              - display_title = "Manage"
+              - redirect_link = ""
+            -elsif ["custom_page1s","custom_page2s","custom_page3s","custom_page4s","custom_page5s",'custom_page6s','custom_page7s','custom_page8s','custom_page9s','custom_page10s'].include?(url) 
+              - display_title = "Manage" if url == "custom_page1s" and @event.custom_page1s.present?
+              - display_title = "Manage" if url == "custom_page2s" and @event.custom_page2s.present?
+              - display_title = "Manage" if url == "custom_page3s" and @event.custom_page3s.present?
+              - display_title = "Manage" if url == "custom_page4s" and @event.custom_page4s.present?
+              - display_title = "Manage" if url == "custom_page5s" and @event.custom_page5s.present?
+              - display_title = "Manage" if url == "custom_page6s" and @event.custom_page6s.present?
+              - display_title = "Manage" if url == "custom_page7s" and @event.custom_page7s.present?
+              - display_title = "Manage" if url == "custom_page8s" and @event.custom_page8s.present?
+              - display_title = "Manage" if url == "custom_page9s" and @event.custom_page9s.present?
+              - display_title = "Manage" if url == "custom_page10s" and @event.custom_page10s.present?
+            - if ["notes","my_profile","my_calendar", "favourites","chats","social_sharings"].exclude? (url)
+              - url1 = "emergency_exits" if url == "venue"
+              - url1 = url if url != "venue"
+              - url1 = "leaderboards" if url == "leaderboard"
+              -# url1 = "feedback_forms" if url == "feedbacks"
+              - url1 = "feedbacks" if url == "feedbacks"
+              - url1 = "qr_code" if url == "qr_code"
+              / - if url1 == "qr_code" and @event.analytics.select('distinct invitee_id, viewable_url').where.not(viewable_url: [nil, ""]).present?
+              /   = link_to display_title, admin_event_export_qr_codes_path(:export => 'export', :format => 'xls')
+              - if @event.present? and @event.is_parent?
+                - if url1 != "qr_code" and url1 != "images" #and url1 != "faqs"
+                  = link_to display_title, "/admin/events/#{@event.id}/#{url1}#{redirect_link}?type=dashboard_new"#,:class => "displayInlineBlock"
+                - if url == "images" and @event.is_parent?
+                  - event_feature = @event.event_features.where("name = ?", "galleries").first
+                  - if event_feature.present? and event_feature.image_setting.blank?
+                    = link_to display_title, new_admin_event_event_feature_path(:event_id => @event.id, :type => "image_setting")
+                  - elsif event_feature.present? and event_feature.image_setting.downcase == 'yes'
+                    - url1 = "folders" if url == "images" and event_feature.image_setting.downcase == 'yes' 
+                    - redirect_link = '' if url == "images" and Folder.where(event_id: @event.id).present?
+                    = link_to display_title, "/admin/events/#{@event.id}/#{url1}#{redirect_link}?type=dashboard_new"
+                  - else
+                    - url1 = "images" and @event.is_parent?
+                    = link_to display_title, "/admin/events/#{@event.id}/#{url1}#{redirect_link}?type=dashboard_new"#,:class => "displayInlineBlock"
+                    / - if url == "faqs" and @event.is_parent?
+                    /   / - event_feature = @event.event_features.where("name = ?", "faqs").first
+                    /   / - if event_feature.present? and event_feature.faq_setting.blank?
+                    /   /   = link_to display_title, new_admin_event_event_feature_path(:event_id => @event.id, :type => "faq_setting")
+                    /   / - else
+                    /   - url1 = "faqs" and @event.is_parent?
+                    /   = link_to display_title, "/admin/events/#{@event.id}/#{url1}#{redirect_link}?type=dashboard_new"
+            - if (!current_user.has_role_for_event?("moderator", @event.id,session[:current_user_role])) #!(current_user.has_role? :moderator)
+              - if @event.present? and @event.is_parent?
+                |
+                = link_to "Disable", admin_event_mobile_application_path(:event_id => @event.id, :id => @mobile_application.id,:disable_event => "#{url}", :type => params[:type]), :method => "put", :remote => true 
+            - if ["polls","conversations","qnas","quizzes"].include?(url) and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))#(!current_user.has_role? :db_manager)#!(current_user.has_role? :moderator) and ["polls","conversations","qnas"].include?(url)
+              |
+              - if url == "polls"
+                / = link_to "Go to Wall", admin_event_polls_path(:event_id => @event.id, :type => "public_wall"),:class => " centerAlign", :target => "_blank", :remote => true
+                / @event.polls.pluck(:wall_type).uniq.compact!
+                - if @event.polls.pluck(:wall_type).compact!.present? and @event.polls.pluck(:wall_type).uniq.compact!.count > 1
+                  = link_to "Go to Wall", admin_event_polls_path(:event_id => @event.id, :type => "public_wall", option: "partial", redirect_page: "new") , :class => "centerAlign", :target => "_blank"
+                - elsif @event.polls.pluck(:wall_type).compact!.present? and @event.polls.pluck(:wall_type).uniq.compact!.count == 1
+                  = link_to "Go to Wall", admin_event_polls_path(:event_id => @event.id, :type => "public_wall",:wall_type=>"#{@event.polls.pluck(:wall_type).compact!.first}"),:class => " centerAlign", :target => "_blank"
+                - else
+                  = link_to "Go to Wall", admin_event_polls_path(:event_id => @event.id, :type => "public_wall", option: "partial", redirect_page: "new") , :class => "centerAlign", :target => "_blank"
+              - elsif url == "qnas"
+                = link_to "Go to Wall", admin_event_qnas_path(:event_id => @event.id, :qnas_wall => true),:class => " centerAlign", :target => "_blank"
+              - elsif url == "conversations"
+                = link_to "Go to Wall", admin_event_conversations_path(:event_id => @event.id, :conversations_wall => true),:class => " centerAlign", :target => "_blank"
+              - elsif url == "quizzes"
+                = link_to "Go to Wall", admin_event_quizzes_path(:event_id => @event.id, :quiz_wall => true),:class => " centerAlign", :target => "_blank"                
+      - elsif false#(current_user.has_role? :moderator) and ["polls","conversations","qnas"].include? (url)
+        .row.pv5.AddmoreCard
+          .col-xs-12.ph5
+            - if url == "polls"
+              = link_to "Go to Wall", admin_event_polls_path(:event_id => @event.id, :type => "public_wall"),:class => " centerAlign", :target => "_blank"
+            - elsif url == "qnas"
+              = link_to "Go to Wall", admin_event_qnas_path(:event_id => @event.id, :qnas_wall => true),:class => " centerAlign", :target => "_blank"
+            - elsif url == "conversations"
+              = link_to "Go to Wall", admin_event_conversations_path(:event_id => @event.id, :conversations_wall => true),:class => " centerAlign", :target => "_blank"
+      - elsif (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))#!(current_user.has_role? :db_manager) #true#(@resource_role.blank? or (@resource_role.present? and @resource_role.name != 'moderator'))
+        .row.pv5.AddmoreCard
+          .col-xs-12.ph5
+            - if @event.present? and @event.is_parent?
+              = link_to "Enable", admin_event_mobile_application_path(:event_id => @event.id, :id => @mobile_application.id,:enable_event => "#{url}", :type => params[:type]), :method => "put" ,:class => " centerAlign", :remote => true

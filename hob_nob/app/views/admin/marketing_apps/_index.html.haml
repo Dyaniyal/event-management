@@ -1,0 +1,38 @@
+%table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+  %tr
+    %th Application Name
+    %th Application Type
+    %th Preview ID
+    %th.mobileEventsWidth Events
+    %th Add Events
+    %th Status
+    %th 
+  - objs.each_with_index do |marketing_app,index|
+    %tr
+      - mobile_application = MobileApplication.get_mobile_application_name(marketing_app.mobile_application_id)
+      %td.font16= link_to mobile_application.name, admin_event_mobile_application_path(:event_id => marketing_app.id, :id => marketing_app.mobile_application_id)
+      %td.font16= mobile_application.application_type == "multi event" ? "Hub Space" : "Multi event"
+      %td.font16= mobile_application.preview_code
+      %td.font16
+        - mobile_application.get_events_for_marketing_app(current_user,@events).each_with_index do |event, index|
+          = ', ' if index > 0
+          = link_to "#{event.event_name}", admin_event_mobile_application_path(:event_id => event.id, :id => event.mobile_application_id)
+      %td.font16
+        - if mobile_application.application_type == 'multi event'
+          - if !(current_user.has_role? :moderator or current_user.has_role? :db_manager)
+            = link_to admin_client_events_path(:client_id => @client.id, :feature => 'mobile_application', :mobile_application_id => mobile_application.id),:class => "rightBtn hvr-sweep-to-right tableBtnTxt addeventlist" do
+              Add Event
+      %td.font16= mobile_application.status.humanize.capitalize rescue nil
+      %td.IconDrp
+        -if !(current_user.has_role? :db_manager)
+          = more_vert_button(marketing_app.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{marketing_app.id}"}
+            = link_to edit_admin_event_mobile_application_path(:event_id => marketing_app.id,:id => mobile_application.id),:class => "mdl-menu__item" do
+              Edit
+            - if mobile_application.push_pem_file.present?
+              = link_to edit_admin_client_mobile_application_push_pem_file_path(:client_id => mobile_application.client_id, :mobile_application_id => mobile_application.id, :id => mobile_application.push_pem_file.id),:class => "mdl-menu__item" do
+                Edit API Access Key
+            - else
+              = link_to new_admin_client_mobile_application_push_pem_file_path(:client_id => mobile_application.client_id, :mobile_application_id => mobile_application.id),:class => "mdl-menu__item" do
+                Add API Access Key
+= will_paginate objs

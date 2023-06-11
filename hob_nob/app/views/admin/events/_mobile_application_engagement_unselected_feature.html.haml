@@ -1,0 +1,25 @@
+.content
+  .row
+    - @count = 0
+    - if (!current_user.has_role_for_event?("moderator", @event.id,session[:current_user_role])) and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))#(!current_user.has_role? :moderator) and (!current_user.has_role? :db_manager)
+      - if show_card_except_event_features("feedbacks")
+        = render :partial => "admin/events/cards", :locals => {:icon => "b_&_w", :objs => @event.feedbacks, :url => "feedbacks", :@count => @count, :img => "feedback.png"}
+      - if show_card_except_event_features("e_kits")
+        = render :partial => "admin/events/cards", :locals => {:icon => "b_&_w", :objs => @event.e_kits, :url => "e_kits", :@count => @count, :img => "e-kit.png"}
+      - if show_card_except_event_features("qnas")
+        = render :partial => "admin/events/cards", :locals => {:icon => "b_&_w", :objs => @event.qnas, :url => "qnas", :@count => @count, :img => "Q&A.png"}
+      - if show_card_except_event_features("conversations")
+        = render :partial => "admin/events/cards", :locals => {:icon => "b_&_w", :objs => @event.conversations, :url => "conversations", :@count => @count, :img => "conversations_1.png"}
+      - if show_card_except_event_features("quizzes")
+        = render :partial => "admin/events/cards", :locals => {:icon => "b_&_w", :objs => @event.quizzes, :url => "quizzes", :@count => @count, :img => "polls.png"}  
+      - if show_card_except_event_features("polls")
+        = render :partial => "admin/events/cards", :locals => {:icon => "b_&_w", :objs => @event.polls, :url => "polls", :@count => @count, :img => "polls.png"}
+      - if show_card_except_event_features("leaderboard")
+        = render :partial => "admin/events/cards", :locals => {:icon => 'b_&_w', :img =>"Leaderboard.png", :objs => "", :url => "leaderboard"}
+      - if show_card_except_event_features("chats")
+        = render :partial => "admin/events/cards", :locals => {:icon => 'b_&_w', :img =>"chat.png", :objs => "", :url => "chats"}    
+      
+      - if show_card_except_event_features("social_sharings")
+        = render :partial => "admin/events/cards", :locals => {:icon => 'b_&_w', :img =>"social_sharing.png", :objs => "", :url => "social_sharings"}
+      - if show_card_except_event_features("activity_feeds")
+        = render :partial => "admin/events/cards", :locals => {:icon => 'b_&_w', :img => "activity_feed.png", :objs => "", :url => "activity_feeds"}

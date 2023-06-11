@@ -1,0 +1,107 @@
+= stylesheet_link_tag "scanner", :media => 'screen'
+%title
+- @font_hash.each do |hash|
+  - if hash.has_key? :url
+    :css
+      @font-face {
+        font-family: "#{hash[:font_name]}";
+        src: url("#{hash[:url][0]}") format("#{hash[:format]}"),
+             url("#{hash[:url][1]}") format("#{hash[:format]}");
+      }
+%body.qr-scanner-page#print
+  - @badge_pdf = BadgePdf.find_by_event_id(params[:event_id])
+  -  @user_registration = UserRegistration.find_by_id(params[:user_registration_id])
+  - if @badge_pdf.present? and @event.present? and params[:qr_code_preview].blank?
+    .container{style: "text-align: left; position:absolute;"}
+      = image_tag(@badge_pdf.badge_image.url, width: "#{@badge_pdf.badge_width.present? ? @badge_pdf.badge_width : "396"}", height: "#{@badge_pdf.badge_height.present? ? @badge_pdf.badge_height : "554"}", alt: "")
+      .description{:style => "#{badge_styles}; display: inline-table; position: absolute"}
+        - if @badge_pdf.allow_text == 'yes'
+          - if @badge_pdf.sequence.present?
+            - @badge_pdf.sequence.each do |field|
+              - if field == "reg_match_name_field" and @badge_pdf.reg_match_name_field.present?
+                / %p.welcomeText
+                .company{style: "#{@badge_pdf.field1_styles}"}
+                  = @user_registration.send(@badge_pdf.reg_match_name_field)
+              - if field == "last_name_match_field"  and @badge_pdf.last_name_match_field.present?
+                //%p.welcomeText
+                .company{style: "#{@badge_pdf.field2_styles}"}
+                  = @user_registration.send(@badge_pdf.last_name_match_field)            
+              - if field == "reg_match_company_field"  and @badge_pdf.reg_match_company_field.present?
+                .company{style: "#{@badge_pdf.field3_styles}"}
+                  = @user_registration.send(@badge_pdf.reg_match_company_field)
+              - if field == "reg_match_designation_field"  and @badge_pdf.reg_match_designation_field.present?
+                .designation{style: "#{@badge_pdf.field4_styles}"}
+                  = @user_registration.send(@badge_pdf.reg_match_designation_field)
+          - else
+            - if @badge_pdf.reg_match_name_field.present?
+              .company{style: "#{@badge_pdf.field1_styles}"}
+                = @user_registration.send(@badge_pdf.reg_match_name_field) rescue nil
+            - if @badge_pdf.last_name_match_field.present?
+              .company{style: "#{@badge_pdf.field2_styles}"}
+                = @user_registration.send(@badge_pdf.last_name_match_field) rescue nil           
+            - if @badge_pdf.reg_match_company_field.present?
+              .company{style: "#{@badge_pdf.field3_styles}"}
+                = @user_registration.send(@badge_pdf.reg_match_company_field) rescue nil
+            - if @badge_pdf.reg_match_designation_field.present?
+              .designation{style: "#{@badge_pdf.field4_styles}"}
+                = @user_registration.send(@badge_pdf.reg_match_designation_field) rescue nil
+        - if @badge_pdf.allow_qr_code == "yes"
+          .qr_code_image{style: "margin-bottom: 20px; margin-top: 20px;"}
+            = image_tag(@user_registration.qr_code.url, width: "#{@badge_pdf.qr_code_attr[:width] || '80'}", height: "#{@badge_pdf.qr_code_attr[:height] || '80'}")
+
+      %div{style: "#{@badge_pdf.try(:badge_image).present? ? "" : "margin-top: 50%"}"}
+        = link_to "Confirm", "", id: 'prnt', class: "printBtn", onclick: "printpage()" if @event.present? and params[:qr_code_preview].blank?
+        = link_to "Cancel", "", class: "cancelBtn", onclick: "window.close()"
+
+      -if false
+        .checkin_form
+          = form_tag admin_event_qr_code_scanners_path(:event_id => @event.id,:confirm_print=>"true"),:method=>"get",:remote=>true,:id=>"check_in_form" do
+            = check_box_tag 'checkin_', 'true', true,:disabled=>"disabled"
+            %label
+              CheckIN
+            = submit_tag 'Submit',:type=>"hidden"
+
+  - else    
+    %h3
+      Please check badge pdf settings
+  :javascript
+    function printpage() {
+      /*$("#check_in_form").submit();*/
+      var user_reg_id = parseInt(window.location.href.split('user_registration_id=')[1])
+      $('.checkin_form').css('display','none');
+      var printButton = document.getElementById("prnt");
+      printButton.style.visibility = 'hidden';
+      $('.cancelBtn').hide();
+      window.print()
+      printButton.style.visibility = 'visible';
+
+      function refreshParent() {
+        window.opener.location = window.opener.location.href.split('?')[0] + '?print=confirmed&user_registration_id=' + user_reg_id
+      }
+
+      if (window.location.href.includes('invitee_search')) {
+        window.close();
+        window.onunload = refreshParent;
+      } else {
+        window.close();
+      }
+    }
+
+  - if @badge_pdf.present?
+    :javascript
+      $(document).ready(function() {
+        if ("#{@badge_pdf.qr_code_attr[:print_qr_code]}" == 'above_text') {
+          $('.qr_code_image').insertBefore('.company:first');
+        } else {
+          $('.qr_code_image').insertAfter('.designation');
+        }
+      });
+
+  :css
+    .checkin_form{
+      padding-bottom: 9px;
+      display:inline-block;
+    }
+    .printBtn {
+      margin-left: 40%;
+    }

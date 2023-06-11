@@ -1,0 +1,11 @@
+%table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+  %tr
+    %th Email Address
+    %th Timestamp
+    %th
+  - objs.each do |track_link_user|
+    %tr
+      %td.description_adjust.font16= track_link_user.email
+      %td.description_adjust.font16= track_link_user.updated_at.in_time_zone('Mumbai')  
+  = render :partial => "admin/layouts/more_links", :locals => {tracks: @track_link_users}
+= will_paginate objs

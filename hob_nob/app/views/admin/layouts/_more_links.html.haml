@@ -1,0 +1,427 @@
+- if current_user.present? and !(current_user.has_role_for_event?("moderator", @event.id,session[:current_user_role]))#!(current_user.has_role? "moderator")
+  %ul.fixed-activon-btn-new.morefixed-activon-btn 
+    %li.mdl-button.mdl-js-button.mdl-button--fab.mdl-js-ripple-effect.mdl-color--red-700.drop
+      %i.material-icons.ml-color-text--shades-white view_module
+      %ul{:for => "demo-menu-top-right"}
+        - page = (params[:controller].split("/").second).singularize       
+        - case page
+          - when 'client'
+            - if current_user.has_role? :licensee_admin
+              %li
+                = link_to new_admin_client_path ,:class => "centerAlign" do
+                  Add Client
+          - when 'event'
+            %li
+              - if params[:show_history] != "true" and @event.nil?
+                - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin
+                  = link_to new_admin_client_event_path(:client_id => @client.id),:class => "centerAlign" do
+                    Add Event
+              - else
+                / = link_to admin_client_event_path(:client_id => @client.id,:id => @event.id,:history => "true"),:target => "_blank",:class => "centerAlign" do
+                /   Show History
+                - if @event.mobile_application.nil? and @event.status != "pending"
+                  = link_to new_admin_client_mobile_application_path(:client_id => @event.client_id),:class => "centerAlign" do
+                    Add Mobile Application
+                  = link_to admin_client_mobile_applications_path(:client_id => @event.client_id, :feature => 'events', :event_id => @event.id), :class => "centerAlign" do
+                    Add To Existing Mobile Applications  
+                - elsif @event.mobile_application.present?   
+                  = link_to admin_event_mobile_application_path(:event_id => @event.id, :id => @event.mobile_application_id),:class => "centerAlign" do
+                    Manage Mobile Application    
+          - when 'mobile_application'
+            %li 
+              - if params[:type] == "show_content"
+                = link_to admin_event_log_changes_path(:event_id => params[:event_id], :invitee => "true"), :class => "centerAlign" do
+                  Logs
+              / - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin
+              /   = link_to new_admin_client_mobile_application_path(:client_id => params[:client_id]),:class => "centerAlign" do
+              /     Add Mobile Application
+          - when 'invitee_search'
+            %li
+              - if (@event.present? and @event.client.hide_export == "no") and @user_registrations.entered_users.present?
+                = link_to admin_event_invitee_searches_path(:event_id => @event.id, :format => 'xls'),:class => "centerAlign" do
+                  Export
+          - when 'invitee_structure'
+            %li
+              - if (@event.present? and @event.client.hide_import == "no")
+                = link_to new_admin_event_invitee_structure_path(:importable_type => 'invitee_data', :event_id => @event.id,:import => 'xls') ,:class => "centerAlign" do
+                  Import Through Excel
+                = link_to new_admin_event_import_data_api_path(:event_id => @event.id) ,:class => "centerAlign" do
+                  Import Through API
+          - when 'theme'
+            %li
+              - if params[:show_history] != "true" and @theme.nil?
+                = link_to new_admin_theme_path ,:class => "centerAlign" do
+                  Add Theme
+              - else
+                / = link_to admin_event_theme_path(:event_id => @event.id,:id => @theme.id,:history => "true"),:target => "_blank" ,:class => "centerAlign" do
+                /   Show History     
+          - when 'speaker'
+            %li
+              - if (@event.present? and @event.client.hide_export == "no") and @speakers.present?
+                - if params[:from] == "microsites"
+                  = link_to admin_event_speakers_path(:event_id => @event.id, :format => 'xls', :from => 'microsites'),:class => "centerAlign" do
+                    Export
+                - else 
+                  = link_to admin_event_speakers_path(:event_id => @event.id, :format => 'xls'),:class => "centerAlign" do
+                    Export
+              - if (@event.present? and @event.client.hide_import == "no") and !(current_user.has_role? :db_manager)
+                - if params[:from] == "microsites"
+                  = link_to new_admin_event_speaker_path(:importable_type => 'speaker', :event_id => @event.id,:import => 'xls', :from => 'microsites') ,:class => "centerAlign" do
+                    Import
+                - else
+                  = link_to new_admin_event_speaker_path(:importable_type => 'speaker', :event_id => @event.id,:import => 'xls') ,:class => "centerAlign" do
+                    Import
+              - if (@event.present? and @event.client.hide_export == "no") and @feedbacks.present?# and (current_user.has_role? :db_manager or current_user.has_role? :licensee_admin)
+                = link_to admin_event_speakers_path(:event_id => @event.id, :export_type => 'Feedback', :format => 'xls'),:class => "centerAlign" do
+                  Export Feedback
+              - if false #@event.present?
+                = link_to new_admin_event_speaker_path(:event_id => @event.id),:class => "centerAlign" do
+                  Add Speaker
+          - when 'sponsor'
+            %li
+              - if (@event.present? and @event.client.hide_export == "no")
+                = link_to admin_event_sponsors_path(:event_id => @event.id, :format => 'xls'),:class => "centerAlign" do
+                  Export
+          - when 'attendee'
+            %li
+              - if params[:show_history] != "true" and @attendee.nil?
+                - if (@event.present? and (@event.client.hide_import == "no"))
+                  = link_to new_admin_import_path(:importable_type => 'attendee', :importable_id => @event.id) ,:class => "centerAlign" do
+                    Import
+              - else
+                / = link_to admin_event_attendee_path(:event_id => @event.id,:id => @attendee.id,:history => "true"),:target => "_blank" ,:class => "centerAlign" do
+                /   Show History     
+          - when 'agenda'
+            %li
+              - if (@event.present? and @event.client.hide_export == "no") and @feedbacks.present?# and (current_user.has_role? :db_manager or current_user.has_role? :licensee_admin)
+                = link_to admin_event_agendas_path(:event_id => @event.id, :format => 'xls', :export_type => 'Feedback'),:class => "centerAlign" do
+                  Export Session Feedback
+                / - if (!current_user.has_role? :db_manager)
+              - if (@event.present? and @event.client.hide_import == "no")
+                - if params[:from] == "microsites"
+                  = link_to new_admin_event_agenda_path(:importable_type => 'agenda', :importable_id => @event.id,:import => 'xls', :from => 'microsites') ,:class => "centerAlign" do
+                    Import
+                - else
+                  = link_to new_admin_event_agenda_path(:importable_type => 'agenda', :importable_id => @event.id,:import => 'xls') ,:class => "centerAlign" do
+                    Import
+          - when 'invitee'
+            %li
+              - if params[:show_history] != "true" and (@event.present? and @event.client.hide_export == "no") and @event.is_parent?
+                - if params[:action] != "new" and @event.invitees.present?# and (current_user.has_role? :db_manager or current_user.has_role? :licensee_admin)
+                  = link_to admin_event_invitees_path(:event_id => @event.id, :format => 'xls'),:class => "centerAlign" do
+                    Export
+                - if (@event.present? and @event.client.hide_import == "no")
+                  = link_to new_admin_event_invitee_path(:importable_type => 'invitee', :event_id => @event.id,:import => 'xls') ,:class => "centerAlign" do
+                    Import
+              - else
+                / = link_to admin_event_invitee_path(:event_id => @event.id,:id => @invitee.id,:history => "true"),:target => "_blank" ,:class => "centerAlign" do
+                /   Show History
+          - when 'leaderboard'
+            %li
+              - if (@event.present? and @event.client.hide_export == "no") and @event.is_parent? and @invitees.present?# and (current_user.has_role? :db_manager or current_user.has_role? :licensee_admin)
+                = link_to admin_event_leaderboards_path(:event_id => @event.id, :format => 'xls'),:class => "centerAlign" do
+                  Export
+                - top_5_invitees = Invitee.invitee_with_thousand_or_more_points(@event.id)
+                - if top_5_invitees.present?
+                  = link_to admin_event_leaderboards_path(:event_id => @event.id, :format => 'xls', :top => '5'),:class => "centerAlign" do
+                    Export Top 5
+          - when 'user'
+            %li
+              - if current_user.has_role? :licensee_admin
+                - if params[:client_id].present?
+                  = link_to new_admin_client_user_path(:client_id => params[:client_id], :role => 'client_admin'), :class => "centerAlign" do
+                    Add Client Admin
+                - else
+                  = link_to admin_client_path(:feature => 'users', :role => 'client_admin'), :class => "centerAlign" do
+                    Add Client Admin
+
+              - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin
+                - if params[:event_id].present?
+                  = link_to new_admin_event_user_path(:event_id => params[:event_id], :feature => 'users', :role => 'event_admin'), :class => "centerAlign" do
+                    Add Event Admin
+                - elsif params[:client_id].present?
+                  = link_to admin_client_events_path(:client_id => params[:client_id], :role => 'event_admin', :feature => 'users'), :class => "centerAlign" do
+                    Add Event Admin
+                - else
+                  = link_to admin_clients_path(:feature => 'users', :role => 'event_admin'), :class => "centerAlign" do
+                    Add Event Admin
+              
+              - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin
+                - if params[:event_id].present?
+                  = link_to new_admin_event_user_path(:event_id => params[:event_id], :role => 'moderator'), :class => "centerAlign" do
+                    Add Module Admin
+                - elsif params[:client_id].present?
+                  = link_to admin_client_events_path(:client_id => params[:client_id], :feature => 'users', :role => 'moderator'), :class => "centerAlign" do
+                    Add Module Admin
+                - else
+                  = link_to admin_clients_path(:feature => 'users', :role => 'moderator'), :class => "centerAlign" do
+                    Add Module Admin
+
+              - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin
+                - if params[:event_id].present?
+                  = link_to new_admin_event_user_path(:event_id => params[:event_id], :feature => 'users', :role => 'moderator'), :class => "centerAlign" do
+                    Add Moderator
+                - elsif params[:client_id].present? and (current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin)
+                  = link_to admin_client_events_path(:client_id => params[:client_id], :feature => 'users', :role => 'moderator'), :class => "centerAlign" do
+                    Add Moderator
+                - elsif (current_user.has_role? :licensee_admin or current_user.has_role? :client_admin or current_user.has_role? :event_admin)
+                  = link_to admin_clients_path(:feature => 'users', :role => 'moderator'), :class => "centerAlign" do
+                    Add Moderator
+
+          - when 'licensee'
+            %li
+              = link_to new_admin_licensee_path ,:class => "centerAlign" do
+                Add Licensee
+          - when 'conversation'
+            %li
+              - if (@event.present? and @event.client.hide_export == "no") and @event.is_parent? and @conversations.present?# and (current_user.has_role? :db_manager or current_user.has_role? :licensee_admin)
+                = link_to admin_event_conversations_path(:event_id => @event.id, :format => 'xls'),:class => "centerAlign" do
+                  Export
+              - if (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+                - @conversation_wall = ConversationWall.find_by_event_id(@event.id)   
+                - if @conversation_wall.present?
+                  = link_to edit_admin_event_conversation_wall_path(:event_id => @event.id,:id =>@conversation_wall.id),:class => "centerAlign" do
+                    Customize Wall
+                - else
+                  = link_to new_admin_event_conversation_wall_path(:event_id => @event.id),:class => "centerAlign" do
+                    Customize Wall
+              - if false
+                = link_to new_admin_event_conversation_path(:importable_type => 'conversation', :event_id => @event.id,:import => 'xls') ,:class => "centerAlign" do
+                  Import   
+                - if @conversations.present?
+                  = link_to new_admin_event_conversation_path(:importable_type => 'comments', :event_id => @event.id,:import => 'xls') ,:class => "centerAlign" do
+                    Import Comments
+                  = link_to new_admin_event_conversation_path(:importable_type => 'likes', :event_id => @event.id,:import => 'xls') ,:class => "centerAlign" do
+                    Import Likes
+                - if false#@comments.present?
+                  = link_to admin_event_comments_path(:event_id => @event.id, :format => "xls") ,:class => "centerAlign" do
+                    Export 
+                / - if @likes.present?
+                /   = link_to admin_event_likes_path(:event_id => @event.id, :format => "xls") ,:class => "centerAlign" do
+                /     Export Likes
+          - when 'feedback'
+            %li
+              - if false # @event.present? and @event.is_parent?#["index", "new"].include?(params[:action])# and (!current_user.has_role? :db_manager)
+                = link_to new_admin_event_feedback_path(:importable_type => 'feedback', :event_id => @event.id,:import => 'xls') ,:class => "centerAlign" do
+                  Import
+              - if @event.present? and @event.is_parent? and params[:action] == "index" and @feedbacks.present?# and ( current_user.has_role? :licensee_admin or current_user.has_role? :db_manager)
+                - if false # !(current_user.has_role? :db_manager)
+                  = link_to admin_event_feedbacks_path(:event_id => @event.id,:feedback_form_id=>params[:feedback_form_id], :format => 'xls'),:class => "centerAlign" do
+                    Export
+                - if false
+                  = link_to new_admin_event_feedback_path(:event_id => @event.id, :importable_type => 'user_feedbacks', :import => "xls") ,:class => "centerAlign" do
+                    Import Answer     
+                - if @user_feedbacks.present? and current_user.has_role? :db_manager
+                  = link_to admin_event_user_feedbacks_path(:event_id => @event.id,:feedback_form_id=>params[:feedback_form_id], :format => "xls",:export_type => 'user_feedback') ,:class => "centerAlign" do
+                    Export Answer 
+          - when 'image'
+            %li
+              - if @event.present?
+                = link_to  new_admin_feedback_form_path(:event_id => @event.id),:class => "centerAlign" do
+                  Add Feedback Form
+          - when 'faq'
+            %li
+              - if params[:show_history] != "true" and @faq.nil?
+                = link_to new_admin_event_faq_path(:event_id => @event.id),:class => "centerAlign" do
+                  Add FAQ
+              - else
+                / = link_to admin_event_faq_path(:event_id => @event.id,:id => @faq.id,:history => "true"),:target => "_blank" ,:class => "centerAlign" do
+                /   Show History     
+          - when 'image'
+            %li
+              - if @event.present?
+                = link_to  new_admin_event_image_path(:event_id => @event.id),:class => "centerAlign" do
+                  Add Image 
+          - when 'highlight_image'
+            %li
+              - if @event.present?
+                = link_to  new_admin_event_highlight_image_path(:event_id => @event.id),:class => "centerAlign" do
+                  Add Highlight Image        
+          - when 'poll'
+            %li
+              - if false#["index", "new"].include?(params[:action]) and (!current_user.has_role_for_event?("db_manager", @event.id)) #(!current_user.has_role? :db_manager)
+                = link_to new_admin_event_poll_path(:event_id => @event.id, :importable_type => 'poll', :import => "xls") ,:class => "centerAlign" do
+                  Import 
+                / - if params[:action] == "index" and @polls.present?
+                /   = link_to admin_event_polls_path(:event_id => @event.id, :format => 'xls'),:class => "centerAlign" do
+                /     Export
+                - if false
+                  = link_to new_admin_event_poll_path(:event_id => @event.id, :importable_type => 'user_polls', :import => "xls") ,:class => "centerAlign" do
+                    Import Answer
+              - if (@event.present? and @event.client.hide_export == "no") and @user_polls.present?# and (current_user.has_role? :db_manager or current_user.has_role? :licensee_admin)
+                = link_to admin_event_user_polls_path(:event_id => @event.id, :format => "xls") ,:class => "centerAlign" do
+                  Export Answer
+              - if @event.present? and @event.is_parent? and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))    
+                - @poll_wall = PollWall.find_by_event_id(@event.id)   
+                - if @poll_wall.present?
+                  = link_to edit_admin_event_poll_wall_path(:event_id => @event.id,:id =>@poll_wall.id),:class => "centerAlign" do
+                    Customize Wall
+                - else
+                  = link_to new_admin_event_poll_wall_path(:event_id => @event.id),:class => "centerAlign" do
+                    Customize Wall                   
+          - when 'qna'
+            %li
+              - if (@event.present? and @event.client.hide_export == "no") and @event.is_parent? and @qnas.present?# and (current_user.has_role? :db_manager or current_user.has_role? :licensee_admin)
+                = link_to admin_event_qnas_path(:event_id => @event.id, :format => 'xls'),:class => "centerAlign" do
+                  Export
+              - if @event.present? and @event.is_parent? and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))    
+                - @qna_wall = QnaWall.find_by_event_id(@event.id)   
+                - if @event.present? and @event.is_parent? and @qna_wall.present?
+                  = link_to edit_admin_event_qna_wall_path(:event_id => @event.id,:id =>@qna_wall.id),:class => "centerAlign" do
+                    Customize Wall
+                - else @event.present? and @event.is_parent?
+                  = link_to new_admin_event_qna_wall_path(:event_id => @event.id),:class => "centerAlign" do
+                    Customize Wall 
+              - if false
+                = link_to new_admin_event_qna_path(:importable_type => 'qna', :event_id => @event.id,:import => 'xls') ,:class => "centerAlign" do
+                  Import        
+          - when 'sponsor'
+            %li
+              - if params[:show_history] != "true" and @sponsor.nil?
+                = link_to new_admin_event_sponsor_path(:event_id => @event.id),:class => "centerAlign" do
+                  Add Sponsor
+              - else
+                / = link_to admin_event_sponsor_path(:event_id => @event.id,:id => @sponsor.id,:history => "true"),:target => "_blank" ,:class => "centerAlign" do
+                /   Show History    
+          - when 'award'
+            %li
+              - if params[:show_history] != "true" and @award.nil?
+                = link_to new_admin_event_award_path(:event_id => @event.id),:class => "centerAlign" do
+                  Add Award
+              - else
+                / = link_to admin_event_award_path(:event_id => @event.id,:id => @award.id,:history => "true"),:target => "_blank" ,:class => "centerAlign" do
+                /   Show History     
+          - when 'winner'
+            %li
+              - if params[:show_history] != "true" and @winner.nil?
+                = link_to new_admin_event_award_winner_path(:event_id => @event.id,:award_id => @award.id),:class => "centerAlign" do
+                  Add Winner
+              - else
+                / = link_to admin_event_award_winner_path(:event_id => @event.id,:award_id => @winner.award_id,:id => @winner.id,:history => "true"),:target => "_blank" ,:class => "centerAlign" do
+                /   Show History     
+          - when 'e_kit'
+            %li
+              - if @event.present?
+                = link_to new_admin_event_e_kit_path(:event_id => @event.id),:class => "centerAlign" do
+                  Add e_Kit 
+          - when 'contact'
+            %li
+              - if @event.present?
+                = link_to new_admin_event_contact_path(:event_id => @event.id),:class => "centerAlign" do
+                  Add Contact
+          - when 'emergecy exit'
+            %li
+              - if @event.present?
+                = link_to new_admin_event_emergency_exit_path(:event_id => @event.id),:class => "centerAlign" do
+                  Add Emergecy Exit                         
+          - when 'notification'
+            %li
+              - if @event.present?
+                = link_to new_admin_event_notification_path(:event_id => @event.id),:class => "centerAlign" do
+                  Add Notification
+          
+          - when 'panel'
+            %li
+              - if @event.present?
+                = link_to new_admin_event_panel_path(:event_id => @event.id),:class => "centerAlign" do
+                  Add Panel   
+          - when 'quiz'
+            %li
+              / - if ["index", "new"].include?(params[:action])
+              /   = link_to new_admin_event_quizee_path(:event_id => @event.id, :importable_type => 'quizee', :import => "xls") ,:class => "centerAlign" do
+              /     Import 
+              - if  (@event.present? and @event.client.hide_export == "no") and @event.is_parent? and params[:action] == "index" and @quizzes.present?
+                = link_to admin_event_user_quizzes_path(:event_id => @event.id, :format => 'xls'),:class => "centerAlign" do
+                  Export
+              - if @event.present? and @event.is_parent? and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))    
+                - @quiz_wall = QuizWall.find_by_event_id(@event.id)   
+                - if @quiz_wall.present?
+                  = link_to edit_admin_event_quiz_wall_path(:event_id => @event.id,:id =>@quiz_wall.id),:class => "centerAlign" do
+                    Customize Wall
+                - else
+                  = link_to new_admin_event_quiz_wall_path(:event_id => @event.id),:class => "centerAlign" do
+                    Customize Wall 
+          - when 'my_travel'
+            %li
+              - if (@event.present? and @event.client.hide_import == "no") and @event.is_parent?# and !(current_user.has_role? :db_manager)
+                = link_to new_admin_event_my_travel_path(:importable_type => 'my_travel', :event_id => @event.id,:import => 'xls') ,:class => "centerAlign" do
+                  Import 
+              - if (@event.present? and @event.client.hide_export == "no") and @event.is_parent? and @my_travels.present?# and (current_user.has_role? :db_manager or current_user.has_role? :licensee_admin)
+                = link_to admin_event_my_travels_path(:event_id => @event.id, :format => 'xls'),:class => "centerAlign" do
+                  Export   
+          - when 'user_registration'
+            %li
+              - if (@event.present? and @event.client.hide_export == "no") and @user_registrations.present?
+                = link_to admin_event_user_registrations_path(:event_id => @event.id, :format => 'xls'),:class => "centerAlign" do
+                  Export
+              - if !(current_user.has_role? :client_response_manager)
+                - if (@event.present? and @event.client.hide_import == "no")
+                  - if @event.present? and @registration.present?
+                    = link_to new_admin_event_user_registration_path(:importable_type => 'user_registration', :event_id => @event.id,:import => 'xls') ,:class => "centerAlign" do
+                      Import Data
+                  = link_to new_admin_event_auto_status_email_path(:importable_type =>'auto_status_email', :event_id => @event.id,:import => 'xls',:registration_type=>"auto_approve") ,:class => "centerAlign" do
+                    Import Auto Approve Email IDs
+                  = link_to new_admin_event_auto_status_email_path(:importable_type => 'auto_status_email', :event_id => @event.id,:import => 'xls',:registration_type=>"auto_reject") ,:class => "centerAlign" do
+                    Import Auto Reject Email IDs
+                - if @event.present? and @event.registrations.present? and @event.registration_settings.present? and @event.registration_look_and_feels.present?
+                  - regi_setting = @event.registration_settings.first
+                  - regi_setti_url = (regi_setting.registration == "hobnob" ? regi_setting.reg_url : regi_setting.external_reg_url) rescue nil
+                  = link_to regi_setti_url,:target =>"_blank",:class => "centerAlign" do
+                    Preview Form 
+          - when 'registration_detail'
+            %li
+              - if (@event.present? and @event.client.hide_export == "no") and @registrations.present?
+                - if params[:type].present?
+                  = link_to admin_event_user_registrations_path(:event_id => @event.id, :format => 'xls',:type => params[:type]),:class => "centerAlign" do
+                    Export
+                -elsif params[:type].blank?
+                  = link_to admin_event_user_registrations_path(:event_id => @event.id, :format => 'xls'),:class => "centerAlign" do
+                    Export
+          - when 'telecaller_dashboard'
+            %li
+              - if (@event.present? and @event.client.hide_export == "no") and @telecaller_data.present?
+                = link_to admin_event_telecaller_dashboard_path(:event_id => @event.id, :format => 'xls',:from=>"dashboard",:params => params,:id=>1),:class => "centerAlign" do
+                  Export
+          - when 'registration_statistic'
+            - if (@event.present? and @event.client.hide_export == "no") and @event.is_parent? and params[:type].present? and (params[:type] == "total_attendees" || params[:type] == 'pre_registered' || params[:type] == 'walkin' || params[:type] == 'no_shows') and @user_registrations.present?
+              %li
+                = link_to admin_event_registration_statistic_path(:id=>1,:event_id => @event.id, type: params[:type],:format => 'xls'),:class => "centerAlign" do
+                  Export 
+              - if (params[:type].present? and params[:type] == "confirmed") and @user_registrations.present?
+                %li
+                  = link_to admin_event_invitee_searches_path(:event_id => @event.id, :format => 'xls'),:class => "centerAlign" do
+                    Export
+          - when 'campaign_detail'
+            %li
+              - if (@event.present? and @event.client.hide_export == "no") and @event.is_parent?
+                / - registration_edms = Edm.where(:event_id => @event.id,:campaign_id => 0).pluck(:id)
+                / - total_edm_sent = EdmMailSent.where(:event_id => @event.id).where('edm_id NOT IN (?)',registration_edms)
+                / - if total_edm_sent.present?
+                - if params["campaign_id"].present?
+                  = link_to admin_event_campaign_details_path(:event_id => @event.id, :format => 'xls',:campaign_id => params[:campaign_id]),:class => "centerAlign" do
+                    Export                               
+          - when 'campaign_detail'
+            %li
+              - if (@event.present? and @event.client.hide_export == "no")
+                = link_to admin_event_campaign_details_path(:event_id => @event.id, :format => 'xls') ,:class => "centerAlign" do
+                  Export           
+          - when 'track_link_user'
+            %li
+              - if (@event.present? and @event.client.hide_export == "no")
+                - if (params[:email_count] == "true" and params[:edm_id].present?)
+                  = link_to admin_event_track_link_users_path(:edm_id => params[:edm_id],:track_link_no => params[:track_link_no], :email_count => "true", :format => 'xls'),:class => "centerAlign" do
+                    Export
+                - elsif (params[:email_count] == "true" and params[:event_id].present?)
+                  = link_to admin_event_track_link_users_path(:event_id => @event.id,:track_link_no => params[:track_link_no], :email_count => "true", :format => 'xls'),:class => "centerAlign" do
+                    Export
+                - elsif params[:edm_id].present?
+                  = link_to admin_event_track_link_users_path(:event_id => @event.id,:track_link_no => params[:track_link_no], :edm_id => params[:edm_id], :format => 'xls'),:class => "centerAlign" do
+                    Export
+                - else 
+                  = link_to admin_event_track_link_users_path(:event_id => @event.id,:track_link_no => params[:track_link_no], :format => 'xls'),:class => "centerAlign" do
+                    Export
+          - when 'unsubscribe'
+            %li 
+              - if (@event.present? and @event.client.hide_import == "no") and @event.is_parent?
+                = link_to new_admin_event_unsubscribe_path(:event_id => @event.id, :importable_type => 'unsubscribe',:import => 'xls') ,:class => "centerAlign" do
+                  Import  

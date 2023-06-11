@@ -1,0 +1,62 @@
+.save_button.mdl-card.agendaHeight
+  = form_for [:admin, @event, @faq], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp.p-b-25
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information
+      -# if @event.event_features.where(:faq_setting => "Yes").present?  or (@event.microsite.present? and @event.microsite.microsite_features.where(:faq_setting => "Yes").present?)
+        / = f.hidden_field :faq_setting, :value => true 
+        / .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+        /   .form-group
+        /     %label.col-lg-4.control-label.ml-color--shades-white
+        /       Category *
+        /     .col-lg-7  
+        /       - default_faq_type = Faq.where(:event_id => params[:event_id]).pluck(:faq_type).compact.uniq
+        /       - default_faq_type << 'New Category'
+        /       %i.arrow.single
+        /       = f.select("faq", "faq_type", default_faq_type, {:selected => f.object.faq_type,:prompt => "#{(f.object.faq_type.present?) ? f.object.faq_type : "Select Category" }"}, {include_blank: 'true',:class=> 'select2-single form-control'})
+        /       .field_with_errors
+        /         .span{:class => "errorMessage"}
+        /           = f.object.errors.messages[:faq_type].join("") rescue nil 
+        / .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+        /   - @show_new_category = (f.object.errors.present? and f.object.faq_type == 'New Category') ? true : false
+        /   #new_category{:style => (f.object.errors.present? and f.object.faq_type == 'New Category') ? 'display:block' : ''}
+        /     = f.custom_text_field :new_category, "New Category *","background" => "false"
+      = f.custom_text_field :question, "Question *","background" => "false"
+      = f.custom_text_area_field :answer, "answer *", "background" => "false"
+      = hidden_field_tag "type","#{params[:type]}" if params[:type].present?
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.form-group{:style=>"width:32%;"}
+          .md-checkbox
+            %label
+              = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated
+      = hidden_field_tag "from","#{params[:from]}" if params[:from].present? 
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+
+/ - if @show_new_category.present? and @show_new_category == true
+/   :javascript
+/     $("#new_category").show();    
+/ - else
+/   :javascript
+/     $("#new_category").hide();
+:javascript
+  $(window).load(function(){
+    $('.gui-file').change(function(){
+      filename = $(this)[0].files[0].name;
+      $(".gui-input").val(filename);
+    });
+  })
+  / $("#faq_faq_type").click(function(){
+  /   value = $("#faq_faq_type").val();
+  /   if (value == "New Category"){
+  /     $("#new_category").show();
+  /   }else{
+  /     $("#new_category").hide();
+  /   }s
+  / }); 

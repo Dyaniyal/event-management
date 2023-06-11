@@ -1,0 +1,22 @@
+.save_button.mdl-card.agendaheight
+  = form_for [:admin, @event, @award, @winner],:html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          General Information
+          / %a{:href => 'javascript:void(0);', :class =>'helpTag testhelp'}
+          /   what's this?
+      =# render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "winner_generalInfo.jpg", :section_id => "winner_logo_section"}
+      = f.custom_text_field :name, "Winner","background" => "false"
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.col-md-4{:style=>"width:35%;"}
+          .md-checkbox
+            %label
+              = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)

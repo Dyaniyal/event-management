@@ -1,0 +1,42 @@
+= javascript_include_tag "jquery.fancybox"
+.save_button.mdl-card
+  = form_for [:admin, @event ,@invitee_group], :html => {:class =>'form-horizontal'},:builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp.p-b-15
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information
+      = f.custom_text_field :name, "Name *", :class => 'mdl-textfield__input'
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8{:style => "margin-top: 30px"}
+        .bs-component
+          .form-group
+            %label.col-lg-4.control-label
+              Select invitee *
+            .col-lg-7.notification.m-l-10.inviteewidth
+              - default_invitee_list = []
+              - default_invitee_list += @invitees.collect{|invitee| [ invitee.name_with_email, invitee.id ]}
+              - default_invitee_list = default_invitee_list.sort {|a,b| a[0].downcase <=> b[0].downcase}
+              - select_all = ['Select All', 'select_all']
+              - default_invitee_list = default_invitee_list.unshift(select_all)
+              - default_invitee_list.each do |invitee|
+                .md-checkbox
+                  %label
+                    = check_box_tag "invitee_group[invitee_ids][]", invitee[1], (f.object.invitee_ids.include?(invitee[1].to_s)), :class => "", :id => "event_user_ids_#{invitee[0]}"
+                    %span.checkbox 
+                    = invitee[0]
+            .col-lg-1
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8   
+        .form-group
+          %label.col-lg-4
+          .field_with_errors.col-lg-7
+            .span{:class => "errorMessage"}
+              = f.object.errors.messages[:invitee_ids].join("") rescue nil
+            
+              / = f.select("invitee_group", "invitee_ids", default_invitee_list,{:selected => f.object.invitee_ids},{include_blank: 'None', :multiple => true, :style => 'min-height:300px'})
+            / .field_with_errors
+            / .span{:class => "errorMessage"}
+            / = f.object.errors.messages[:invitee_ids].join("") rescue nil   
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)

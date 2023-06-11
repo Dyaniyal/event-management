@@ -1,0 +1,30 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  - if params["history"] != "true"
+    .relative.clear
+      - page = params[:controller].split("/").second if params[:controller] != "admin/mobile_applications"
+      - page =  title.capitalize if params[:controller] == "admin/mobile_applications"
+      - page = "e-KIT" if page == "e_kits"
+      - page = "#{title}" if page == "manage_mobile_apps"
+      - page = "Question" if page == "feedbacks"
+      - page = "FeedbackForm" if page == "feedback_forms"
+      - page = "Telecaller" if (page == "telecallers" or page == "invitee_datas")
+      - page = "Microsite" if page == "microsites" 
+      = render :partial => "/admin/dashboards/breadcumb_links",:locals => {:name => params[:controller],:page => page}   
+      / %h3.mdl-color-text--red
+      /   = title
+      //= show_edit_link(params)  #  if page == 'themes' and @theme.present? and !@theme.is_admin_theme?
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.m-t-75
+    - if params["history"] != "true" 
+      %div
+        .mdl-tabs.mdl-js-tabs.ProfileTabLeft.p-h-40
+          #starks-panel
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+              .p-40
+                %div.mdl-color--grey-100
+                  - page = params[:controller].split("/").second
+                  - if page == 'invitee_datas' and params[:action] == 'update' and params[:commit] == 'NEXT' #params[:action] == 'update_details'
+                    = render :partial => "admin/telecallers/show", :locals => {:obj => obj}
+                  - else
+                    = render :partial => "admin/#{page}/show", :locals => {:obj => obj} 
+  - if params["history"] == "true"
+    = render :partial => 'layouts/changes_history'

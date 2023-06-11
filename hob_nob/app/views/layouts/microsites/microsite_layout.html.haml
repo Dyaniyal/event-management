@@ -1,0 +1,29 @@
+!!!
+%html{:lang => "en"}
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %title #{@microsite.name}
+    %meta{:charset => "utf-8"}/
+    %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
+    = stylesheet_link_tag "microsites/bootstrap.min.css", "microsites/box-video.css","microsites/reset.css", "microsites/style.css", "jquery.fancybox.css"
+    = csrf_meta_tags
+    = javascript_include_tag "microsite/application"
+  - if @event.microsite.microsite_look_and_feel.present?
+    - color = @event.microsite.microsite_look_and_feel.body_background_color
+  %body{"data-offset" => "60", "data-spy" => "scroll", "data-target" => ".navbar", :style => "color: #333; background-color: ##{color};font-family =>Metric-Thin.otf;"  }
+    = render :partial => 'layouts/microsites/microsite_header'
+
+    / Banner Start
+    - if @event.microsite.microsite_look_and_feel.present? and @event.microsite.microsite_look_and_feel.banner_image.present?
+      .banner
+        %span
+          = image_tag(@event.microsite.microsite_look_and_feel.banner_image.url, :style => "width:100%")
+        .bannertittle{:style => "color: #fff;font-size: 84px;"}
+          #{@microsite.microsite_look_and_feel.header_formatter.html_safe}
+    - else
+      .banner{:style => "min-height: 0px;"}
+
+      / Banner End
+      / Main Container Start
+  = yield
+  = render :partial => 'layouts/microsites/microsite_footer'

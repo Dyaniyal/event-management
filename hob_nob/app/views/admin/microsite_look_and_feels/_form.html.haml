@@ -1,0 +1,95 @@
+= javascript_include_tag "jquery-1.11.3.min", "pick-a-color-1.2.0.min", "tinycolor", "jquery.fancybox", "theme_color_pick"
+.save_button.mdl-card.feedbackFormPage
+  = form_for [:admin, @event, @event.microsite, @microsite_look_and_feel], :html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.pollInfo.mdl-shadow--1dp.feedbackFormPage
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information    
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+        .bs-component
+          .form-group
+            .span.col-lg-4
+              = f.label "Logo (450x70px) ",:class =>"control-label", style: "float: right;"
+            .col-lg-7.Closetheme
+              %label.field.file
+                %span.button.btn-primary
+                  Choose File 
+                = f.file_field :logo,:id => "uploadBtnLogo", :class=>"gui-file"
+                = text_field_tag("text_file_name","", id: "1uploadBtnLogo", class: "gui-input", :value => "#{f.object.logo_file_name.nil? ? "there is no Attachment Available !" : f.object.logo_file_name}", :read_only => true)
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = f.object.errors.messages[:logo].join("") rescue nil
+            - if @microsite_look_and_feel.present? and f.object.logo_file_name.present? and params[:action] == "edit"
+              .col-lg-1
+                = link_to admin_event_microsite_microsite_look_and_feel_path(:event_id => @event.id, :microsite_look_and_feel_id => @microsite_look_and_feel.id,:remove_image => true,:logo => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                  %span
+                    X
+      = f.custom_text_field :logo_back_color, "Logo Background Color", :value => (f.object.new_record? ? "4d4e4f" : f.object.logo_back_color), :class => 'pick-a-color',"background" => "false"
+    .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15.feedbackFormPage
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+        %h4.heading-border.displaybolck.p-t-10
+          Banner Setting      
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+        .bs-component
+          .form-group
+            .span.col-lg-4
+              = f.label "Banner Image (Recommanded 1600x500px) ",:class =>"control-label", style: "float: right;"
+            .col-lg-7.Closetheme
+              %label.field.file
+                %span.button.btn-primary
+                  Choose File 
+                = f.file_field :banner_image,:id => "uploadBtnbannerImage", :class=>"gui-file"
+                = text_field_tag("text_file_name","", id: "1uploadBtnbannerImage", class: "gui-input", :value => "#{f.object.banner_image_file_name.nil? ? "there is no Attachment Available !" : f.object.banner_image_file_name}", :read_only => true)
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = f.object.errors.messages[:banner_image].join("") rescue nil
+            - if @microsite_look_and_feel.present? and f.object.banner_image_file_name.present? and params[:action] == "edit"
+              .col-lg-1
+                = link_to admin_event_microsite_microsite_look_and_feel_path(:event_id => @event.id, :microsite_look_and_feel_id => @microsite_look_and_feel.id,:remove_image => true,:banner_image => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                  %span
+                    X    
+      = f.label "Banner Text"
+      = f.cktext_area :header_formatter 
+    .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15.feedbackFormPage
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+        %h4.heading-border.displaybolck.p-t-10
+          = f.label "Home Page content"
+          = f.cktext_area :home_page_content 
+        = f.custom_text_field :body_background_color, "Home Background Color", :value => (f.object.new_record? ? "ffffff" : f.object.body_background_color), :class => 'pick-a-color',"background" => "false"
+    .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15.feedbackFormPage
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+        %h4.heading-border.displaybolck.p-t-10
+          Home Page Features
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5.socialMediaRadioBtn
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt  Do you want to show event dates?
+          .col-lg-3.p-h-12
+            = f.custom_radio_button_menu :event_dates, "active","Yes", :id => "url_event_date", :default_checked => (f.object.event_dates == 'active') ? 'checked' : ''
+            = f.custom_radio_button_menu :event_dates, "deactive","No", :id => "build_new_event_date", :default_checked => (f.object.event_dates == 'deactive') ? 'checked' : ''
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5.socialMediaRadioBtn
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt  Do you want to show event location?
+          .col-lg-3.p-h-12
+            = f.custom_radio_button_menu :event_location, "active","Yes", :id => "url_event_location", :default_checked => (f.object.event_location == 'active') ? 'checked' : ''
+            = f.custom_radio_button_menu :event_location, "deactive","No", :id => "build_new_event_location", :default_checked => (f.object.event_location == 'deactive') ? 'checked' : ''
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5.socialMediaRadioBtn
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt  Do you want to show contact details?
+          .col-lg-3.p-h-12
+            = f.custom_radio_button_menu :contact_detail, "active","Yes", :id => "url_contact_detail", :default_checked => (f.object.contact_detail == 'active') ? 'checked' : ''
+            = f.custom_radio_button_menu :contact_detail, "deactive","No", :id => "build_new_contact_detail", :default_checked => (f.object.contact_detail == 'deactive') ? 'checked' : ''
+    .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15.feedbackFormPage
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+        %h4.heading-border.displaybolck.p-t-10
+          = f.label "Footer Formatter"
+          %br
+          = f.cktext_area :footer_formatter 
+      = f.custom_text_field :footer_background_color, "Footer Background Color", :value => (f.object.new_record? ? "dbdbdb" : f.object.footer_background_color), :class => 'pick-a-color',"background" => "false"
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)

@@ -1,0 +1,6 @@
+%ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect.mdl-color--blue-grey-900.droplisttab.Mangeuserdroplisttab{:for => page_id, :style => "width: 266px;height: 500px;overflow-y: auto"}
+  - users = User.joins(:roles).where('roles.resource_type = ? and resource_id = ?', 'Event', @event.id).uniq
+  - users.each do |user|
+    %li.mdl-menu__item
+      = link_to admin_event_log_changes_path(:event_id => @event.id, :user_id => "#{user.id}"), :class => "mdl-color-text--white" do
+        #{user.email}

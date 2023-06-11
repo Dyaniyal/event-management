@@ -1,0 +1,52 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin
+      = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "clients", :url => "/admin/clients/new", :msg => 'test'}
+    - else
+      = index_nodata_message("clients")
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("clients")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      %th Client Name
+      %th Upcoming Event
+      %th Ongoing Event
+      %th Past Event
+      %th Status
+      - objs_ids = objs.pluck(:id)
+      - if !current_user.has_role_without_event("super_admin", objs_ids,session[:current_user_role])#!current_user.has_role? :super_admin  
+        %th
+    - objs.each do |client|
+      %tr
+        -if client.status == "deactive" or current_user.has_role_without_event("super_admin", objs_ids,session[:current_user_role])#current_user.has_role? :super_admin
+          %td.font16= client.name rescue nil
+          %td.font16= Client.upcoming_event(client,current_user,session[:current_user_role]).length
+          %td.font16= Client.ongoing_event(client,current_user,session[:current_user_role]).length
+          %td.font16= Client.past_event(client,current_user,session[:current_user_role]).length
+        - elsif current_user.has_role_without_event("db_manager", objs_ids,session[:current_user_role])#current_user.has_role? :db_manager
+          %td.font16= client.name
+          %td.font16= Client.upcoming_event(client,current_user,session[:current_user_role]).length
+          %td.font16= Client.ongoing_event(client,current_user,session[:current_user_role]).length
+          %td.font16= Client.past_event(client,current_user,session[:current_user_role]).length
+        - else
+          %td.font16= link_to "#{client.name} ", admin_client_events_path(:client_id => client.id),:class => "collection-item"
+          %td.font16= link_to "#{Client.upcoming_event(client,current_user,session[:current_user_role]).length} ", admin_client_events_path(:client_id => client.id,:type => "upcoming_event"),:class => "collection-item"
+          %td.font16= link_to "#{Client.ongoing_event(client,current_user,session[:current_user_role]).length} ", admin_client_events_path(:client_id => client.id,:type => "ongoing_event"),:class => "collection-item" 
+          %td.font16= link_to "#{Client.past_event(client,current_user,session[:current_user_role]).length} ", admin_client_events_path(:client_id => client.id,:type => "past_event"),:class => "collection-item"
+        %td.font16= client.status.capitalize rescue nil
+        %td.IconDrp
+          - if (current_user.has_role_without_event("licensee_admin", objs_ids,session[:current_user_role]) or current_user.has_role_without_event("client_admin", objs_ids,session[:current_user_role]))
+            = more_vert_button(client.id)
+            %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{client.id}"}
+              - if can? :update, client
+                = link_to edit_admin_client_path(client.id), :class => "mdl-menu__item" do
+                  Edit
+              - if (user_signed_in? and current_user.has_role_without_event("licensee_admin", objs_ids,session[:current_user_role])) #current_user.has_role? :licensee_admin
+                = link_to "/admin/clients/#{client.id}/users", :class =>"mdl-menu__item" do
+                  Manage Users
+                - client.aasm.events.each do |eve|
+                  = link_to "#{eve.name.to_s.titlecase}".html_safe,{:action=>"update", :controller=>"admin/clients", :id => client.id, :status => eve.name.to_s, :page => params[:page]}, :method => "put", :data => { confirm: 'Are you sure, you want to change the status.'},:class => "mdl-menu__item"
+                = link_to 'Manage Fonts', admin_client_fonts_path(client_id: client.id), class: 'mdl-menu__item'
+  = will_paginate objs

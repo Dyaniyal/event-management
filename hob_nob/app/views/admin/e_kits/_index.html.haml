@@ -1,0 +1,55 @@
+- if (objs.blank? and @e_kits.blank?) and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "e_kits", :url => "/admin/events/#{params[:event_id]}/e_kits/new", :msg => 'test'}
+-elsif (objs.blank? and @e_kits.blank?) and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("e_kits")
+- else
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    - if objs.class ==  ActsAsTaggableOn::Tag::ActiveRecord_Relation 
+      - if objs.present? or @e_kits.present?
+        %tr
+          %th Tag Name 
+          %th Sub Folder
+          %th Name
+          %th Attachment 
+          %th Session Name
+          %th Sponsor Name
+          %th
+            - if false
+              - tag_cloud(objs, %w(css1 css2 css3 css4)) do |tag, css_class|
+                %tr
+                  %td -
+                  %td                  
+                    = link_to tag.name, { :action => :index, :tag => tag.name }, :class => css_class
+                  %td -
+                  %td    
+            - if @e_kits.present?
+              - @e_kits.each do |e_kit|
+                %tr 
+                  %td.font16= e_kit.get_tag_name
+                  %td.font16= e_kit.sub_folder
+                  %td.font16= show_link(params, e_kit.id, e_kit.name) rescue nil
+                  %td.font16= show_link(params, e_kit.id, (e_kit.attachment_file_name.split(".").first)) rescue nil
+                  %td.font16= e_kit.agenda.title if e_kit.agenda.present?
+                  %td.font16= e_kit.sponsor.name if e_kit.sponsor.present?
+                  %td.IconDrp
+                    = more_vert_button(e_kit.id)
+                    %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{e_kit.id}"}
+                      = edit_link(params, e_kit.id)
+                      - if @event.is_parent?
+                        = delete_link(params, e_kit.id)
+    - else
+      %tr
+        %th Name 
+        %th Attachment 
+        %th
+          - @tags.each do |e_kit|
+            %tr 
+              %td.font16= show_link(params, e_kit.id, e_kit.name) rescue nil
+              %td.font16= show_link(params, e_kit.id, (e_kit.attachment_file_name.split(".").first)) rescue nil
+              %td.IconDrp
+                = more_vert_button(e_kit.id)
+                %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{e_kit.id}"}
+                  = edit_link(params, e_kit.id)
+                  = delete_link(params, e_kit.id)

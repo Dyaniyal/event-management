@@ -1,0 +1,251 @@
+- if params[:import].present?
+  = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+- else
+  = javascript_include_tag "jquery.fancybox"
+  .save_button.mdl-card.feedbackFormPage  
+    = form_for [:admin, @event, @agenda],:html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+      .mdl-grid.mdl-shadow--1dp
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            Visibility Settings
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            .mdl-grid.p-v-5
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt Show this data element to:
+              .col-lg-3.p-h-12  
+                = f.custom_radio_button_menu :show_agenda_feature, "all","All", :id => "feature_option_1#{f.object.id}", :default_checked => "#{f.object.show_agenda_feature =="all" || f.object.show_agenda_feature.blank? ? "checked" : ""}",:class => "show_agenda_feature"
+                = f.custom_radio_button_menu :show_agenda_feature, "group", "Group", :id => "feature_option_2#{f.object.id}", :default_checked => "#{f.object.show_agenda_feature == "group" ? "checked" : ""}",:class => "show_agenda_feature"
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8{:style => ((f.object.show_agenda_feature == 'all' or f.object.show_agenda_feature.blank?)? 'margin-top:30px;display:none;' : 'margin-top:30px'), :id => 'group_check_boxes'}
+              .form-group
+                %label.col-lg-4.control-label.ml-color--shades-white
+                  Select Groups *
+                  %br
+                - er = f.object.errors.messages[:group_ids].join(',') rescue nil
+                .col-lg-7.notification
+                  - default_group_list = [['No Polls taken', 'No Polls taken'], ['No Feedback given', 'No Feedback given'], ['No Quiz taken', 'No Quiz taken'], ['No Q&A', 'No Q&A'], ['NO QR code scanned', 'NO QR code scanned'], ['No Chat', 'No Chat']]
+                  - default_group_list = @default_groups.collect{|group| [ group.name, group.id ]}
+                  - default_group_list.each_with_index do |group, index|
+                    - if index == 0
+                      .usersep
+                        Default Groups
+                    .md-checkbox
+                      %label
+                        %span.checkbox 
+                        = group[0]
+                  - default_group_list = @other_groups.collect{|group| [ group.name, group.id ]}
+                  - default_group_list.each_with_index do |group, index|
+                    - if index == 0
+                      .usersep
+                        Groups created by you
+                    .md-checkbox
+                      %label
+                        = f.check_box :group_ids, {:multiple => true, :class => "myclass", :style => "mystyle", include_hidden: false}, group[1].to_s
+                        %span.checkbox 
+                        = group[0] 
+                .clear
+                .field_with_errors.marginErrMgs
+                  .span{:class => "errorMessage"}
+                    = er 
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10
+            General Information
+        = f.custom_text_field :title, "Title *","background" => "false", :class => 'mdl-textfield__input'
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+          .form-group
+            %label.col-lg-4.control-label.ml-color--shades-white
+              Track
+            .col-lg-7
+              - agenda_tracks = @event.get_event_agenda_tracks.collect {|p| [ p.track_name, p.track_name ] }.uniq
+              - if @event.present? and @event.is_parent?
+                - agenda_tracks = agenda_tracks.unshift(["Add New Track", 0])
+              %i.arrow.single
+              = f.select("agenda", "agenda_track_id", agenda_tracks, {:selected => f.object.agenda_track.present? ? f.object.agenda_track.track_name : "",:prompt => "#{(f.object.agenda_track.present? and f.object.agenda_track.track_name != "Add New Track") ? f.object.agenda_track : "Select Track" }"}, {include_blank: 'None',:class=> 'select2-single form-control'})
+              .field_with_errors
+                .span{:class => "errorMessage"}
+                  = f.object.errors.messages[:agenda_type].join("") rescue nil 
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+          #new_category      
+
+            = f.custom_text_field_speaker :new_category, "Track Name *","background" => "false", :col => '12', :display_field => "#{f.object.agenda_type != "Add New Track" ? "none" : ""}"      
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8{ :id => 'group_check_boxes'}
+          .form-group
+            %label.col-lg-4.control-label.ml-color--shades-white
+              Speaker
+            .col-lg-7.notification.agendaDropdown
+              - list_of_speakers = event_speakers_list(params[:event_id])
+              - speaker_name = list_of_speakers.collect{|p| [ p.speaker_name, p.id ]}
+              - speaker_ids = f.object.speaker_ids.to_s.gsub("\"", "").sub("[", "").sub("]", "").split(", ")
+              .agendaSpeakerCheckboxes
+                .usersep
+                  %a{:href => 'javascript:void(0)', :onclick => "agenda_speaker_dropdown()", :class => "dropbtn"}
+                    Select Speaker
+                -if @event.speakers.blank?
+                  #myDropdown
+                    No Speakers available. Click on + sign to add manually.
+                -else
+                  #myDropdown
+                    - for speaker in @event.speakers
+                      .md-checkbox
+                        %label
+                          = check_box_tag "[agenda][speaker_ids][]", speaker.id, (speaker_ids.include? speaker.id.to_s), :class => "", :id => "agenda_speaker_ids#{speaker.id}"
+                          %span.checkbox 
+                          = speaker.speaker_name
+              .speakerIdsError.redText
+                = @agenda.errors.messages[:speaker_ids].first if @agenda.errors.present? and @agenda.errors.messages[:speaker_ids].present?
+            = link_to "javascript:void(0)", :class => "addMoreSpeaker" do
+              %i.material-icons.mdl-color-text--white.block
+                add
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.visible#visible
+          #add_speaker
+            = f.custom_text_field_speaker :speaker_names, "Add Speaker (Comma seperated) *","background" => "false", :col => '12', :display_field => "#{f.object.speaker_names.blank? ? "none" :  "" }", :value => f.object.speaker_names
+        - if @event.event_features.pluck(:name).include?("sponsors")
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+            .form-group
+              %label.col-lg-4.control-label.ml-color--shades-white
+                Select Sponsor
+              .col-lg-7
+                - sponsor_tracks = [["Select Sponsor",""]] + @event.sponsors.collect {|p| [ p.name, p.id ] }.uniq
+                -# agenda_tracks = agenda_tracks.unshift(["Add New Track", 0])
+                %i.arrow.single
+                = f.select("agenda", "sponsor_id", sponsor_tracks, {:selected => f.object.sponsor_id.present? ? f.object.sponsor_id : ""}, {:class=> 'select2-single form-control'})
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = f.object.errors.messages[:sponsor_id].join("") rescue nil 
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .form-group
+              = f.custom_text_field :location, "Location ","background" => "false", :class => 'mdl-textfield__input'
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .form-group
+              %label.col-lg-4.control-label{:for => "Start Agenda Date"} Start Date/Time *
+              = f.custom_text_field_date :start_agenda_date, "Start Agenda Date", :id => "date-start1",:value => f.object.start_agenda_date.present? ? f.object.start_agenda_date.strftime('%d/%m/%Y') : ''
+              .col-lg-3.timeDropdown
+                .timeTab
+                  = f.custom_text_field_date :start_time_hour, " ", :class => "hours inputs is-focused", :placeholder => 'HH ', :value => get_hour_minute_second_ampm(f.object.start_agenda_time, 'hour'), :col => '2',:maxlength => "2"
+                  = f.custom_text_field_date :start_time_minute, " ", :class => "minutes inputs is-focused", :placeholder => 'MM ', :value => get_hour_minute_second_ampm(f.object.start_agenda_time, 'minute'), :col => '2',:maxlength => "2"
+                  = f.custom_text_field_date :start_time_am, " ", :class => "ampm inputs is-focused", :placeholder => 'AM/PM', :value => get_hour_minute_second_ampm(f.object.start_agenda_time, 'ampm'), :col => '3',:maxlength => "2"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .bs-component
+            .form-group
+              %label.col-lg-4.control-label{:for => "End Agenda Date"} End Date/Time
+              = f.custom_text_field_date :end_agenda_date, "End Agenda Date", :id => "date-end1",:value => f.object.end_agenda_date.present? ? f.object.end_agenda_date.strftime('%d/%m/%Y ') : ''
+              .col-lg-3.timeDropdown
+                .timeTab
+                  = f.custom_text_field_date :end_time_hour, " ", :class => "hours inputs", :placeholder => 'HH ', :value => get_hour_minute_second_ampm(f.object.end_agenda_time, 'hour'), :col => '2',:maxlength => "2"
+                  = f.custom_text_field_date :end_time_minute, " ", :class => "minutes inputs", :placeholder => 'MM ', :value => get_hour_minute_second_ampm(f.object.end_agenda_time, 'minute'), :col => '2',:maxlength => "2"
+                  = f.custom_text_field_date :end_time_am, " ", :class => "ampm inputs", :placeholder => 'AM/PM', :value => get_hour_minute_second_ampm(f.object.end_agenda_time, 'ampm'), :col => '3',:maxlength => "2"
+        = f.custom_text_area_field :discription, "description", "background" => "false"
+        - if @event.panels.where(panel_type:"speaker").present? and  @event.event_features.pluck(:name).include?("qnas")
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            .mdl-grid.p-v-5
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt Display Ask a Question link
+              .col-lg-3.p-h-12   
+                = f.custom_radio_button :ask_an_question, "yes","Yes", :id => "option-3"
+                = f.custom_radio_button :ask_an_question, "no", "No", :id => "option-4"
+        - else
+          = f.hidden_field :ask_an_question, :value => "no"        
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Session Rating *
+            .col-lg-3.p-h-12   
+              = f.custom_radio_button :rating_status, "active","Active", :id => "option-1"
+              = f.custom_radio_button :rating_status, "deactive", "Deactive", :id => "option-2"
+            .col-lg-1.agenda_help
+              = link_to "?" ,"/whats_this/agenda/general_information/Help_agenda_sessionRating.jpg", rel: "agenda_image", title: "Session Rating", :class =>'fancybox whatsImg appwhatsthis'  
+              
+        - if @event.present? and @event.parent_id.present?
+          .mdl-grid.p-v-5.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.col-md-4{:style=>"width:35%;"}
+            .md-checkbox
+              %label
+                = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+                %span.checkbox 
+                Is language updated
+   
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Display Wayfinding (Meridian)
+            .col-lg-3.p-h-12   
+              = f.custom_radio_button :way_finder, "yes","Yes", :id => "w-option-1"
+              = f.custom_radio_button :way_finder, "no", "No", :id => "w-option-2"
+            
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.wayFinderText{:style => f.object.way_finder == "yes" ? "display:block" : "display:none"}
+          .bs-component
+            .form-group
+              = f.custom_text_field :way_location, "Meridian Placemark *","background" => "false", :class => 'mdl-textfield__input'
+
+        = f.hidden_field :event_id, :value => params[:event_id]
+        = hidden_field_tag "type","#{params[:type]}" if params[:type].present?
+        = hidden_field_tag "from","#{params[:from]}" if params[:from].present?
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)
+  = render :partial => 'admin/layouts/more_links'
+:javascript
+  $(window).load(function(){
+    $(".show_agenda_feature").change(function(){
+      selected_value = $(this).val();
+      if (selected_value == "group"){
+        $("#group_check_boxes").show();
+      }else{
+        $("#group_check_boxes").hide();
+      }  
+    });
+  })  
+:javascript
+  $("#agenda_agenda_track_id").click(function(){
+    value = $('#agenda_agenda_track_id').find(":selected").text();
+    if(value == "Add New Track")
+      $("#agenda_new_category").parent().parent().show();
+    else
+      $("#agenda_new_category").parent().parent().hide();
+    end
+  });
+  
+  $("#w-option-1").click(function(){
+    $(".wayFinderText").show();
+  });
+
+  $("#w-option-2").click(function(){
+    $("#agenda_way_location").val("");
+    $(".wayFinderText").hide();
+  });
+
+
+:javascript
+  $(window).load(function(){
+  $('#date-start1').bootstrapMaterialDatePicker
+      ({
+        weekStart: 0, 
+        format: 'DD/MM/YYYY',
+        time: false,
+        minDate : "#{@event.start_event_date.strftime("%d/%m/%Y") rescue nil}",
+        maxDate : "#{@event.end_event_date.strftime("%d/%m/%Y") rescue nil}"
+      }).on('change', function(e, date)
+      {
+        $('#date-end1').bootstrapMaterialDatePicker('setMinDate', date);
+        time: false
+      });
+  $('#date-end1').bootstrapMaterialDatePicker
+      ({
+        weekStart: 0, 
+        format: 'DD/MM/YYYY',
+        time: false,
+        minDate : "#{@event.start_event_date.strftime("%d/%m/%Y") rescue nil}",
+        maxDate : "#{@event.end_event_date.strftime("%d/%m/%Y") rescue nil}"
+      }).on('change', function(e, date)
+      {
+        $('#date-start1').bootstrapMaterialDatePicker('setMaxDate', date);
+        time: false
+      });  
+  flightTime();
+  minutes();
+  times();  
+  })
+

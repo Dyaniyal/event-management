@@ -1,0 +1,22 @@
+/ - if !objs.present? and !params[:admin_search].present?
+/   .mdl-typography--text-center.BlnkTxt.p-t-10
+/     = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "registrations", :url => "/admin/events/#{params[:event_id]}/registrations/new", :msg => 'test'}
+/ -elsif !objs.present? and params[:admin_search].present?
+/   .mdl-typography--text-center.BlnkTxt.p-t-10
+/     = get_search_data("registrations")
+/ - else  
+%table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+  %tr
+    %th Consent Questions
+    %th Answer Type
+    %th 
+  - objs.each do |consent_question|
+    %tr
+      %td.font16= consent_question.question rescue nil
+      %td.font16= consent_question.answer_type.humanize
+      %td.IconDrp
+        = more_vert_button(consent_question.id)
+        %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{consent_question.id}"}
+          = edit_link(params, consent_question.id)
+          = delete_link(params, consent_question.id)
+  =# will_paginate objs   

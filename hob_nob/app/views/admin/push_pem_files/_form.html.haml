@@ -1,0 +1,29 @@
+.save_button.mdl-card.agendaheight 
+  = form_for [:admin, @client, @mobile_application, @push_pem_file], :builder => CustomFormBuilder do |f|
+    .mdl-grid.emegencyUpload.p-b-35
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          General Information
+      = f.custom_text_field :title, "Push Title"
+      = f.custom_text_field :android_push_key, "API Access Key*"
+      = f.hidden_field :mobile_application_id, :value => params[:mobile_application_id]
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+
+
+:javascript
+
+  $(window).load(function(){
+    console.log( "#{@push_pem_file.pem_file_file_name}" );
+    if ("#{params[:action]}" == "edit"){
+      filename = "#{@push_pem_file.pem_file_file_name}"
+      $(".gui-input").val(filename);
+    }
+    $('.fileUpload input').change(function(){
+      filename = $(this)[0].files[0].name;
+      $(".gui-input").val(filename);
+    });
+  }) 

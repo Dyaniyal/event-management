@@ -1,0 +1,67 @@
+- if !objs.present? and !params[:admin_search].present? and params[:from] == "microsites"
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "speakers", :url => "/admin/events/#{params[:event_id]}/speakers/new?from=microsites", :msg => 'test'}
+- elsif !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "speakers", :url => "/admin/events/#{params[:event_id]}/speakers/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("speakers")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16.ng-scope.ng-table.manage-event{"template-pagination" => "custom/pager"}
+    %tr
+      - if @event.is_parent?
+        %th Sequence 
+      %th Profile Picture
+      %th 
+        Speaker Name 
+      %th.test
+        .event_select123
+          DESIGNATION
+        .invitee_com12
+        = form_tag admin_event_speakers_path(:event_id => @event.id) , :method => :get , id: "search_speakers_by_designation" , :class => "category_dropdown speaker_designation_title" do
+          -  @speaker_designation = Speaker.where( event_id: @event.id).pluck('DISTINCT designation').compact.delete_if(&:empty?)
+          = select_tag 'search[designation]', options_for_select(['All'] + @speaker_designation, selected: (params[:search][:designation] if params[:search].present? and not params[:search_keyword].present?))
+          = hidden_field_tag :adv_search, true  
+      %th.test
+        .event_select123
+          COMPANY NAME
+        .invitee_com12
+        = form_tag admin_event_speakers_path(:event_id => @event.id) , :method => :get , id: "search_speakers_by_cname" , :class => "category_dropdown" do
+          -  @comanies_list = Speaker.where( event_id: @event.id).pluck('DISTINCT company').compact.delete_if(&:empty?)
+          = select_tag 'search[company_name]', options_for_select(['All'] + @comanies_list, selected: (params[:search][:company_name] if params[:search].present? and not params[:search_keyword].present?))
+          = hidden_field_tag :adv_search, true            
+      %th
+        - objs.each_with_index do |speaker, index|
+          %tr
+            - if @event.is_parent?
+              %td.sortable
+                .orderseq
+                  - if index != 0
+                    %span= link_to "",admin_event_sequence_path(:event_id => speaker.event_id, :id => speaker.id, :seq_type => "up", :feature_type => "speakers"),:class => "uparrow", :method => "put", :remote => true
+                  - if speaker.sequence.to_i != 0 and (@speakers.length - 1) != index
+                    %span= link_to "",admin_event_sequence_path(:event_id => speaker.event_id, :id => speaker.id, :type => "down", :feature_type => "speakers"),:class => "downarrow", :method => "put", :remote => true
+            %td.font16= image_tag(speaker.profile_pic_url(:thumb), :width => 60, :heigth => 60 )
+            / - if current_user.has_role? :db_manager 
+            -if (current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+              %td.font16= speaker.speaker_name
+            - else
+              %td.font16= show_link(params, speaker.id, speaker.speaker_name) rescue nil
+            %td.font16= speaker.designation rescue nil
+            %td.font16= speaker.company rescue nil
+            %td.IconDrp
+              - if (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))#!(current_user.has_role? :db_manager)
+                = more_vert_button(speaker.id)
+                %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{speaker.id}"}
+                  = edit_link(params, speaker.id)
+                  - if @event.is_parent?
+                    = delete_link(params, speaker.id)
+
+:javascript
+  $('input[readonly]').dblclick(function() {
+    $(this).removeAttr('readonly');
+  });
+  $( document ).ready(function() {   
+    $('#search_designation').select2();
+    $('#search_company_name').select2();
+  }); 

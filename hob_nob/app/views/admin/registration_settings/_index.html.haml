@@ -1,0 +1,36 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = index_nodata_message("Registration Setting")
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("Registration Settings")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      %th Show on Mobile app
+      %th Start Date
+      %th End Date
+      %th URL
+      %th
+    - objs.each do |regi_setting|
+      %tr
+        %td.description_adjust.font16= regi_setting.on_mobile_app.capitalize rescue nil
+        %td.font16= time_with_zone(regi_setting.start_date,"IST")
+        %td.font16= time_with_zone(regi_setting.end_date,"IST")
+        - regi_setti_url = (regi_setting.registration == "hobnob" ? regi_setting.reg_url : regi_setting.external_reg_url) rescue nil
+        %td.font16= link_to regi_setti_url,regi_setti_url, target: "_blank" if @event.registrations.present?
+        %td.IconDrp
+          = more_vert_button(regi_setting.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{regi_setting.id}"}
+            = link_to edit_admin_event_registration_setting_path(:event_id => @event.id, :id => regi_setting.id), :class => "mdl-menu__item mdl-js-ripple-effect" do
+              Edit Setting
+            - if @event.registrations.present?
+              = link_to regi_setti_url,:target =>"_blank"  ,:class => "mdl-menu__item mdl-js-ripple-effect" do
+                Preview Form
+            -if @event.registrations.present? and regi_setting.registration == "hobnob"
+              = link_to edit_admin_event_registration_path(:event_id => @event.id, :id => @event.registrations.first.id), :class => "mdl-menu__item mdl-js-ripple-effect" do
+                Edit Form
+            -if (@event.registrations.present? and regi_setting.template == "custom" and regi_setting.registration == "hobnob")
+              = link_to edit_admin_event_registration_path(:event_id=> @event.id,:id => @event.registrations.first.id,:change_code => "true"), :class => "mdl-menu__item mdl-js-ripple-effect" do
+                Edit Source Code
+  = will_paginate objs

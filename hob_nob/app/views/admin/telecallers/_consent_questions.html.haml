@@ -1,0 +1,108 @@
+- if @consent_questions.present?
+  - count = 0
+  - @consent_questions.each do |consent_question|
+    - count += 1
+    - if consent_question.question.present? 
+      = f.hidden_field :consent_questions_answered_time, :value => Time.now
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+        .mdl-grid.p-v-5.mobiappstype.m-t-15
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt
+              = consent_question.question
+          - if consent_question.answer_type == 'radio_button'
+            .col-lg-7.p-h-12.userregis
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8
+                = f.custom_radio_button_for_user_registration "consent_answer_#{count}", "#{consent_question.option_1}", "#{consent_question.option_1}", :id => "#{consent_question.question}option_1" if consent_question.option_1.present?
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8
+                = f.custom_radio_button_for_user_registration "consent_answer_#{count}", "#{consent_question.option_2}", "#{consent_question.option_2}", :id => "#{consent_question.question}option_2" if consent_question.option_2.present?
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8
+                = f.custom_radio_button_for_user_registration "consent_answer_#{count}", "#{consent_question.option_3}", "#{consent_question.option_3}", :id => "#{consent_question.question}option_3" if consent_question.option_3.present?
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8
+                = f.custom_radio_button_for_user_registration "consent_answer_#{count}", "#{consent_question.option_4}", "#{consent_question.option_4}", :id => "#{consent_question.question}option_4" if consent_question.option_4.present?
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8
+                = f.custom_radio_button_for_user_registration "consent_answer_#{count}", "#{consent_question.option_5}", "#{consent_question.option_5}", :id => "#{consent_question.question}option_5" if consent_question.option_5.present?
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8
+                = f.custom_radio_button_for_user_registration "consent_answer_#{count}", "#{consent_question.option_6}", "#{consent_question.option_6}", :id => "#{consent_question.question}option_6" if consent_question.option_6.present?
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8
+                = f.custom_radio_button_for_user_registration "consent_answer_#{count}", "#{consent_question.option_7}", "#{consent_question.option_7}", :id => "#{consent_question.question}option_7" if consent_question.option_7.present?
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8
+                = f.custom_radio_button_for_user_registration "consent_answer_#{count}", "#{consent_question.option_8}", "#{consent_question.option_8}", :id => "#{consent_question.question}option_8" if consent_question.option_8.present?
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8
+                = f.custom_radio_button_for_user_registration "consent_answer_#{count}", "#{consent_question.option_9}", "#{consent_question.option_9}", :id => "#{consent_question.question}option_9" if consent_question.option_9.present?
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8
+                = f.custom_radio_button_for_user_registration "consent_answer_#{count}", "#{consent_question.option_10}", "#{consent_question.option_10}", :id => "#{consent_question.question}option_10" if consent_question.option_10.present?
+                = f.hidden_field "consent_question_#{count}", :value => "#{consent_question.question}"
+
+          - if consent_question.answer_type == 'check_box'
+            .col-lg-7.p-h-12
+              - if  consent_question.option_1.present?
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                  %label.help-tip
+                    = check_box_tag "invitee_datum[consent_answer_#{count}][]","#{consent_question.option_1}",false, :id => "#{consent_question.question}option_1"
+                    %span.checkbox
+                    %span.top6
+                      = "#{consent_question.option_1}"
+              - if consent_question.option_2.present?
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                  %label.help-tip
+                    = check_box_tag "invitee_datum[consent_answer_#{count}][]","#{consent_question.option_2}",false, :id => "#{consent_question.question}option_2" 
+                    %span.checkbox
+                    %span.top6
+                      = "#{consent_question.option_2}"
+              - if consent_question.option_3.present?
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                  %label.help-tip
+                    = check_box_tag "invitee_datum[consent_answer_#{count}][]","#{consent_question.option_3}",false, :id => "#{consent_question.question}option_3" 
+                    %span.checkbox
+                    %span.top6
+                      = "#{consent_question.option_3}"
+              - if consent_question.option_4.present?
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                  %label.help-tip
+                    = check_box_tag "invitee_datum[consent_answer_#{count}][]","#{consent_question.option_4}",false,:id => "#{consent_question.question}option_4" 
+                    %span.checkbox
+                    %span.top6
+                      = "#{consent_question.option_4}"
+              - if consent_question.option_5.present?
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                  %label.help-tip
+                    = check_box_tag "invitee_datum[consent_answer_#{count}][]","#{consent_question.option_5}",false, :id => "#{consent_question.question}option_5" 
+                    %span.checkbox
+                    %span.top6
+                      = "#{consent_question.option_5}"
+              - if consent_question.option_6.present?
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                  %label.help-tip
+                    = check_box_tag "invitee_datum[consent_answer_#{count}][]","#{consent_question.option_6}",false, :id => "#{consent_question.question}option_6" 
+                    %span.checkbox
+                    %span.top6
+                      = "#{consent_question.option_6}"
+              - if consent_question.option_7.present?
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                  %label.help-tip
+                    = check_box_tag "invitee_datum[consent_answer_#{count}][]","#{consent_question.option_7}",false, :id => "#{consent_question.question}option_7" 
+                    %span.checkbox
+                    %span.top6
+                      = "#{consent_question.option_7}"
+              - if consent_question.option_8.present?
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                  %label.help-tip
+                    = check_box_tag "invitee_datum[consent_answer_#{count}][]","#{consent_question.option_8}",false, :id => "#{consent_question.question}option_8" 
+                    %span.checkbox
+                    %span.top6
+                      = "#{consent_question.option_8}"
+              - if consent_question.option_9.present?
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                  %label.help-tip
+                    = check_box_tag "invitee_datum[consent_answer_#{count}][]","#{consent_question.option_9}",false, :id => "#{consent_question.question}option_9" 
+                    %span.checkbox
+                    %span.top6
+                      = "#{consent_question.option_9}"
+              - if consent_question.option_10.present?
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                  %label.help-tip
+                    = check_box_tag "invitee_datum[consent_answer_#{count}][]","#{consent_question.option_10}",false, :id => "#{consent_question.question}option_10" 
+                    %span.checkbox
+                    %span.top6
+                      = "#{consent_question.option_10}"
+              = f.hidden_field "consent_question_#{count}", :value => "#{consent_question.question}"

@@ -1,0 +1,40 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "licensees", :url => "/admin/licensees/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("licensees")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16{"template-pagination" => "custom/pager"}
+    %tr
+      %th Name
+      %th Company Name
+      %th Email id
+      %th Status
+      %th Nbr. of events
+      %th Start Date
+      %th End Date
+      %th
+      - if objs.present?
+        - objs.each do |licensee| 
+          %tr
+            %td.font16= link_to "#{licensee.get_full_name}", edit_admin_licensee_path(:id => licensee.id)
+            %td.font16= licensee.company.capitalize rescue nil
+            %td.font16= link_to "#{licensee.email}", admin_licensee_path(licensee.id)
+            %td.font16= licensee.status.capitalize rescue nil
+            / %td.font16= licensee.get_licensee_events_count
+            - if licensee.no_of_event.present?
+              %td.font16= "#{licensee.get_licensee_events_count} of #{licensee.no_of_event}"
+            - else
+              %td.font16= licensee.get_licensee_events_count
+            %td.font16= licensee.licensee_start_date.strftime('%d-%m-%Y') rescue nil
+            %td.font16= licensee.licensee_end_date.strftime('%d-%m-%Y') rescue nil
+            %td.IconDrp
+              = more_vert_button(licensee.id)
+              %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{licensee.id}"}
+                = link_to edit_admin_licensee_path(licensee.id),:class => "mdl-menu__item" do
+                  Edit
+                - licensee.aasm.events.each do |eve|
+                  = link_to "#{eve.name.to_s.titlecase}".html_safe,{:action=>"update", :controller=>"admin/licensees", :id => licensee.id, :status => eve.name.to_s, :page => params[:page]}, :method => "put", :data => { confirm: 'Are you sure, you want to change the status.'},:class => "mdl-menu__item"
+                = link_to "Delete",{:action=>"update", :controller=>"admin/licensees", :id => licensee.id, :deleted => "true", :page => params[:page]}, :method => "put", :data => { confirm: 'Are you sure, you want Delete the Licensee.'},:class => "mdl-menu__item"
+  = will_paginate objs

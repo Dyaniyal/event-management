@@ -1,0 +1,28 @@
+$(".overlayBg").hide();
+<% if @user_registration.errors.present? %>
+	 <% @user_registration.errors.messages.each do |error_message| %>
+    $("#error_field_<%=error_message.first.to_s %>").html("<%=error_message.second.join%>")
+    $("#error_field_<%=error_message.first.to_s %>").css('margin-left','35%');
+    $("#error_field_<%=error_message.first.to_s %>").css('color','red');
+  <% end %>
+<% elsif @user_registration.status.present? and ["approved","confirmed"].include?(@user_registration.status) %>
+	$(".error-msg-text").css('display','none');
+		window.setTimeout(function() {
+    	location = window.location.href;
+		}, 2000);
+	$(".regis_form_msg").html("");
+	$(".regis_form_msg").html("Registration created successfully");
+	window.open('/admin/events/<%=@event.id%>/qr_code_scanners?user_registration_id=<%=@user_registration.id%>&page=print_preview&walk_in_registration=true', "myWindowName", "width=1000, height=800","about:blank","newwin");
+<% else %>
+	$(".error-msg-text").css('display','none');
+	<% if @user_name.present? %>
+		window.setTimeout(function() {
+    	location =  window.location.href;
+		}, 2000);
+		$(".regis_form_msg").html("Registration of <%= @user_registration.send(@user_name)%> is not confirmed");
+	<% else %>
+	$(".regis_form_msg").html("Registration is not confirmed");
+	<% end %>
+<% end %>
+
+

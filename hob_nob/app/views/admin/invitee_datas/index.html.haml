@@ -1,0 +1,4 @@
+-if params[:stats].present? and params[:stats] == "true"
+  = render :partial => 'db_stats', :locals => {:objs => @invitee_data}
+-else
+  = render :partial => 'admin/layouts/index_header', :locals => {:objs => @invitee_data} 

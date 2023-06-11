@@ -1,0 +1,28 @@
+- last_page_url = request.referer if request.referer.present?
+- last_page_url = request.original_url if last_page_url.blank?
+- arr = last_page_url.split('/')
+- hide_content_in_breadcrumb = arr
+- position_no = arr.include?('events') ? arr.index("events") + 1 : ""
+- position_value = arr.at(position_no) if position_no.present?
+- event = Event.find(position_value)
+- client = Client.find(event.client_id)
+- mobile_application = event.mobile_application   
+%ol.breadcrumb
+  %li.breadcrumb-active
+    = link_to 'Home', admin_dashboards_path, :class => "mdl-color-text--white"
+  %li.breadcrumb-link
+    = link_to client.name, admin_client_events_path(:client_id => client.id), :class => "mdl-color-text--white"
+  %li.breadcrumb-link
+    = link_to "#{event.event_name}", admin_client_event_path(:client_id => client.id, :id => event.id), :class => "mdl-color-text--white" 
+  - if mobile_application.present? and hide_content_in_breadcrumb.last.split('?').exclude?("analytics=true")
+    %li.breadcrumb-link
+      = link_to mobile_application.name, admin_event_mobile_application_path(:event_id => event.id, :id=> mobile_application.id), :class => "mdl-color-text--white"
+    - if last_page_url.split('?').exclude?('type=show_content')
+      - if ["registrations","invitee_structures","groupings", "notifications","users", "registration_settings","telecallers", 'user_registrations','telecaller_accessible_columns',"invitee_datas","campaigns","edms"].collect{|c| arr.exclude?(c)}.include?(true) and mobile_application.present? 
+        %li.breadcrumb-link
+          - if ["notifications", "e_kits","feedbacks","feedback_forms","conversations","qnas","quizzes","polls","panels", "leaderboards", "chats", "invitee_groups"].collect{|c| arr.include?(c)}.include?(true)
+            = link_to "Engagement", admin_event_mobile_application_path(:event_id => event.id, :id=> mobile_application.id, :type => "show_engagement"), :class => "mdl-color-text--white"
+          - elsif
+            = link_to "Content", admin_event_mobile_application_path(:event_id => event.id, :id=> mobile_application.id, :type => "show_content"), :class => "mdl-color-text--white"
+  %li.breadcrumb-link
+    = link_to "Prohibited Access", "javascript:void(0);", :class => "mdl-color-text--white"

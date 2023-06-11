@@ -1,0 +1,341 @@
+.overlayBg
+  / %img{:src => "/assets/loader.gif", :class =>"loader-img"}/
+  .spinner
+    .rect1
+    .rect2
+    .rect3
+    .rect4
+    .rect5
+.save_button.newresitration.agendaHeight.newStyle
+  = form_for [:admin, @event, @user_registration], :builder => CustomFormBuilder,:remote =>true do |f|
+    .mdl-grid.mdl-shadow--1dp.p-b-25.m-b-5.mdl-card
+      %span.regis_form_msg
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+      - @registration.attributes.except('id', 'created_at', 'updated_at', 'event_id', 'custom_css','custom_js', 'custom_source_code','email_field','parent_id', "language_updated", "multi_lng_parent_id").map{|key, value| (value.present? and value["label"].present? and value["option_type"].present?) ? [key,value] : ""}.compact.each do |key,hsh|
+        - if hsh.present? and hsh['label'].present? and hsh['option_type'] == 'Radio Button'
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.m-b-5.errorMess
+            .mdl-grid.p-v-5.mobiappstype.m-t-15
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt
+                  = hsh['label']
+                  = (hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? '*' : ''
+              .col-lg-7.p-h-12.userregis.col-xs-12
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.resp-50
+                  - er = f.object.errors.messages[key.to_sym].join(',') rescue nil
+                  - f.object.errors.messages[key.to_sym].clear if f.object.errors.messages[key.to_sym].present?
+                  = f.custom_radio_button key, "#{hsh['option_1']}", "#{hsh['option_1']}", :id => "#{key}_1" if hsh['option_1'].present?
+                  - if hsh["option_1"].present? and hsh["option_2"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                    .error-msg-text#error_field{:id=>"#{key}"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.resp-50
+                  = f.custom_radio_button key, "#{hsh['option_2']}", "#{hsh['option_2']}", :id => "#{key}_2" if hsh['option_2'].present?
+                  - if hsh["option_2"].present? and hsh["option_3"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                    .error-msg-text#error_field{:id=>"#{key}"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.resp-50
+                  = f.custom_radio_button key, "#{hsh['option_3']}", "#{hsh['option_3']}", :id => "#{key}_3" if hsh['option_3'].present?
+                  - if hsh["option_3"].present? and hsh["option_4"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                    .error-msg-text#error_field{:id=>"#{key}"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.resp-50
+                  = f.custom_radio_button key, "#{hsh['option_4']}", "#{hsh['option_4']}", :id => "#{key}_4" if hsh['option_4'].present?
+                  - if hsh["option_4"].present? and hsh["option_5"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                    .error-msg-text#error_field{:id=>"#{key}"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.resp-50
+                  = f.custom_radio_button key, "#{hsh['option_5']}", "#{hsh['option_5']}", :id => "#{key}_5" if hsh['option_5'].present?
+                  - if hsh["option_5"].present? and hsh["option_6"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                    .error-msg-text#error_field{:id=>"#{key}"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.resp-50
+                  = f.custom_radio_button key, "#{hsh['option_6']}", "#{hsh['option_6']}", :id => "#{key}_6" if hsh['option_6'].present?
+                  - if hsh["option_6"].present? and hsh["option_7"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                    .error-msg-text#error_field{:id=>"#{key}"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.resp-50
+                  = f.custom_radio_button key, "#{hsh['option_7']}", "#{hsh['option_7']}", :id => "#{key}_7" if hsh['option_7'].present?
+                  - if hsh["option_7"].present? and hsh["option_8"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                    .error-msg-text#error_field{:id=>"#{key}"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.resp-50
+                  = f.custom_radio_button key, "#{hsh['option_8']}", "#{hsh['option_8']}", :id => "#{key}_8" if hsh['option_8'].present?
+                  - if hsh["option_8"].present? and hsh["option_9"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                    .error-msg-text#error_field{:id=>"#{key}"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.resp-50
+                  = f.custom_radio_button key, "#{hsh['option_9']}", "#{hsh['option_9']}", :id => "#{key}_9" if hsh['option_9'].present?
+                  - if hsh["option_9"].present? and hsh["option_10"].blank?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                    .error-msg-text#error_field{:id=>"#{key}"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.resp-50
+                  = f.custom_radio_button key, "#{hsh['option_10']}", "#{hsh['option_10']}", :id => "#{key}_10" if hsh['option_10'].present?
+                  - if hsh["option_10"].present?
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        = er
+                    .error-msg-text#error_field{:id=>"#{key}"}
+          -if hsh[:text_box_required_after_options].present? and hsh[:text_box_required_after_options] == "yes"
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+              .bs-component
+                .form-group
+                  .col-lg-4.control-label
+                  .col-lg-7
+                    = text_field_tag "user_registration[text_box_for_checkbox_or_radiobutton][#{key}][]", f.object.text_box_for_checkbox_or_radiobutton.present? ? eval(f.object.text_box_for_checkbox_or_radiobutton)[key] : '',:class => "form-control"
+        - if hsh.present? and  hsh['label'].present? and hsh['option_type'] == 'Check Box'
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+            .mdl-grid.p-v-5.mobiappstype
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt.m12t
+                  = hsh['label']
+                  = (hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? '*' : ''
+              .col-lg-7.p-h-12
+                -if hsh['option_1'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                    %label.help-tip{:for => "user_registration_#{key}_1"}
+                      - er = f.object.errors.messages[key.to_sym].join(',') rescue nil
+                      - f.object.errors.messages[key.to_sym].clear if f.object.errors.messages[key.to_sym].present?
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_1']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_1']}") ? "checked" : false), :id => "user_registration_#{key}_1"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_1']}"
+                      - if hsh["option_1"].present? and hsh["option_2"].blank?
+                        .field_with_errors
+                          .span{:class => "errorMessage"}
+                            = er
+                        .error-msg-text#error_field{:id=>"#{key}"}
+                -if hsh['option_2'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                    %label.help-tip{:for => "user_registration_#{key}_2"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_2']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_2']}") ? "checked" : false), :id => "user_registration_#{key}_2"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_2']}"
+                      - if hsh["option_2"].present? and hsh["option_3"].blank?
+                        .field_with_errors
+                          .span{:class => "errorMessage"}
+                            = er
+                        .error-msg-text#error_field{:id=>"#{key}"}
+                -if hsh['option_3'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                    %label.help-tip{:for => "user_registration_#{key}_3"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_3']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_3']}") ? "checked" : false), :id => "user_registration_#{key}_3"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_3']}"
+                      - if hsh["option_3"].present? and hsh["option_4"].blank?
+                        .field_with_errors
+                          .span{:class => "errorMessage"}
+                            = er
+                        .error-msg-text#error_field{:id=>"#{key}"}
+                -if hsh['option_4'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                    %label.help-tip{:for => "user_registration_#{key}_4"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_4']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_4']}") ? "checked" : false), :id => "user_registration_#{key}_4"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_4']}"
+                      - if hsh["option_4"].present? and hsh["option_5"].blank?
+                        .field_with_errors
+                          .span{:class => "errorMessage"}
+                            = er
+                        .error-msg-text#error_field{:id=>"#{key}"}
+                -if hsh['option_5'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                    %label.help-tip{:for => "user_registration_#{key}_5"}
+                      / - er = f.object.errors.messages[key.to_sym].join(',') rescue nil
+                      / - f.object.errors.messages[key.to_sym].clear if f.object.errors.messages[key.to_sym].present?
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_5']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_5']}") ? "checked" : false), :id => "user_registration_#{key}_5"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_5']}"
+                      - if hsh["option_5"].present? and hsh["option_6"].blank?
+                        .field_with_errors
+                          .span{:class => "errorMessage"}
+                            = er
+                        .error-msg-text#error_field{:id=>"#{key}"}
+                -if hsh['option_6'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                    %label.help-tip{:for => "user_registration_#{key}_6"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_6']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_6']}") ? "checked" : false), :id => "user_registration_#{key}_6"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_6']}"
+                      - if hsh["option_6"].present? and hsh["option_7"].blank?
+                        .field_with_errors
+                          .span{:class => "errorMessage"}
+                            = er
+                        .error-msg-text#error_field{:id=>"#{key}"}
+                -if hsh['option_7'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                    %label.help-tip{:for => "user_registration_#{key}_7"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_7']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_7']}") ? "checked" : false), :id => "user_registration_#{key}_7"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_7']}"
+                      - if hsh["option_7"].present? and hsh["option_8"].blank?
+                        .field_with_errors
+                          .span{:class => "errorMessage"}
+                            = er
+                        .error-msg-text#error_field{:id=>"#{key}"}
+                -if hsh['option_8'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                    %label.help-tip{:for => "user_registration_#{key}_8"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_8']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_8']}") ? "checked" : false), :id => "user_registration_#{key}_8"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_8']}"
+                      - if hsh["option_8"].present? and hsh["option_9"].blank?
+                        .field_with_errors
+                          .span{:class => "errorMessage"}
+                            = er
+                        .error-msg-text#error_field{:id=>"#{key}"}
+                -if hsh['option_9'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                    %label.help-tip{:for => "user_registration_#{key}_9"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_9']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_9']}") ? "checked" : false), :id => "user_registration_#{key}_9"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_9']}"
+                      - if hsh["option_9"].present? and hsh["option_10"].blank?
+                        .field_with_errors
+                          .span{:class => "errorMessage"}
+                            = er
+                        .error-msg-text#error_field{:id=>"#{key}"}
+                -if hsh['option_10'].present?
+                  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                    %label.help-tip{:for => "user_registration_#{key}_10"}
+                      = check_box_tag "user_registration[#{key}][]","#{hsh['option_10']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_10']}") ? "checked" : false), :id => "user_registration_#{key}_10"
+                      %span.checkbox
+                      %span.top6
+                        = "#{hsh['option_10']}"
+                      - if hsh["option_10"].present?
+                        .field_with_errors
+                          .span{:class => "errorMessage"}
+                            = er
+                        .error-msg-text#error_field{:id=>"#{key}"}
+          -if hsh[:text_box_required_after_options].present? and hsh[:text_box_required_after_options] == "yes"
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+              .bs-component
+                .form-group
+                  .col-lg-4.control-label
+                  .col-lg-7
+                    = text_field_tag "user_registration[text_box_for_checkbox_or_radiobutton][#{key}][]",f.object.text_box_for_checkbox_or_radiobutton.present? ? eval(f.object.text_box_for_checkbox_or_radiobutton)[key] : '',:class => "form-control"
+        - if hsh.present? and hsh['label'].present? and hsh['option_type'] == 'Single Check Box'
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+            .mdl-grid.p-v-5.mobiappstype
+              .col-lg-4
+              .col-lg-1.p-h-12.control-label{style: "margin-right: -20px;"}
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.text-left
+                  %label.help-tip{:for => "user_registration_#{key}_1"}
+                    = check_box_tag "user_registration[#{key}][]", hsh['label'], @user_registration.send(key).try(:match, /True/) ? true : false, id: "user_registration_#{key}_1", readonly: true  
+                    %span.checkbox
+              .col-lg-5.p-h-12.mdl-typography--text-left
+                %p.displayInlineBlock.multicitytxt.m12t
+                  = hsh['label']
+                  = (hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? '*' : ''
+        - if hsh.present? and hsh['label'].present? and hsh['option_type'] == 'Text Box'
+          = f.custom_text_field key,(hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? "#{hsh['label']} *" : "#{hsh['label']}" #"#{hsh['label']}"
+          .error-msg-text#error_field{:id=>"#{key}"}
+        - if hsh.present? and hsh['label'].present? and hsh['option_type'] == 'Text Area'
+          = f.custom_text_area_field key,(hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? "#{hsh['label']} *" : "#{hsh['label']}" #"#{hsh['label']}"#, :field_name => "#{hsh['label']}"
+          .error-msg-text#error_field{:id=>"#{key}"}
+        - if hsh.present? and hsh['label'].present? and hsh['option_type'] == 'Date Picker'
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            .bs-component
+              .form-group
+                %label.col-lg-4.control-label{:for => "_Event Start Date"}
+                  = hsh['label']
+                  = (hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? '*' : ''
+                = f.custom_text_field_date key, hsh['label'], :col =>"7", :id => "date-start", :value => f.object["#{key}"].present? ? f.object["#{key}"] : ''
+                .error-msg-text#error_field{:id=>"#{key}"}
+        - if hsh.present? and hsh['label'].present? and hsh['option_type'] == 'Drop-Down list'
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-t-15
+            .form-group
+              %label.col-lg-4.control-label.ml-color--shades-white
+                = hsh['label']
+                = (hsh["mandatory_field"].present? and hsh["mandatory_field"] == "yes") ? '*' : ''
+              .col-lg-7.m-8
+                - drop_down_items = []
+                - ['option_1', 'option_2', 'option_3', 'option_4', 'option_5', 'option_6', 'option_7', 'option_8', 'option_9', 'option_10'].each do |op|
+                  - drop_down_items << hsh[op] if hsh[op].present?
+                %i.arrow.single
+                = f.select("user_registration",key, drop_down_items, {:selected => f.object["#{key}"].present? ? f.object["#{key}"] : '' , :prompt => 'Select Option Type'}, {include_blank: 'None', :class=> 'select2-single form-control'})
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = f.object.errors.messages[key.to_sym].join("") rescue nil
+                .error-msg-text#error_field{:id=>"#{key}"}
+          -if hsh.present? and hsh[:text_box_required_after_options].present? and hsh[:text_box_required_after_options] == "yes"
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+              .bs-component
+                .form-group
+                  .col-lg-4.control-label
+                  .col-lg-7
+                    = text_field_tag "user_registration[text_box_for_checkbox_or_radiobutton][#{key}][]",f.object.text_box_for_checkbox_or_radiobutton.present? ? eval(f.object.text_box_for_checkbox_or_radiobutton)[key] : '',:class => "form-control"
+      =# f.custom_text_field :rfid, "RFID "
+      =# f.custom_text_field :comment, "Comment "
+
+      - if false
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+          .mdl-grid.p-v-5.mobiappstype
+            .col-lg-4.mdl-typography--text-right.col-xs-5
+              %p.displayInlineBlock.multicitytxt.m12t
+                Event kit given
+            .col-lg-7.p-h-12
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                %label.help-tip{:for => "user_registration_event_kit"}
+                  %input#user_registration_event_kit{:name => "user_registration[event_kit]", :type => "checkbox", :value => "true"}/
+                  %span.checkbox
+                  %span.top6
+                    / Self
+
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+          .mdl-grid.p-v-5.mobiappstype
+            .col-lg-4.mdl-typography--text-right.col-xs-5
+              %p.displayInlineBlock.multicitytxt.m12t
+                Gift given
+            .col-lg-7.p-h-12
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                %label.help-tip{:for => "user_registration_gift"}
+                  %input#user_registration_gift{:name => "user_registration[gift]", :type => "checkbox", :value => "true"}/
+                  %span.checkbox
+                  %span.top6
+      = f.custom_text_field :remark1, "Remark 1"
+      = f.custom_text_field :remark2, "Remark 2"
+      = f.custom_text_field :remark3, "Remark 3"
+      = f.custom_text_field :remark4, "Remark 4"
+      = f.custom_text_field :remark5, "Remark 5"
+
+      = f.hidden_field :walk_in_registration, :value => true
+      = f.hidden_field :registration_type, :value => "walkin"
+      = f.hidden_field :auto_approved_status, :value =>"#{@event.registration_settings.first.auto_approved}"
+      = f.hidden_field :set_status_on_new_create,:value=>"true"
+      .fixed-activon-btn-new.btn-bottom.text-center.col-xs-2#invitee_search_reg_button
+        = f.custom_submit_button1 "REGISTER"
+      .successful_registration
+:css
+  .checkboxDiv input[type="checkbox"] {
+    opacity: 0;
+    position: absolute;
+    margin-left: -30px;
+    z-index: 9;
+    width: 21px;
+  }

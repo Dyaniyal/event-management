@@ -1,0 +1,61 @@
+- if @microsite.microsite_features.where(:image_setting => "Yes").present?
+  .main-container{:style => "font-size: 20px;color: #333;"}
+    .main-content.about-content
+      .container
+        .text-center
+          - image = @microsite.get_active_features.where(:name => "images")
+          %h1{:style => "font-size:50px;"} #{image.first.page_title}
+      .container
+        .row
+          .col-md-12
+            .tabbable-panel.faqsWrap
+              .tabbable-line
+                %ul.nav.nav-tabs
+                  - @event.folders.pluck(:name).compact.uniq.each_with_index do |name, index|
+                    %li{:class => index == 0 ? "active" : ""}
+                      %a{"data-toggle" => "tab", :href => "#tab_default_#{index}"}
+                        #{name}
+                .tab-content
+                  - @event.folders.group(:name).count.each_with_index do |name, index|
+                    .tab-pane{:id => "tab_default_#{index}", :class => index == 0 ? "active" : ""}
+                      #accordion.panel-group
+                        - folder = @event.folders.where("name = ?", name[0])
+                        - folder.each_with_index do |folder, i|
+                          .demo-gallery
+                            %ul#lightgallery.list-unstyled.row
+                              - folder.images.each do |image| 
+                                %li.col-md-4{:style => "margin-bottom:10px;height:250px;"}
+                                  - imag = image.image.url(:large)
+                                  %a.fancybox-button{:href => "#{imag}", :rel => "fancybox-button"}
+                                    = image_tag(image.image_url(:small), :height => "max-height")
+                                  .corp_video_img
+
+  .clear
+- else
+  .main-container{:style => "font-size: 20px;color: #333;"}
+    / Main Content Start
+    .main-content.about-content
+      .container
+        .text-center
+          - image = @microsite.get_active_features.where(:name => "images")
+          %h1{:style => "font-size:50px;"} #{image.first.page_title}
+          .demo-gallery
+            %ul#lightgallery.list-unstyled.row
+              - @event.images.each do |image| 
+                %li.col-md-4{:style => "margin-bottom:10px;height:250px;"}
+                  - imag = image.image.url(:large)
+                  %a.fancybox-button{:href => "#{imag}", :rel => "fancybox-button"}
+                    = image_tag(image.image_url(:small), :height => "max-height")
+                  .corp_video_img
+:javascript
+  $(document).ready(function() {
+    $(".fancybox-button").fancybox({
+      prevEffect    : 'none',
+      nextEffect    : 'none',
+      closeEffect   : 'none',
+      helpers   : {
+        title : { type : 'inside' },
+        buttons : {}
+      }
+    });
+  });

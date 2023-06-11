@@ -1,0 +1,340 @@
+= javascript_include_tag "jquery-1.11.3.min", "pick-a-color-1.2.0.min", "tinycolor", "jquery.fancybox", "theme_color_pick"
+.save_button.editBadgeForm
+  = form_for [:admin, @event, @badge_pdf], :builder => CustomFormBuilder, :html => { :multipart => true } do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40.p-b-15
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+        %h4.heading-border.displaybolck.p-t-10        
+          General Settings
+      / = f.new_custom_file_browser_field :scan_bg_image, "Background Image (1600x900px) png only", :id => "upload", :value => f.object.scan_bg_image_file_name, :action=> params[:action], "background" => "false"
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15
+        .mdl-grid.p-v-5.form-group
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Skip Badge printing *
+          .col-lg-3.p-h-12
+            = f.custom_radio_button :skip_print, "true","Yes", :id => "option-1"
+            = f.custom_radio_button :skip_print, "false", "No", :id => "option-2"
+        .mdl-grid.p-v-5.form-group
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Use QR Code Scanner
+          .col-lg-3.p-h-12
+            = f.custom_radio_button :allow_qr_code_scanner, "true","Yes", :id => "scanner-1"
+            = f.custom_radio_button :allow_qr_code_scanner, "false", "No", :id => "scanner-2"
+
+
+        = f.custom_text_field :qr_code_page_color, "Text Color", :value => (f.object.new_record? ? "000000" : f.object.qr_code_page_color), :class => 'pick-a-color',"background" => "false" 
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+        .bs-component
+          .form-group
+            .span.col-lg-4
+              = f.label "Background Image for QR code scanning page (1600x900px) png only",:class =>"control-label", style: "float: right;"
+            .col-lg-7.Closetheme
+              %label.field.file
+                %span.button.btn-primary
+                  Choose File 
+                = f.file_field :scan_bg_image,:id => "upload", :class=>"gui-file"
+                = text_field_tag("text_file_name","", id: "1upload", class: "gui-input", :value => "#{f.object.scan_bg_image_file_name.nil? ? "there is no Attachment Available !" : f.object.scan_bg_image_file_name}", :read_only => true)
+            - if @badge_pdf.present? and f.object.scan_bg_image_file_name.present? 
+              .col-lg-1
+                = link_to "?" ,"/whats_this/look_and_feel/backgrounds/Help_Look&Feel_BackgroundImage.jpg", rel: "event_bg_image", title: "Background Image", :class =>'fancybox whatsImg'
+                = link_to admin_event_badge_pdf_path(:event_id => @event.id, :id => @badge_pdf.id,:remove_scan_bg_image => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                  %span
+                    X
+    
+    .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40.p-b-35
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          Badge Settings
+
+      =# f.new_custom_file_browser_field :badge_image, "Badge Image (396x554px)only", :id => "uploadBtn", :value => f.object.badge_image_file_name, :action=> params[:action], :action=> params[:action], "background" => "false"
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+        .bs-component
+          .form-group
+            .span.col-lg-4
+              = f.label "Badge image (png only, in px)",:class =>"control-label", style: "float: right;"
+            .col-lg-7.Closetheme
+              %label.field.file
+                %span.button.btn-primary
+                  Choose File 
+                = f.file_field :badge_image,:id => "uploadBtn2", :class=>"gui-file"
+                = text_field_tag("text_file_name","", id: "1uploadBtn2", class: "gui-input", :value => "#{f.object.badge_image_file_name.nil? ? "there is no Attachment Available !" : f.object.badge_image_file_name}", :read_only => true)
+            - if @badge_pdf.present? and f.object.badge_image_file_name.present? 
+              .col-lg-1
+                = link_to "?" ,"/whats_this/look_and_feel/backgrounds/Help_Look&Feel_BackgroundImage.jpg", rel: "event_bg_image", title: "Event Background Image", :class =>'fancybox whatsImg'
+                = link_to  admin_event_badge_pdf_path(:event_id => @event.id, :id => @badge_pdf.id,:remove_image => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                  %span
+                    X
+            
+      = f.custom_text_field :badge_height, "Badge height in px ","background" => "false"
+      = f.custom_text_field :badge_width, "Badge width in px ","background" => "false"
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+        .mdl-grid.p-v-5.form-group
+          .col-lg-4.control-label.ml-color--shades-white.manage_fields
+            Font for badge printing
+          .col-lg-7
+            %i.arrow.single
+            = f.select "badge_pdf", :printing_font_style, @font_styles, { selected: f.object.try(:printing_font_style), prompt: "Please Select" }, { include_blank: "None", class: 'select2-single form-control' }
+            
+    .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15.feedbackFormPage
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+        %h4.heading-border.displaybolck.p-t-10
+          Badge Alignment Settings
+      = f.custom_text_field :top, "Leave margins from top in px ","background" => "false"
+      = f.custom_text_field :bottom, "Leave margins from bottom in px ","background" => "false"
+      = f.custom_text_field :left, "Leave margins from left in px ","background" => "false"
+      = f.custom_text_field :right, "Leave margins from right in px ","background" => "false"
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+        .mdl-grid.p-v-5.form-group
+          .col-lg-4.control-label.ml-color--shades-white
+            Print alignment 
+          .col-lg-7
+            %i.arrow.single
+            = f.select "badge_pdf", :print_alignment, [["Left","left"],["Center","center"], ["Right","right"]], { selected: f.object.try(:print_alignment), prompt: "Please Select" }, { include_blank: "None", class: 'select2-single form-control' }
+    .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15.feedbackFormPage
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+        %h4.heading-border.displaybolck.p-t-10
+          Badge Content Settings - Fields
+        .mdl-grid.p-v-5
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Print Fields*
+          .col-lg-3.p-h-5
+            = f.custom_radio_button_menu :allow_text, "yes","Yes", id: "allow_text-1", default_checked: f.object.try(:allow_text) == "yes" ? 'checked' : ''
+            = f.custom_radio_button_menu :allow_text, "no", "No", id: "allow_text-2", default_checked: f.object.try(:allow_text) == "no" ? 'checked' : ''
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15.fieldCheckbox
+        .mdl-grid.p-v-5.form-group.editBadgeFormChkBox
+          / .col-lg-4.mdl-typography--text-right.fieldDiv
+          /   %p.displayInlineBlock.multicitytxt Show Fields:
+          = render :partial => 'edit_form_sequence', :locals => {:f =>f}                      
+
+          = f.hidden_field :event_id,:value => params[:event_id]
+          = f.custom_text_field :color, "Text Color", :value => (f.object.new_record? ? "000000" : f.object.color), :class => 'pick-a-color',"background" => "false"
+
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.form-group{:style=>"width:32%;"}
+          .md-checkbox
+            %label
+              = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated
+
+    .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.m-b-5
+        %h4.heading-border.displaybolck.p-t-10        
+          Badge Content Settings - QR Code
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-t-15.qr_code_hideshow
+        .mdl-grid.p-v-5.form-group
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Show QR code*
+          .col-lg-3.p-h-12
+            = f.custom_radio_button :allow_qr_code, "yes","Yes", :id => "qr_code-1"
+            = f.custom_radio_button :allow_qr_code, "no", "No", :id => "qr_code-2"
+      
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.m-b-5  
+        .mdl-grid.p-v-5.form-group
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Print QR Code
+          .col-lg-7
+            %i.arrow.single
+            = select_tag "badge_pdf[qr_code_attr][print_qr_code]", options_for_select([["Above Text", "above_text"],["Below Text", "below_text"]] , selected: f.object.qr_code_attr[:print_qr_code]), :prompt => 'Please Select', :class => 'select2-single form-control'
+
+      = custom_text_field_tag_user "badge_pdf[qr_code_attr][height]", "QR code height in px", f.object.qr_code_attr[:height]
+      = custom_text_field_tag_user "badge_pdf[qr_code_attr][width]", "QR code width in px", f.object.qr_code_attr[:width]
+
+    .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.displaybolck.p-t-10
+          Dashboard Fields
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+            Unique Count 1
+          .col-lg-7.form-group
+            %i.arrow.single
+            = f.select :badge_pdf, :unique_field1, @registration.selected_column_values, {selected: @badge_pdf.unique_field1 ,include_blank: 'Please Select' }, {class: 'select2-single form-control' }
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+            Unique Count 2
+          .col-lg-7.form-group
+            %i.arrow.single
+            = f.select :badge_pdf, :unique_field2, @registration.selected_column_values, {selected: @badge_pdf.unique_field2 , include_blank: 'Please Select' }, {class: 'select2-single form-control' }
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+            Unique Count 3
+          .col-lg-7.form-group
+            %i.arrow.single
+            = f.select :badge_pdf, :unique_field3, @registration.selected_column_values, {selected: @badge_pdf.unique_field3, include_blank: 'Please Select' }, {class: 'select2-single form-control' }
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+            Value Wise Count 1
+          .col-lg-7.form-group
+            %i.arrow.single
+            = f.select :badge_pdf, :value_wise_field1, @registration.clickable_fields, {selected: @badge_pdf.value_wise_field1 , include_blank: 'Please Select' }, {class: 'select2-single form-control' }
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+            Value Wise Count 2
+          .col-lg-7.form-group
+            %i.arrow.single
+            = f.select :badge_pdf, :value_wise_field2, @registration.clickable_fields, {selected: @badge_pdf.value_wise_field2 , include_blank: 'Please Select' }, {class: 'select2-single form-control' }
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+            Value Wise Count 3
+          .col-lg-7.form-group
+            %i.arrow.single
+            = f.select :badge_pdf, :value_wise_field3, @registration.clickable_fields, {selected: @badge_pdf.value_wise_field3 , include_blank: 'Please Select' }, {class: 'select2-single form-control' }
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+            Value Wise Count 4
+          .col-lg-7.form-group
+            %i.arrow.single
+            = f.select :badge_pdf, :value_wise_field4, @registration.clickable_fields, {selected: @badge_pdf.value_wise_field4 , include_blank: 'Please Select' }, {class: 'select2-single form-control' }
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+            Value Wise Count 5
+          .col-lg-7.form-group
+            %i.arrow.single
+            = f.select :badge_pdf, :value_wise_field5, @registration.clickable_fields, {selected: @badge_pdf.value_wise_field5 , include_blank: 'Please Select' }, {class: 'select2-single form-control' }
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+            Value Wise Count 6
+          .col-lg-7.form-group
+            %i.arrow.single
+            = f.select :badge_pdf, :value_wise_field6, @registration.clickable_fields, {selected: @badge_pdf.value_wise_field6 , include_blank: 'Please Select' }, {class: 'select2-single form-control' }
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+            Value Wise Count 7
+          .col-lg-7.form-group
+            %i.arrow.single
+            = f.select :badge_pdf, :value_wise_field7, @registration.clickable_fields, {selected: @badge_pdf.value_wise_field7 , include_blank: 'Please Select' }, {class: 'select2-single form-control' }
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+            Value Wise Count 8
+          .col-lg-7.form-group
+            %i.arrow.single
+            = f.select :badge_pdf, :value_wise_field8, @registration.clickable_fields, {selected: @badge_pdf.value_wise_field8, include_blank: 'Please Select' }, {class: 'select2-single form-control' }
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+            Value Wise Count 9
+          .col-lg-7.form-group
+            %i.arrow.single
+            = f.select :badge_pdf, :value_wise_field9, @registration.clickable_fields, {selected: @badge_pdf.value_wise_field9 , include_blank: 'Please Select' }, {class: 'select2-single form-control', include_blank: true }
+
+
+      .fixed-activon-btn-new
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)
+
+
+:css
+  .checkboxDiv
+    {
+      width: 172px;
+    }
+  .panel {
+      margin-bottom: 18px;
+    }
+  .manage_fields{
+    padding-bottom:20px;
+  }   
+:javascript
+  $( document ).ready(function() { 
+    updateArrow();
+    showHideTextFields();  
+    showHideQrcodeAttr();
+    showHideSkipPrint();
+    $('.orderseq a').click(function() { 
+      if ($(this).hasClass("uparrow"))
+        moveUp($(this).parents('.panel-default'));
+      else
+        moveDown($(this).parents('.panel-default'));
+      updateArrow();
+    });
+  }); 
+
+  function showHideSkipPrint() {
+    var remove_panel = $('#option-1').parents('.mdl-card').nextAll().slice(0, 4);
+
+    $('#option-1, #option-2').click(function() {
+      console.log($('#option-1').is(':checked'))
+      $('#option-1').is(':checked') ? remove_panel.hide() : remove_panel.show()
+    });
+
+    if ($('#option-1').is(':checked')) {
+      remove_panel.hide();
+    }
+  }
+
+  function updateArrow(){
+    $(".editBadgeFormChkBox").children().each(function(){ 
+      $(this).find(".uparrow").show();
+      $(this).find(".downarrow").show();
+    });
+    $(".editBadgeFormChkBox").children().last().find(".downarrow").hide();    
+    $(".editBadgeFormChkBox").children().eq(0).find(".uparrow").hide();
+  }
+  function moveDown(item) {
+    var next = item.next();
+    item.insertAfter(next);
+  }
+
+  function moveUp(item) {
+    var prev = item.prev();
+    item.insertBefore(prev);
+  }
+
+  function showHideTextFields() {
+    var mapping_fields = $('.editBadgeFormChkBox')
+    $("input[id^='allow_text']").click(function() {
+      if ($('#allow_text-1').is(':checked')) {
+        mapping_fields.show();
+      }
+      if ($('#allow_text-2').is(':checked')) {
+        mapping_fields.hide();
+      }
+    });
+    if ($('#allow_text-2').is(':checked')) {
+      mapping_fields.hide();
+    }    
+  }
+  
+  function showHideQrcodeAttr() {
+    var hide_show = $(".qr_code_hideshow").nextAll() 
+    $("input[id^='qr_code']").click(function() {
+      if ($("#qr_code-1").is(':checked')) {
+        hide_show.show();
+      } else {
+        hide_show.hide()
+      }
+    });
+    if ($("#qr_code-2").is(':checked')) {
+      hide_show.hide()
+    }
+  }

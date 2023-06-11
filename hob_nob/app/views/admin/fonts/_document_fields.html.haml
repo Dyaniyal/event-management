@@ -1,0 +1,11 @@
+.nested-fields.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.error_space
+  .bs-component.fields
+    .form-group
+      .span.col-lg-4
+        = f.label "Font File #{f.options[:child_index] + 1}", class: 'control-label', style: 'float: right;'
+      .col-lg-7
+        %label.field.file
+          %span.button.btn-primary
+            Choose File
+          = f.file_field :document, id: "document_uploadBtn_#{f.options[:child_index]}", class: 'gui-file'
+          = text_field_tag('text_file_name' , '', id: "1document_uploadBtn_#{f.options[:child_index]}", class: 'gui-input', value: "#{f.object.document_file_name.nil? ? "there is no Attachment Available !" : f.object.document_file_name}", read_only: true)

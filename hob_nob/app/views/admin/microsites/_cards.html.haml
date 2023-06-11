@@ -1,0 +1,114 @@
+.col-sm-3.col-xl-3
+  .panel.panel-tile
+    .panel-body
+      .row.pv5
+        .col-xs-5.ph10
+          / %img.img-responsive.mauto{:alt => "", :src =>"/assets/clipart0.png"}/
+          - if icon.present?
+            %i.mdl-color-text--blue-grey-400.material-icons.firstimg{:class => "incards"}> 
+              = image_tag("black_&_white_icons/#{img}")
+          - else
+            = image_tag("coloured_icons/#{img}")
+        .col-xs-7.pl5
+          %h6.text-muted.truncate
+            = Client::display_hsh2[url] 
+          - page = params[:controller].split("/").second
+          - features = ['agendas','speakers', 'faqs', 'images', 'contacts', 'sponsors', 'emergency_exits','registrations', 'custom_page1s', 'custom_page2s', 'custom_page3s', 'custom_page4s', 'custom_page5s',"custom_page6s","custom_page7s","custom_page8s","custom_page9s","custom_page10s"]
+          - if show_card_except_microsite_features(url)
+            - microsite_feature = @event.microsite.microsite_features.where(:name => page)
+            - page = page.titleize
+          - else
+            %h2.fs40.mt5.mbn
+              - if url == "registrations"
+                - count = (@microsite.registration_url.present?) ? 1 : 0
+                = link_to "#{count}","/admin/events/#{@event.id}/microsites/#{@event.microsite.id}/edit?get=registrations"
+                - #if ["abouts"].include?(url)
+                - #count = @event.about.present? ? 1 : 0 if url == "abouts"
+                - #redirection = (count == 1 ? "/#{@event.id}/edit" : "/new")#about feature is removed for microistes
+              - elsif url == "emergency_exits"
+                - count = (@event.emergency_exit.present?) ? 1 : 0
+                - redirection = (count == 1 ? "/#{@event.emergency_exit.id}/edit" : "/new")
+              - elsif ['custom_page1s',"custom_page2s",'custom_page3s','custom_page4s','custom_page5s','custom_page6s','custom_page7s','custom_page8s','custom_page9s','custom_page10s'].include? (url)
+                - count = objs.present? ? 1 : 0
+                - redirection = (count == 0 ? "/new" : "") 
+              - else
+                - count = objs.count if url != "activity_feeds"
+                - count = @count if url == "activity_feeds"
+                - redirection = (count == 0 ? "/new" : "")
+                - redirection = "" if (count == 0 and url == 'qnas' and (!current_user.has_role_for_event?("moderator", @event.id,session[:current_user_role])))# !current_user.has_role? :moderator)
+              - if ["poll_walls","conversation_walls","qna_walls"].include? (url)
+                = link_to "#{count}","/admin/events/#{@event.id}/#{url1}#{redirection}", :target => "_blank"
+              - elsif url == "faqs"
+                - url1 = "faqs"
+                = link_to "#{count}","/admin/events/#{@event.id}/#{url1}#{redirection}?from=microsites"
+              - elsif url == "images"
+                - microsite_feature = @microsite.microsite_features.where("name = ?", "images").first
+                - if microsite_feature.present? and microsite_feature.image_setting.blank?
+                  = link_to "#{count}", new_admin_event_microsite_microsite_feature_path(:event_id => @event.id, :microsite_id => @microsite.id, :type => "image_setting")
+                - elsif microsite_feature.present? and microsite_feature.image_setting.downcase == 'yes'
+                  - url1 = "folders" if url == "images" 
+                  = link_to "#{count}","/admin/events/#{@event.id}/#{url1}#{redirection}?from=microsites"
+                - else
+                  - url1 = "images"
+                  = link_to "#{count}","/admin/events/#{@event.id}/#{url1}#{redirection}?from=microsites"
+              - elsif url != "notes" and url != "registrations"
+                - url1 = "emergency_exits" if url == "emergency_exits"
+                - url1 = url if url != "emergency_exits"
+                = link_to "#{count}","/admin/events/#{@event.id}/#{url1}#{redirection}?from=microsites"
+      - if show_card_microsite(url) and (@resource_role.blank? or @resource_role.present?) and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+        .row.pv5.AddmoreCard
+          .col-xs-12.ph5
+            - single_associated = ["qnas","conversations"]
+            - redirect_link = single_associated.include?(url) ? "" : "/new" 
+            - asso_manage_keyword = ["qnas","conversations","abouts","my_calendar"]
+            - display_title = (asso_manage_keyword.include?(url) ? "Manage" : "Add") 
+            - if (url == "registrations" and @microsite.registration_url.blank?) 
+              = link_to "Add", "/admin/events/#{@event.id}/microsites/#{@event.microsite.id}/edit?get=registrations"
+            - elsif  (url == "registrations"and @microsite.registration_url.present?)
+              = link_to "Manage", "/admin/events/#{@event.id}/microsites/#{@event.microsite.id}/edit?get=registrations"
+            - elsif (url == "emergency_exits" and @event.emergency_exit.blank?) 
+              - display_title = "Add"
+            - elsif (url == "emergency_exits" and @event.emergency_exit.present?)
+              - display_title = "Manage"
+            - elsif ["custom_page1s","custom_page2s","custom_page3s","custom_page4s","custom_page5s",'custom_page6s','custom_page7s','custom_page8s','custom_page9s','custom_page10s'].include?(url) 
+              - display_title = "Manage" if url == "custom_page1s" and @event.custom_page1s.present?
+              - display_title = "Manage" if url == "custom_page2s" and @event.custom_page2s.present?
+              - display_title = "Manage" if url == "custom_page3s" and @event.custom_page3s.present?
+              - display_title = "Manage" if url == "custom_page4s" and @event.custom_page4s.present?
+              - display_title = "Manage" if url == "custom_page5s" and @event.custom_page5s.present?
+              - display_title = "Manage" if url == "custom_page6s" and @event.custom_page6s.present?
+              - display_title = "Manage" if url == "custom_page7s" and @event.custom_page7s.present?
+              - display_title = "Manage" if url == "custom_page8s" and @event.custom_page8s.present?
+              - display_title = "Manage" if url == "custom_page9s" and @event.custom_page9s.present?
+              - display_title = "Manage" if url == "custom_page10s" and @event.custom_page10s.present?
+            - if ["notes","my_profile","my_calendar", "favourites","chats","social_sharings","registrations"].exclude? (url)
+              - url1 = "emergency_exits" if url == "emergency_exits"
+              - url1 = url if url != "emergency_exits" and url != "registrations"
+              - url1 = "qr_code" if url == "qr_code"
+              - if url1 != "qr_code" and url1 != "images"
+                = link_to display_title, "/admin/events/#{@event.id}/#{url1}#{redirect_link}?from=microsites"
+              - if url == "images"
+                - microsite_feature = @microsite.microsite_features.where("name = ?", "images").first
+                - if microsite_feature.present? and microsite_feature.image_setting.blank?
+                  = link_to display_title, new_admin_event_microsite_microsite_feature_path(:event_id => @event.id, :microsite_id => @microsite.id, :type => "image_setting")
+                - elsif microsite_feature.present? and microsite_feature.image_setting.downcase == 'yes'
+                  - url1 = "folders" if url == "images" and microsite_feature.image_setting.downcase == 'yes' 
+                  - redirect_link = '' if url == "images" and Folder.where(event_id: @event.id).present?
+                  = link_to display_title, "/admin/events/#{@event.id}/#{url1}#{redirect_link}?from=microsites"
+                - else
+                  - url1 = "images"
+                  = link_to display_title, "/admin/events/#{@event.id}/#{url1}#{redirect_link}?from=microsites"
+            - if 
+              |
+              = link_to "Disable", admin_event_microsite_path(:event_id => @event.id, :id => @event.microsite.id,:disable => "#{url}", :type => params[:type]), :method => "put", :remote => true 
+            - if ["polls","conversations","qnas","quizzes"].include?(url) and (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+              |        
+      
+      - elsif true 
+        .row.pv5.AddmoreCard
+          .col-xs-12.ph5
+            = link_to "Enable", admin_event_microsite_path(:event_id => @event.id, :id => @event.microsite.id ,:enable => "#{url}", :type => params[:type]), :method => "put" ,:class => " centerAlign", :remote => true
+ 
+
+
+

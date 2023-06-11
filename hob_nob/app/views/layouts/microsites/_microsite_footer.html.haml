@@ -1,0 +1,27 @@
+
+/ Footer Start
+- if @event.microsite.microsite_look_and_feel.present?
+  - color = @event.microsite.microsite_look_and_feel.footer_background_color
+.footer{:style => "background: ##{color};font-size: 14px;"}
+  .container
+    %p
+      - if @event.microsite.microsite_look_and_feel.present?
+        #{@event.microsite.microsite_look_and_feel.footer_formatter.html_safe}
+/ / Footer End
+/ %ul#social_side_links
+/   - if @event.microsite.social_media_status == "active"
+/     - if @event.microsite.facebook_id.present?
+/       %li
+/         %a{:href => "#{@microsite.facebook_id}", :style => "background-color: #fff;", :target => "blank"}= image_tag "facebook.png" 
+/     - if @event.microsite.twitter_id.present?
+/       %li
+/         %a{:href => "#{@microsite.twitter_id}", :style => "background-color: #fff;", :target => "_blank"}= image_tag "twitter.png"
+/     - if @event.microsite.google_id.present?
+/       %li
+/         %a{:href => "#{@microsite.google_id}", :style => "background-color: #fff;", :target => "_blank"}= image_tag "google.png" 
+/     - if @event.microsite.linkedin_id.present?
+/       %li
+/         %a{:href => "#{@microsite.linkedin_id}", :style => "background-color: #fff;", :target => "_blank"}= image_tag "linkden.png" 
+/     - if @event.microsite.instagram_id.present?
+/       %li
+/         %a{:href => "#{@microsite.instagram_id}", :style => "background-color: #fff;", :target => "_blank"}= image_tag "instagram.png" 

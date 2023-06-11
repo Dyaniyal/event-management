@@ -1,0 +1,8 @@
+%li.breadcrumb-link.mdl-color-text--white
+  - title = "New " + "#{Client::bredcrumb_hsh[params[:controller].split("/").second]} " rescue nil
+  - title = "New Look & Feel" if title == "New Theme "
+  - title = "Features" if title == "New Menu "
+  - title =  "New Question" if title == "New Feedback "
+  -if params[:controller] == "admin/conversations" and params[:action] == "new" and params[:import].present? and params[:importable_type].present?
+    - title = "Import #{params[:importable_type]}" 
+  = link_to title, "javascript:void(0);", :class => "mdl-color-text--white"

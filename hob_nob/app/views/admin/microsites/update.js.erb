@@ -1,0 +1,4 @@
+<% if params[:type] == "show_content" %>
+  $(".enable_card").html('<%= escape_javascript(render :partial => "admin/microsites/microsite_dashboard") %>');
+  $(".disable_card").html('<%= escape_javascript(render :partial => "admin/microsites/microsite_dashboard_except_selected_microsite_features") %>');
+<% end %>

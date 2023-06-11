@@ -1,0 +1,36 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section.menus
+    .mdl-color--light-blue-800.relative.clear
+      - page =  @licensee.first_name.capitalize rescue nil
+      = render :partial => "/admin/dashboards/breadcumb_links",:locals => {:name => params[:controller],:page => page}
+      / .p-20
+      /   .displayInlineBlock
+      /     %h3.mdl-color-text--white.m-t-20.m-b-5
+      /       = @licensee.first_name.capitalize rescue nil
+          
+      /   %p.m-t-20.headingInfo
+      /     = link_to edit_admin_licensee_path(:id => params[:id]) do 
+      /       %i.material-icons.mdl-color-text--white edit
+    .mdl-cell--13-col.mdl-cell--13-col-tablet.mdl-cell--13-col-phone
+      .ml-card-holder
+        .ml-color--shades-white.mdl-shadow--1dp
+          %form{:action => "#"}
+            .mdl-grid
+              = show_field("Name: ", @licensee.first_name).html_safe
+              = show_field("Email id: ", @licensee.email).html_safe
+              .mdl-cell--2-col.mdl-cell--4-col-tablet.ml-color--shades-white.m-8
+                %a.viewMoreLink.floatRight{:href => "javascript:void(0);"}
+                  %span.verticalTop view more
+            .mdl-grid.toggleDiv
+              = show_field("Company Name: ",@licensee.company).html_safe
+              = show_field("Package Type: ",@licensee.package_type).html_safe
+    .mdl-cell.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.p-20
+      .ml-card-holder
+        #gridWrap
+          %ul.dynamic-grid.angular-grid.galleryLayout{"angular-grid" => "images", "grid-width" => "250", "gutter-size" => "20", "refresh-on-img-load" => "true"}
+            - if @clients.present?
+              = render :partial => "admin/licensees/card", :locals => {:obj => "client"}
+            - if @event_count > 0
+              = render :partial => "admin/licensees/card", :locals => {:obj => "event"}
+            - if @licensee.present?
+              = render :partial => "admin/licensees/card", :locals => {:obj => "licensee"}

@@ -1,0 +1,4 @@
+- if params[:read_only] == true
+  = render :partial => 'layouts/layout_form', :locals => {:page => @theme.name}
+-else
+  = render :partial => 'layouts/layout_form', :locals => {:page => 'Edit Theme'}

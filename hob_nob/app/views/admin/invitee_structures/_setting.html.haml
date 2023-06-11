@@ -1,0 +1,23 @@
+.save_button.mdl-card
+  = form_for [:admin, @event ,@invitee_structure], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.pollInfo.mdl-shadow--1dp
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          Expiry Date Setting
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .bs-component.m-b-30
+          .form-group
+            %label.col-lg-4.control-label{:for => "Expiry Database Date"} Expiry Database Date *
+            = f.custom_text_field_for_date :expiry_date, "Expiry Database", :id => "date-start",:value => f.object.expiry_date.present? ? f.object.expiry_date.to_time.in_time_zone('Mumbai').strftime('%d/%m/%Y') : ''
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+
+:javascript
+  $('#date-start').bootstrapMaterialDatePicker({
+    format : 'DD/MM/YYYY',
+    minDate : "#{(Date.today + 1).strftime("%d/%m/%Y")}",
+    time : false
+  });

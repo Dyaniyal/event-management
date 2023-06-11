@@ -1,0 +1,24 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = index_nodata_message("push_pem_file")
+    = link_to "add one now.",new_admin_event_push_pem_file_path(:mobile_application_id => @mobile_application.id),:class => "centerAlign"
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("push_pem_file")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      %th Push Phrase
+      %th Push Url
+      %th Android Push Key
+      %th Url
+      %th  
+      %tr
+        %td.font16= objs.push_phrase
+        %td.font16= objs.push_url
+        %td.IconDrp
+          = more_vert_button(objs.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{objs.id}"}
+            = edit_link(params, objs.id)
+            = delete_link(params, objs.id)
+          

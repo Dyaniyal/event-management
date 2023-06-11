@@ -1,0 +1,61 @@
+.main-container{:style => "font-size: 20px;color: #333;"}
+  / Main Content Start
+  .main-content
+    .container
+      - if @event.microsite.microsite_look_and_feel.present? and @event.microsite.microsite_look_and_feel.home_page_content.present?
+        .text-center
+          %p #{@event.microsite.microsite_look_and_feel.home_page_content.html_safe}
+      - else
+        .text-center{:style => "padding-top:40px;"}
+  .clear
+  / Main Content End
+  / Event Start
+  - if @event.microsite.microsite_look_and_feel.present?
+    .event-wrap{:style => "color:#fff;"}
+      .container
+        - if @event.microsite.microsite_look_and_feel.event_dates == "active"
+          .col-md-4
+            .event-box{:style => "background-color: #5f7a76;"}
+              %h3 Event Dates
+              = image_tag "calander.png"
+              %p.txtcenter.Thankpop #{formatted_time(@event.start_event_time, "%B %d")} to #{formatted_time(@event.end_event_time, "%B %d, %Y")}
+        - if @event.microsite.microsite_look_and_feel.event_location == "active"
+          .col-md-4
+            .event-box{:style => "background-color: #5f7a76;"}
+              %h3 Event Location
+              = image_tag "map.png"
+              %p{:style => "font-size:18px; line-height: 1.5em;\n    margin-top: 15px;"}
+                #{@event.cities}
+        - if @event.contacts.present? and @event.microsite.microsite_look_and_feel.contact_detail == "active"
+          .col-md-4
+            .event-box{:style => "background-color: #5f7a76;"}
+              %h3 Contact Details
+              = image_tag "calander.png"
+              %p{:style => "font-size:18px; line-height: 1.5em;\n    margin-top: 15px;"}
+                #{@event.contacts.last.name}
+                %br
+                %a{:href => "mailto:lorem@sample.com"} #{@event.contacts.last.email}
+                
+  / Event End
+  / Venue Start
+  - if @microsite.get_active_features.pluck(:name).include?("emergency_exits")
+    .venue-wrap
+      .container
+        .text-center
+          -venue = @microsite.get_active_features.where(:name => "emergency_exits")
+          %h2{:style => "font-size: 40px;color: #333;"} #{venue.first.page_title}
+          .col-md-8
+            .map
+              %iframe{:allowfullscreen => "", :frameborder => "0", :src => "#{@event.microsite_map}", :style => "border:0"}
+          .col-md-4
+            .venue-box{:style => "height: 304px; background-color: #5f7a76;font-size: 16px;color: #fff;"}
+              %h3 Join us in #{@event.cities}
+              %p
+                %span.bold #{@event.venues}
+                = succeed "#{@event.cities}" do
+                  %br/
+                = succeed "#{@event.country_name}" do
+                  %br/
+    / Venue End
+  / Main Container End
+

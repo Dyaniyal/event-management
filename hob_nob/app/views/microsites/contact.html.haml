@@ -1,0 +1,65 @@
+.main-container{:style => "font-size: 20px;color: #333;"}
+  .main-content.about-content
+    .container
+      .text-center
+        - contact = @microsite.get_active_features.where(:name => "contacts")
+        %h1{:style => "font-size:50px;"} #{contact.first.page_title}
+    .container
+      .row
+        .about_our_company{:style => "margin-bottom: 20px;"}
+          - if @event.contacts.present? and @event.contacts.first.present?
+            - contact = Contact.find(@event.contacts.first)
+      - if @event.contacts.present?
+        - @event.contacts.reverse.each_with_index do |contact, index|      
+          .col-md-4
+            .cla{:style => "height: 117px;"}
+              %p{:style => "color:#000;margin-top:7px !important;"}
+                %strong
+                #{contact.introduction}
+              %p{:style => "color:#000;margin-top:7px !important;"}
+                %strong
+                #{contact.name}
+              %p{:style => "color:#000;margin-top:7px !important;"}
+                %strong
+                #{contact.mobile}
+              %p{:style => "color:#000;margin-top:7px !important;"}
+                %strong
+                #{contact.email}
+              %p
+    .clear
+    / Main Content End
+
+- if false
+  .main-container{:style => "font-size: 20px;color: #333;"}
+    .main-content.about-content
+      .container
+        .text-center
+          - contact = @microsite.get_active_features.where(:name => "contacts")
+          %h1{:style => "font-size:50px;"} #{contact.first.page_title}
+      .container
+        .row
+          .col-md-12
+            .tabbable-panel.faqsWrap
+              .tabbable-line
+                %ul.nav.nav-tabs
+                / li elemtens for categories
+                .tab-content
+                  #tab_default_1.tab-pane.active
+                    #accordion.panel-group
+                      - @event.contacts.reverse.each_with_index do |contact, index|
+                        .panel.panel-default1
+                          .panel-heading{:style => index == 0 ? "border-top:none" : ""}
+                            %h4.panel-title
+                              %a{"data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse#{index}"}
+                                - if contact.introduction == ""
+                                  Introductory line is missing
+                                - else
+                                  #{contact.introduction}
+                          .panel-collapse.collapse{:id => "collapse#{index}", :class => index == 0 ? "in" : ""}
+                            .panel-body
+                              #{contact.name}
+                              %br
+                              #{contact.mobile}
+                              %br
+                              #{contact.email}                                            
+    .clear

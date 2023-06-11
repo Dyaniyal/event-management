@@ -1,0 +1,19 @@
+- folder_name = ["new_icons","blue_icons","red_icons"]
+- library_name = {"new_icons" => "Library 1", "blue_icons" => "Library 2", "red_icons" => "Library 3" }
+- folder_name.each do |folder_name|
+  .mdl-grid.mdl-shadow--1dp.mdl-card.p-b-15{:style => "margin-top: 40px;"}
+    .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+      %h4.heading-border.displaybolck.p-t-10
+        = library_name[folder_name]
+    - @images.each do |image|
+      .mdl-cell--4-col.mdl-cell--4-col-tablet.m-4
+        %p.no-m-b
+          %strong 
+            = "#{image.singularize.titleize} :"
+          %span
+            = " Main Icon"
+            = image_tag("/main_icons/#{folder_name}/#{image}.png", :width => "30", :height => "30")
+            = " Menu Icon"
+            = image_tag("/menu_icons/#{folder_name}/#{image}.png", :width => "30", :height => "30")
+          
+      

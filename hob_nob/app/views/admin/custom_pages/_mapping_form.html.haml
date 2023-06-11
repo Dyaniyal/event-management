@@ -1,0 +1,19 @@
+.mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40.paramterMapping{:style => (f.object.page_type == "build_new") ? "display:none" : "display:flex"}
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+    %h4.heading-border.p-t-10
+      Parameter Mappings
+      %span.titleQuestion
+  - invitee_fields = @event.invitees.new.get_column_for_custom_pages
+  - for count in 1..5  do
+    = f.custom_text_field "param#{count}_name", "parameter #{count} name", :value => f.object.send("param#{count}_name")
+    .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8{:style => "margin-top:15px;"}
+      .form-group
+        %label.col-lg-4.control-label.ml-color--shades-white
+          = "Mapped to Invitee Column"
+        .col-lg-7
+          %i.arrow.single
+          = f.select("#{table}", "param#{count}_value", invitee_fields, {:selected => f.object.send("param#{count}_value").present? ? f.object.send("param#{count}_value") : "", :prompt => 'Map field for invitee'}, { include_blank: true,:class=> 'select2-single form-control'})
+          .field_with_errors
+            .span{:class => "errorMessage"}
+              = f.object.errors.messages[:"param#{count}_value"].join("") rescue ""
+.clear

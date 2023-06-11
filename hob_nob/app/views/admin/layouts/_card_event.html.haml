@@ -1,0 +1,25 @@
+- not_addnew_array = ["Page views", "Conversations", "Questions asked", "Notifications sent", 'Polls taken', 'Questions Asked', 'Feedback Submitted', 'Speaker Ratings', 'Session Ratings', 'Favorites', 'Quiz answered', 'e-Kit Document Views', 'QR Code scans', 'Ios unique users', 'Android unique users', 'Ios active users', 'Android active users', 'Total unique users', 'Total active users']
+.col-sm-3.col-xl-3
+  .panel.panel-tile
+    .panel-body
+      .row.pv5
+        .col-xs-5.ph10
+          = image_tag(image_path)
+        .col-xs-7.pl5
+          %h6.text-muted{:class => "#{params[:controller] == "admin/dashboards" ? "" : ""}"}
+            = page_title
+          %h2.fs30.mbn 
+            -if not_addnew_array.exclude? page_title
+              = link_to feature_count, "javascript:void(0);", :style => "font-weight: 600; color: #444"
+            - else
+              = feature_count
+      -if not_addnew_array.exclude? page_title
+        .row.pv5.AddmoreCard
+          .col-xs-12.ph5
+            %a.centerAlign.pointerEventsNone{:href => "javascript:void(0);"} 
+              - if params[:controller] == "admin/mobile_applications"
+                Enable
+              - elsif params[:controller] == "admin/events"
+                Coming Soon
+              - elsif page_title == "Analytics"
+                View Analytics

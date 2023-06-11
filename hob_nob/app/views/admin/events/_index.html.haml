@@ -1,0 +1,106 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin
+      - if params[:feature] == "mobile_application" and params[:mobile_application_id].present?
+        - url = new_admin_client_event_path(:client_id => @client.id, :mobile_application_id => params[:mobile_application_id]) 
+      - else   
+        - url = new_admin_client_event_path(:client_id => @client.id)      
+      = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "events", :url => url, :msg => 'test'}
+    - else
+      = index_nodata_message("events")    
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("events")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16.ng-scope.ng-table.manage-event{"template-pagination" => "custom/pager"}
+    %tr
+      %th Event Name
+      %th.test
+        / Event Category
+        / %a{:href => "#"}
+        /   %img{:src => "/assets/funnel.png"}/
+        .event_select123
+          Event Category
+        .event_cate
+          = form_tag admin_client_events_url(:client_id => @client.id), :method => :get, :class=> "event_index_category_filter_form drop category_dropdown" do
+            = select_tag "search[order_by]",options_for_select([['All','All'],["Upcoming","upcoming"],["Ongoing", "ongoing"], ["Past", "past"]], selected: (params[:search][:order_by] if params[:search].present?))
+            = hidden_field_tag :admin_search, "true"
+            = hidden_field_tag :adv_search, "true"
+      / - if !current_user.has_role? :moderator
+      /   %th 
+      %th.test
+        .event_select123.event_status_title
+          Status
+        .event_stat
+          = form_tag admin_client_events_url(:client_id => @client.id), :method => :get, :class=> "event_index_status_filter_form category_dropdown search_status event_status_title" do
+            = select_tag "search[order_by_status]",options_for_select([['All','All'],["Pending","pending"],["Rejected", "rejected"],["Published", "published"],["Approved", "approved"]], selected: (params[:search][:order_by_status] if params[:search].present?))
+            = hidden_field_tag :admin_search, "true"
+            = hidden_field_tag :adv_search, "true"
+      %th
+      - if objs.present?
+        - objs.each do |event|
+          %tr
+            %td.font16
+              - if event.status != "rejected"
+                - @resource_role = current_user.get_role_on_resource(event)
+                - if @resource_role.present? and @resource_role.name == 'moderator' 
+                  = link_to event.event_name, admin_client_event_path(:id => event.id, :client_id => event.client_id, :analytics => true) if event.mobile_application.present?
+                  = link_to event.event_name, 'javascript:void(0)' if event.mobile_application.blank?
+                - else
+                  = link_to event.event_name, admin_client_event_path(event.client_id, event.id)
+              - else
+                = event.event_name  
+            %td.font16= event.event_category
+            %td.font16
+              - if event.status != 'published' or event.status == 'published'
+                %button{:class => get_status_class(event)}
+                  = event.status.capitalize rescue nil
+              %td.IconDrp
+                - if session[:current_user_role] != "moderator" and session[:current_user_role] != "db_manager" and !(current_user.has_role? :client_response_manager)
+                  = more_vert_button(event.id)
+                  %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{event.id}"}
+                    - if event.status != "rejected"
+                      = link_to edit_admin_client_event_path(event.client_id, event.id, :type => "general"),:class => "mdl-menu__item" do
+                        Edit
+                      - if @check_mo_app_status
+                        - if ['approved','published'].include?(event.status) and event.mobile_application.present?
+                          = link_to admin_event_mobile_application_path(:event_id => event.id, :id => event.mobile_application_id), :class => "mdl-menu__item" do
+                            = (event.mobile_application.present? and event.mobile_application.marketing_app_event_id.blank? ? "Manage Mobile Application" : "Manage Hub Space")
+                        - elsif ['approved','published'].include?(event.status) and event.mobile_application.blank?
+                          = link_to new_admin_client_mobile_application_path(:client_id => event.client_id, :event_id => event.id, :old_one => true), :class => "mdl-menu__item" do
+                            New Mobile Applications
+                        - if ['approved','published'].include?(event.status) and @multi_mobile_applications.present? and !event.mobile_application.present?
+                          = link_to admin_client_mobile_applications_path(:client_id => event.client_id, :feature => 'events', :event_id => event.id), :class => "mdl-menu__item" do
+                            Add Existing Mobile Applications
+                      - if  false# (event.start_event_date == Date.today rescue false) 
+                        = link_to admin_client_event_path(event.client_id, event.id,:schedule_type => "upcoming"), :method => "put", :class => "mdl-menu__item" do
+                          Change to upcoming
+                      - elsif false# (event.start_event_date > Date.today rescue false)  
+                        = link_to admin_client_event_path(event.client_id, event.id,:schedule_type => "ongoing"), :method => "put", :class => "mdl-menu__item" do
+                          Change to ongoing
+                    - if !(current_user.has_role? :client_response_manager)
+                      - if user_signed_in? and (current_user.has_any_role?(:super_admin,:licensee_admin, :client_admin, :event_admin))
+                        = link_to "/admin/events/#{event.id}/users", :class =>"mdl-menu__item" do
+                          Manage Users
+                      - if user_signed_in? and (current_user.has_any_role?(:licensee_admin, :client_admin, :event_admin, :response_manager))
+                        - if current_user.get_licensee_admin.smtp_setting.present?
+                          = link_to new_admin_smtp_setting_path(:event_id => event.id), :class =>"mdl-menu__item" do
+                            SMTP Settings
+                        -else
+                          = link_to new_admin_smtp_setting_path(:event_id => event.id), :class =>"mdl-menu__item" do
+                            SMTP Settings
+                      - if user_signed_in? and (current_user.has_role?(:licensee_admin))
+                        - event.aasm.events.each do |eve|
+                          - if ['publish', 'unpublish'].exclude? eve.name.to_s
+                            = link_to "#{eve.name.to_s.titlecase}".html_safe,{:action=>"update", :controller=>"admin/events", :id => event.id, :status => eve.name.to_s, :page => params[:page]}, :method => "put", :data => { confirm: 'Are you sure, you want to change the status.'},:class => "mdl-menu__item"
+                      - if event.mobile_application.present? and event.parent_id.blank?
+                        = link_to "Create Multi-lingual Event", admin_client_event_path(:client_id => event.client_id,:id => event.id,:copy_multilingual_event => "true"),:method => :put, :data => { confirm: 'Are you sure you want to create a new multi-lingual event?'}, :class => "mdl-menu__item"
+                      - if event.mobile_application.present?
+                        = link_to "Copy Event",edit_admin_client_event_path(:client_id => event.client_id,:id => event.id,:copy_event => "true"),:class => "mdl-menu__item"
+                                     
+  = will_paginate objs
+:javascript
+  $( document ).ready(function() {   
+    $('#search_order_by').select2();
+    $('#search_order_by_status').select2();
+  });

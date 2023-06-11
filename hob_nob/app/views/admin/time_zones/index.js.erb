@@ -1,0 +1,9 @@
+<% @timestamp ||= Time.now %>
+<% @list_of_zone = ActiveSupport::TimeZone.all.uniq{|e| ["GMT#{e.at(@timestamp).formatted_offset}"]} %>
+<% if @timezone.present? and @list_of_zone.map{|e| ["GMT#{e.at(@timestamp).formatted_offset}",e.name]}.select{ |a| a[0] == @timezone}.present?%>
+	<% @timezone = @list_of_zone.map{|e| ["GMT#{e.at(@timestamp).formatted_offset}",e.name]}.select{ |a| a[0] == @timezone}.first[1] %>	
+  $('#event_timezone').html("<%= escape_javascript(options_for_select([['Please select the Time Zone', '']] + ActiveSupport::TimeZone.all.uniq{|e| ["GMT#{e.at(@timestamp).formatted_offset}"]}.map{|e| ["GMT#{e.at(@timestamp).formatted_offset}", e.name]}.sort)) %>");
+	$("#event_timezone").val("<%= raw(@timezone) %>");
+<% else %>
+	$('#event_timezone').html("<%= escape_javascript(options_for_select([['Please select the Time Zone', '']] + ActiveSupport::TimeZone.all.uniq{|e| ["GMT#{e.at(@timestamp).formatted_offset}"]}.map{|e| ["GMT#{e.at(@timestamp).formatted_offset}", e.name]}.sort)) %>");
+<% end %>

@@ -1,0 +1,21 @@
+%table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+  - @events.each do |f|         
+    %tr
+      %td.text-left{"data-title" => "'Event Name'", :filter => "{ 'firstname': 'text' }", :sortable => "'firstname'"}
+        =f.event_name
+      %td{"data-title" => "'Event Code'", :sortable => "'lastname'"} 
+      %td.IconDrp{"data-title" => "''"}
+        %button.mdl-button.mdl-js-button.mdl-button--icon{:id => "demo-menu-lower-right#{f.id}"}
+          %i.material-icons more_vert
+      %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{f.id}"}
+        = link_to edit_admin_client_event_path(f.client_id, f.id),:class => "mdl-menu__item" do
+          Edit
+        = link_to admin_client_event_path(f.client_id, f.id),:class => "mdl-menu__item" do
+          / %i.material-icons.center visibility
+          Show  
+        = link_to admin_client_event_path(f.client_id, f.id),method: :delete,:class =>"waves-effect waves-light btn" do
+          %i.material-icons.center  
+            delete
+        - if user_signed_in? and (current_user.has_role? :super_admin or current_user.has_role? :licensee_admin)
+          = link_to "/admin/assign_client_to_user?resource_type=event&resource_id=#{f.id}&link=#{request.path_info}",:class => "mdl-menu__item" do
+            %i.material-icons.center{:title => "give permision"} vpn_key

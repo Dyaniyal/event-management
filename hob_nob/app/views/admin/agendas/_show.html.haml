@@ -1,0 +1,50 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section.menus
+    .mdl-color--light-blue-800.relative.clear
+      .p-20
+        .displayInlineBlock
+          %h3.mdl-color-text--white.m-t-20.m-b-5.headingInfo 
+            = @agendas.title.capitalize rescue nil
+          = show_edit_link(params)  
+  .mdl-cell--13-col.mdl-cell--13-col-tablet.mdl-cell--13-col-phone
+    %div
+      .mdl-tabs.mdl-js-tabs.ProfileTabLeft
+        .mdl-tabs__tab-bar
+          %a.mdl-tabs__tab{:href => "#Rating-panel"} Rating
+          %a.mdl-tabs__tab{:href => "#feedback-panel"} feedback
+        #Rating-panel.mdl-tabs__panel.m-20
+          .ml-card.mdl-color--white.mdl-shadow--0dp.m-20
+            .ml-card--content
+              .p-20
+                .col
+                  .box.box-blue.box-example-movie
+                    %h4 Rating Information
+                    .box-body
+                      .br-wrapper.br-theme-bars-movie
+                        %select#example-movie{:name => "rating", :style => "display: none;"}
+                          %option{:value => "1"} 1
+                          %option{:value => "2"} 2
+                          %option{:selected => "selected", :value => "3"} 3
+                          %option{:value => "4"} 4
+                        .mdl-grid.mdl-cell--12-col.no-p-l.no-p-b
+                          .br-widget.mdl-cell--6-col.mdl-cell--6-col-tablet.m-h-5
+                            - avg_rate =1# speaker_rating(@agendas)
+                            - (1..5).each do |rate|
+                              - if rate < avg_rate
+                                %a.mdl-color-text--red-400{"data-rating-value" => "1", :href => "#"}
+                                  %i.large.material-icons.active star_rate
+                              - else
+                                %a.mdl-color-text--grey-400{"data-rating-value" => "1", :href => "#"}
+                                  %i.large.material-icons.active star_rate
+                          .br-current-rating.mdl-cell--5-col.mdl-cell--5-col-tablet.m-h-5
+                            %span.ratingInfo
+                            = @agenda.ratings.count 
+                            Count 
+        #feedback-panel.mdl-tabs__panel
+          .ml-card.mdl-color--white.mdl-shadow--0dp.m-20
+            .ml-card--content
+              .p-20
+                %p=# @speaker.feedback.blank? ? "No Feedback" : @speaker.feedback rescue nil
+                %p.t-right
+                  %span.personName=# @speaker.speaker_name rescue nil
+                  %span.dateInfo=# @speaker.created_at.to_date rescue nil   

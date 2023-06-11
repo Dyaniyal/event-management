@@ -1,0 +1,54 @@
+.save_button
+  = form_for [:admin, @event, @event.microsite, @microsite_feature], :html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          - if params[:type] == "image_setting"
+            General Information
+            / - if params[:type] == "faq_setting"
+            /   General Setting
+          - else
+            Microsite Features
+      -if params[:type] == "image_setting"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Add Folders to Gallery?
+            .col-lg-7.p-h-12
+              = hidden_field_tag :image_setting, :value => 'yes'
+              = f.custom_radio_button_menu :image_setting, "Yes","yes", :id => "option-3", :default_checked => "#{@microsite.get_gallery_folder_setting_status == "yes" ? "checked" : "" }"
+              = f.custom_radio_button_menu :image_setting, "No", "no", :id => "option-4", :default_checked => "#{@microsite.get_gallery_folder_setting_status == "no" ? "checked" : "" }"
+              - if @feature_error.present?
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = @feature_error rescue nil
+                    / -if params[:type] == "faq_setting"
+                    /   .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+                    /     .mdl-grid.p-v-5
+                    /       .col-lg-4.mdl-typography--text-right
+                    /         %p.displayInlineBlock.multicitytxt You Want to Add Category To FAQ
+                    /       .col-lg-7.p-h-12
+                    /         = hidden_field_tag :faq_setting, :value => 'yes'
+                    /         = f.custom_radio_button_menu :faq_setting, "Yes","yes", :id => "option-1", :default_checked => "#{@microsite.get_category_faq_setting_status == "yes" ? "checked" : "" }"
+                    /         = f.custom_radio_button_menu :faq_setting, "No", "no", :id => "option-2", :default_checked => "#{@microsite.get_category_faq_setting_status == "no" ? "checked" : "" }"
+                    /         - if @feature_error.present?
+                    /           .field_with_errors
+                    /             .span{:class => "errorMessage"}
+                    /               = @feature_error rescue nil
+      - else
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "event_feature_generalInfo.jpg", :section_id => "event_feature_general_section"} 
+        - hash_of_feature_list = { "agendas" => "Agenda", "speakers" => "Speakers", "faqs" => "FAQ", "images" => "Gallery", "contacts" => "Contact Us", "emergency_exits" => "Venue", "sponsors" => "Sponsors", "registrations" => "Registration", "custom_page1s" => "Custom Page 1", "custom_page2s" => "Custom Page 2", "custom_page3s" => "Custom Page 3", "custom_page4s" => "Custom Page 4", "custom_page5s" => "Custom Page 5", "custom_page6s" => "Custom Page 6", "custom_page7s" => "Custom Page 7", "custom_page8s" => "Custom Page 8", "custom_page9s" => "Custom Page 9", "custom_page10s" => "Custom Page 10" } 
+        = hidden_field_tag :multiple_create, true
+        - @default_features.each do |microsite_feature|
+          .mdl-cell--4-col.mdl-cell--2-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+            %label.help-tip{:for => "event_user_ids_#{microsite_feature}"}
+              = f.check_box_tag "microsite[features][]", microsite_feature, @present_feature.include?("#{microsite_feature}"), :class => "",:id => "event_user_ids_#{microsite_feature}"
+              %span.checkbox{:style => "padding-top: 2px;"}
+              = hash_of_feature_list[microsite_feature]
+              %a{:href => '/whats_this/template/fpo.jpg', :class=>"fancybox"} ?
+
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)

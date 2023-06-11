@@ -1,0 +1,58 @@
+.main-container{:style => "font-size: 20px;color: #333;"}
+  .main-content.about-content
+    .container
+      .text-center
+        - faq = @microsite.get_active_features.where(:name => "faqs")
+        %h1{:style => "font-size:50px;"} #{faq.first.page_title}
+    .container
+      .row
+        .col-md-12
+          .tabbable-panel.faqsWrap
+            .tabbable-line
+              %ul.nav.nav-tabs
+              / li elemtens for categories
+              .tab-content
+                #tab_default_1.tab-pane.active
+                  #accordion.panel-group
+                    - @event.faqs.each_with_index do |faq, index|
+                      .panel.panel-default
+                        .panel-heading{:style => index == 0 ? "border-top:none" : ""}
+                          %h4.panel-title{:style => "font-family: Ubuntu, sans-serif;"}
+                            %a{"data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse#{index}"}
+                              #{faq.question}
+                        .panel-collapse.collapse{:id => "collapse#{index}", :class => index == 0 ? "in" : ""}
+                          .panel-body{:style => "margin-top:-27px;white-space:pre-line;"}
+                            #{faq.answer}
+  .clear
+/ - if @microsite.microsite_features.where(:faq_setting => "Yes").present?
+/   .main-container{:style => "font-size: 20px;color: #333;"}
+/     .main-content.about-content
+/       .container
+/         .text-center
+/           - faq = @microsite.get_active_features.where(:name => "faqs")
+/           %h1{:style => "font-size:50px;"} #{faq.first.page_title}
+/       .container
+/         .row
+/           .col-md-12
+/             .tabbable-panel.faqsWrap
+/               .tabbable-line
+/                 %ul.nav.nav-tabs
+/                   - @event.faqs.pluck(:faq_type).compact.uniq.each_with_index do |faq_type, index|
+/                     %li{:class => index == 0 ? "active" : ""}
+/                       %a{"data-toggle" => "tab", :href => "#tab_default_#{index}"}
+/                         #{faq_type}
+/                 .tab-content
+/                   - @event.faqs.group(:faq_type).count.each_with_index do |faq, index|
+/                     .tab-pane{:id => "tab_default_#{index}", :class => index == 0 ? "active" : ""}
+/                       #accordion.panel-group
+/                         - faqs = @event.faqs.where("faq_type = ?", faq[0])
+/                         - faqs.each_with_index do |faq, i|
+/                           .panel.panel-default
+/                             .panel-heading{:style => i == 0 ? "border-top:none" : ""}
+/                               %h4.panel-title
+/                                 %a{"data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapse#{i}#{index}"}
+/                                   #{faq.question}
+/                             .panel-collapse.collapse{:id => "collapse#{i}#{index}", :class => i == 0 ? "in" : ""}
+/                               .panel-body
+/                                 #{faq.answer}
+/   .clear

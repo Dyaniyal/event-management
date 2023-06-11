@@ -1,0 +1,15 @@
+.popup-overlay
+.ClientPopup
+#register-form.pollWallForm.col.s12.ClientPopup-info
+  %p.txtcenter.m-b-30
+    Please select wall to continue
+  %span
+    = link_to back_path, :class => 'closeclick' do 
+      X
+  = form_for [:admin, @event, @poll], :method => "put" do |f|
+    %i.arrow.single
+    - poll_option_types = ['Wall1','Wall2','Wall3','Wall4','Wall5'] - @event.polls.pluck(:wall_type).compact.uniq
+    = f.select :wall_type , poll_option_types
+    = hidden_field_tag :on_wall, "yes"
+    .row.txtcenter.UserSubmit.m-t-40
+      = f.submit "Submit", :class => "mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-color--light-blue-600 disbtn"

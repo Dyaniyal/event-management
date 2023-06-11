@@ -1,0 +1,12 @@
+%form.ng-pristine.ng-valid{:action => "#"}
+  .mdl-grid
+    .mdl-grid.mdl-cell--12-col.no-p-l.no-p-t.no-p-r.no-p-b
+      = show_field("Theme Name:", "#{obj.name rescue ""}")
+      = show_field("Background Color:", "#{obj.background_color rescue ""}")
+  .mdl-grid.toggleDiv
+    .mdl-grid.mdl-cell--12-col.no-p-l.no-p-t.no-p-r.no-p-b    
+      = show_field("Content Font Color :", "#{obj.content_font_color rescue ""}")
+      = show_field("Button Color:", "#{obj.button_color rescue ""}")
+      = show_field("Button Content Color:", "#{obj.button_content_color rescue ""}")
+      = show_field("Drawar Menu Background Color:", "#{obj.drawer_menu_back_color rescue ""}")
+      = show_field("Drawar Menu Font Color:", "#{obj.drawer_menu_font_color rescue ""}")

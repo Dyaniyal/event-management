@@ -1,0 +1,5 @@
+- if params[:qnas_wall].present?
+  = render :partial => 'qna_wall', :locals => {:objs => @qnas}
+- else
+  = render :partial => 'admin/layouts/index_header', :locals => {:objs => @qnas}
+  = render :partial => 'admin/layouts/more_links'

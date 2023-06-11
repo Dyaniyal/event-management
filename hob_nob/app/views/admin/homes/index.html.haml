@@ -1,0 +1,10 @@
+%section.loginwrap.mdl-color--light-blue-900
+  .loginBlog.loginNew
+    %center.BlnkTxt.p-t-10
+    .formInfo.z-depth-1
+      .LoginLogoLink
+        = image_tag("hobnob-login-logo-img.png")
+      .row.m-t-30.mdl-typography--text-center
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.ml-color--shades-white
+          .mdl-cell--12-col.mdl-cell--12-col-tablet
+            = link_to "Login", new_user_session_path

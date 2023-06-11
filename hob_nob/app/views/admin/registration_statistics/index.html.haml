@@ -1,0 +1,149 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section#content_wrapper
+    = render :partial => "admin/dashboards/breadcumb_links",:locals => {:page => "Statistics",:name => params[:controller]}
+    %section#content.table-layout.animated.fadeIn
+      .chute.chute-center
+        .row.DashPage.eventShowCard
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted  Confirmed/Approved Registrations
+                    %h2.fs30.mt5.mbn
+                      = link_to @confirmed_registration, admin_event_registration_statistic_path(:id => 1,:type => "confirmed")
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+                  / #{check_curent_user_role("client", client_ids,session[:current_user_role]) ? "0px" : "23px"}"
+                  / .col-xs-12.ph5
+                  /   / - if check_curent_user_role("client", client_ids,session[:current_user_role])
+                  /   %a{:href => "/admin/clients/new", :class => "displayBlock"}
+                  /     = 'Add One'# if @clients.count('clients.id') <= 0
+                  /     = 'New Client'# if @clients.count('clients.id') > 0
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Target Attendees
+                    %h2.fs30.mt5.mbn
+                      = @target_attendee #link_to objs.count, "#"
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Total Attendees
+                    %h2.fs30.mt5.mbn
+                      =link_to @total_attendees,admin_event_registration_statistic_path(:id => 1,:type => "total_attendees")#, :remote => true
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Pre-registered Attendees
+                    %h2.fs30.mt5.mbn
+                      =link_to @Pre_registered_attendees,admin_event_registration_statistic_path(:id => 1,:type => "pre_registered")
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Onsite Attendees
+                    %h2.fs30.mt5.mbn
+                      =link_to @onsite_attendees,admin_event_registration_statistic_path(:id => 1,:type => "walkin")
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted No Shows
+                    %h2.fs30.mt5.mbn
+                      =link_to @no_shows,admin_event_registration_statistic_path(:id => 1,:type => "no_shows")
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+        #tab5.panel
+          .panel.attendees-panel
+            %span
+              Target Attendees :  #{@target_attendee}  Attendees:  #{@total_attendees}
+          .panel-body.pn
+            .progress.progress-bar-xl.br4.mdl-color--grey-500
+              -# percentage = "#{(("#{@total_attendees}".to_i / "#{(@target_attendee.to_i.nonzero? || 1)}".to_f) * 100).to_i}"
+              - percentage = "#{@total_attendees}".to_i / "#{(@target_attendee.to_i.nonzero? || 1)}".to_f * 100.0
+              - percentage = percentage > 100 ? 0 : percentage
+              - if true #percentage.to_i > 0
+                .progress.progress-bar-xl.br4.mdl-color--grey-500
+                  .progress-bar.progress-bar-system{"aria-valuemax" => "100", "aria-valuemin" => "0", "aria-valuenow" =>"#{percentage}", :role => "progressbar", :style => "width: #{percentage}%;"}
+                    .pull-left.ph10.gauge
+                      = "Attendees"
+                      - if true#((feature[1] / @event_features[0].to_
+                        %span.pull-right.ph10.gaugevalue
+                          = "#{percentage.round}%" rescue "0 %"
+
+        .row.DashPage.eventShowCard
+          - if @badge_pdf.try(:unique_field1?)
+            .col-sm-3.col-xl-3
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-12{style: "text-align: center;"}
+                      %h6.text-muted
+                        = "#{@badge_pdf.unique_field1}"
+                      %h2.fs30.mt5.mbn.c-b
+                        = @unique_field1_count || 0
+
+          - if @badge_pdf.try(:unique_field2?)
+            .col-sm-3.col-xl-3
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-12{style: "text-align: center;"}
+                      %h6.text-muted
+                        = "#{@badge_pdf.unique_field2}"
+                      %h2.fs30.mt5.mbn.c-b
+                        = @unique_field2_count || 0
+
+          - if @badge_pdf.try(:unique_field3?)
+            .col-sm-3.col-xl-3
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-12{style: "text-align: center;"}
+                      %h6.text-muted
+                        = "#{@badge_pdf.unique_field3}"
+                      %h2.fs30.mt5.mbn.c-b
+                        = @unique_field3_count || 0
+
+        %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+          %tr
+            - [@val_wise_count_field1, @val_wise_count_field2, @val_wise_count_field3, @val_wise_count_field4, @val_wise_count_field5, @val_wise_count_field6, @val_wise_count_field7, @val_wise_count_field8, @val_wise_count_field9].each.with_index(1) do |val_wise_field, i|
+              - if val_wise_field.present?
+                %th{colspan: 2}= @badge_pdf.send("value_wise_field#{i}")
+                - @registration.countable_option_fields(val_wise_field[1]).each do |value|
+                  %tr
+                    %td.font16= value
+                    %td.font16= val_wise_field[0].join.gsub(value).count
+
+
+:css
+  .c-b {
+    color: #058494;
+  }

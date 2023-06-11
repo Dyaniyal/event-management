@@ -1,0 +1,424 @@
+- if params[:page] == 'print_preview' and params[:walk_in_registration]=="true"
+  = render :partial => "/admin/qr_code_scanners/badge_pdf"
+  =# render :partial => "/admin/qr_code_scanners/badge_pdf_walkin_user"
+- elsif (params[:invitee_absent].present? and params[:invitee_absent] =="true") or (params[:user_registration_absent].present? and params[:user_registration_absent] =="true")
+  = render :partial => "/admin/qr_code_scanners/invalid_registration"
+- elsif params[:page] == 'print_preview'
+  = render :partial => "/admin/qr_code_scanners/badge_pdf"
+- elsif @event.id == 482 
+  %body{:class => (params[:qr_code_preview].present? ? "" : "qr-scanner-page"),:style=>"background-image:url(#{@badge_pdfs.scan_bg_image.url});background-size: cover; background-attachment:fixed;"}
+
+  - if params[:page] == 'manual_search'
+    - if true
+      .container
+        .wrapper.submitWrapper
+          .textDiv
+            = form_tag(admin_event_qr_code_scanners_path(:event_id => @event.id), method: :get) do |f|
+              = hidden_field_tag :qr_code_preview, params[:qr_code_preview]
+              = hidden_field_tag :page, params[:page].present? ? params[:page] : 'manual_search'
+              = hidden_field_tag :search, 'manual'
+              = text_field_tag :email, params[:email], placeholder: 'Enter your email or name', :class => 'inputType'
+              %input.submitBtn{:type => "submit", :value => "submit"}/
+          - if @invitees.present?# and params[:qr_code_preview].blank?
+            .tableDiv
+              %table
+                %thead
+                  %tr
+                    - if false
+                      %th Id
+                    %th Name
+                    %th Company Name
+                    %th Designation
+                    %th Email
+                    %th
+                %tbody
+                  - @invitees.each do |invitee|
+                    %tr
+                      - if false
+                        %td
+                          = invitee.id
+                      %td
+                        / %a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => invitee.id, :page => 'print_preview'), :target => '_blank'}
+                        = invitee.name_of_the_invitee
+                      %td
+                        = invitee.company_name
+                      %td
+                        = invitee.designation
+                      %td
+                        / %a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => invitee.id, :page => 'print_preview'), :target => '_blank'}
+                        = invitee.email
+                      %td
+                        =# link_to "Print", admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => invitee.id, :page => 'print_preview'), :target => '_new'
+                        %a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => invitee.id, :page => 'print_preview'), :onclick => "window.open('#{admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => invitee.id, :page => 'print_preview')}','Print','width=1000,height=800'); return false;", :target => "popup"} Print
+          - elsif @invitees.present? and params[:qr_code_preview].present?
+            - @invitees.each do |invitee|
+              .qrcodediv
+                %p
+                  %span.label Name : 
+                  %span.answer= invitee.name_of_the_invitee
+                %p
+                  %span.label Email : 
+                  %span.answer= invitee.email
+                %p
+                  %span.label view Link : 
+                  %span.answer
+                    = link_to "View QR code", admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => invitee.id, :page => 'print_preview', :qr_code_preview => true), :target => '_blank'
+          - elsif @invitees.blank? and params[:search] == 'manual'
+            %p.bottomText Can't find yourself? Please contact the helpdesk for more assistance. Thank you.
+          .btnDiv.newScanBtn
+            %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/qr_code_scanners?qr_code_preview=#{params[:qr_code_preview]}"} New Scan
+  - elsif params[:page] == 'thank_you'
+    .container
+      .wrapper.thankYouWrapper
+        .thankyou-text
+          %p.thanktest 
+            = "Thank you for visiting #{@event.event_name}"
+        .tableDiv
+          - if @invitee.present?
+            %table
+              %thead
+                %tr
+                  - if false
+                    %th Id
+                  %th Name
+                  %th Company Name
+                  %th Designation
+                  %th Email
+              %tbody
+                %tr
+                  - if false
+                    %td
+                      = @invitee.id
+                  %td
+                    -#%a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview]), :target => '_blank'}
+                    = @invitee.name_of_the_invitee
+                  %td
+                    = @invitee.company_name
+                  %td
+                    = @invitee.designation
+                  %td
+                    -#%a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview]), :target => '_blank'}
+                    = @invitee.email
+            .btnDiv.thankyouPage
+              - if @invitee.present?
+                / %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview]), :target => '_blank'} Print Badge
+                %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview]), :onclick => "window.open('#{admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview])}','Print','width=1000,height=800'); return false;", :target => "popup"} Print Badge
+              %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/qr_code_scanners?qr_code_preview=#{params[:qr_code_preview]}"} New Scan
+            .searchManuallyDiv
+              %a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id)} Stop Scan 
+          - else
+            %p.subText
+              = "We are sorry, we couldn’t verify your QR code."
+            .btnDiv.thankyouPage
+              / %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :page => 'manual_search', :qr_code_preview => params[:qr_code_preview])} Search Manually 
+              - if @invitee.present?
+                %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview]), :target => '_blank'} Preview Badge
+              %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/qr_code_scanners?qr_code_preview=#{params[:qr_code_preview]}"} New Scan
+            .searchManuallyDiv
+              %a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id)} Stop Scan 
+  - elsif params[:page] == 'scanning'
+    #main
+      #header
+        %div{:style => "position:relative;top:+20px;left:0px;"}
+          %g:plusone{:size => "medium"}
+        %ul
+      #mainbody
+        %table.tsel{:border => "0", :width => "100%"}
+          %tr.camera
+            %td{:align => "center", :valign => "top"}
+              %table.tsel{:border => "0"}
+                %tr
+                  %td{:align => "center", :colspan => "2"}
+                    #outdiv
+          %tr
+            %td{:align => "center", :colspan => "3"}
+          %tr
+            %td{:align => "center", :colspan => "3"}
+              #result
+              %a{:id => 'btnPrint', :style => 'float:center;display:none', :href => 'javascript:void(0)'} Print
+      .searchManuallyDiv.searchManuallyBtn
+        %a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id)} Stop Scan 
+      / #footer
+      /   %br
+      /     %h5{:align => "center"}
+      /       Copyright &copy; 2016
+      /       %a{:href => "http://www.hobnobspace.com", :target => "_blank"} Hobnobspace
+    %canvas#qr-canvas{:height => "600", :width => "800"}
+    :javascript
+      load();
+      var APP_URL = "#{SAPP_URL}"
+      var EVENT_ID = "#{@event.id}"
+      $("#btnPrint").on("click", function () {
+        var divContents = $("#result").html();
+        var printWindow = window.open('', '', 'height=400,width=800');
+        printWindow.document.write('<html><head><title>Invitee Profile</title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+      });
+
+  - else
+    .container
+      .title     
+      .description
+        %p.welcomeText 
+          = "Welcome to #{@event.event_name}."
+        / %p.subText Please scan your QR Code from the My Profile feature in the App to continue.
+      .scanbtn
+        %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/qr_code_scanners?page=scanning&qr_code_preview=#{params[:qr_code_preview]}"} Scan
+- else
+  %body{:class => (params[:qr_code_preview].present? ? "" : "qr-scanner-page"), :style=>"background-image:url(#{@badge_pdf.present? ?  @badge_pdf.scan_bg_image.url : ""});background-size: cover; background-attachment:fixed;"}
+  - if params[:page] == 'manual_search'
+
+    - if true
+      .container
+        .wrapper.submitWrapper
+          .textDiv
+            = form_tag(admin_event_qr_code_scanners_path(:event_id => @event.id), method: :get) do |f|
+              = hidden_field_tag :qr_code_preview, params[:qr_code_preview]
+              = hidden_field_tag :page, params[:page].present? ? params[:page] : 'manual_search'
+              = hidden_field_tag :search, 'manual'
+              = text_field_tag :email, params[:email], placeholder: 'Search', :class => 'inputType input-type-for-submit', data: { autocomplete_source: @autocomplete_data.registration_field_values }
+              %input.submitBtn{:type => "submit", :value => "submit"}/
+            .btnDiv.newScanBtn
+              %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/qr_code_scanners?qr_code_preview=#{params[:qr_code_preview]}"} New Scan
+          - if params[:email] == ""
+            %h3{style: "color: ##{@badge_pdf.qr_code_page_color}"}
+              Please enter name or email ID
+          - elsif params[:email].present? and @user_registrations.blank?
+            %h3{style: "color: ##{@badge_pdf.qr_code_page_color}"}
+              No registrations found
+          - elsif @user_registrations.present?# and params[:qr_code_preview].blank?
+            .table_wraper{:style => "overflow-x:auto;display:block;margin:0 auto;"}
+              - database_columns = @event.onsite_accessible_columns.selected_columns
+              %table{:align => "center", :width => "100%",:overflow=>"auto",:display => "block", :style=> "table-layout: fixed;max-width: 1800px;border:1px #000 solid;border-collapse: collapse;"}
+                %tr
+                  %th{:style => "text-align:center;padding: 11px 20px;width:100px;background-color: #00b1bb;color: #fff;border:1px #000 solid;"}
+                    = "Action"
+                  - @event.onsite_accessible_columns.selected_values.each do |field|
+                    %th{:style => "text-align:center;padding: 11px 20px;width:300px;background-color: #00b1bb;color: #fff;border:1px #000 solid;"}
+                      = field
+                - @user_registrations.each do |user_registration|
+                  - user_registration_attrs = user_registration.attributes
+                  %tr
+                    %td{:style => "text-align:center;padding: 5px 0px;width:100px;vertical-align: top;background-color: #fff;border:1px #000 solid;"}
+                      - @qr_status = user_registration.qr_code_registration == true ? "Checked-in" : "Checkin"
+                      - if @badge_pdf.present? and @badge_pdf.skip_print == true
+                        %a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :user_registration_id => user_registration.id, :print => 'qr_code_scanner'), :onclick => "window.location.reload()"} #{@qr_status}
+                      - else
+                        %a{:href => edit_admin_event_user_registration_path(:event_id => @event.id, :id => user_registration.id, :page => 'print_preview'), :onclick => "window.open('#{edit_admin_event_user_registration_path(:event_id => @event.id, :id => user_registration.id)}','Print','width=1000,height=800'); return false;", :target => "popup", :class => 'print_div'} #{@qr_status}
+                    - database_columns.each do |attrr|
+                      %td{:style => "text-align:center;padding: 11px 20px;width:300px;vertical-align: top;background-color: #fff;border:1px #000 solid;"}
+                        = user_registration_attrs[attrr]
+                    - if false
+                      %td{:style => "text-align:center;padding: 11px 20px;width:100px;vertical-align: top;background-color: #fff;border:1px #000 solid;text-decoration:none;"}
+                        %a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :user_registration => user_registration.id, :page => 'print_preview'), :onclick => "window.open('#{admin_event_qr_code_scanners_path(:event_id => @event.id, :user_registration_id => user_registration.id, :page => 'print_preview')}','Print','width=1000,height=800'); return false;", :target => "popup", :class => 'print_div'} Print
+          - if @user_registrations
+            .mdl-typography--text-center
+              = will_paginate @user_registrations
+          - if false
+            /   - @registration = @event.registrations.first
+            /   - database_columns = @registration.selected_columns
+            /   - @user_registrations.each do |user_registration|
+            /     #row1_user_info.clearfix
+            /       #column1_head.col-xs-5
+            /         - @registration.selected_column_values.each_with_index do |column, index|
+            /           - if index < 10
+            /             .row1_display_div1
+            /               = column
+            /               %br
+            /           - else
+            /             .row1_display_div11{:style => 'display:none;'}
+            /               = column
+            /               %br
+            /       #column2_data.col-xs-7
+            /         - user_registration_attrs = user_registration.attributes
+            /         - database_columns.each_with_index do |attrr, index|
+            /           - if index < 10
+            /             .row1_display_div2
+            /               = user_registration_attrs[attrr]
+            /               %br
+            /           - else
+            /             .row1_display_div22{:style => 'display:none;'}
+            /               = user_registration_attrs[attrr]
+            /               %br
+            /       - if @registration.present? and @registration.selected_column_values.count > 10
+            /         %a.loadMore_div{:href => "javascript:void(0);"} Load More
+            /         %a.loadLess{:href => "javascript:void(0);", :style => 'display:none'} Load  Less
+            /       %a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :user_registration => user_registration.id, :page => 'print_preview'), :onclick => "window.open('#{admin_event_qr_code_scanners_path(:event_id => @event.id, :user_registration_id => user_registration.id, :page => 'print_preview')}','Print','width=1000,height=800'); return false;", :target => "popup", :class => 'print_div'} Print
+            / - if @user_registrations.present?
+            /   = will_paginate @user_registrations
+          - if false #@invitees.present?# and params[:qr_code_preview].blank?
+          - elsif @invitees.present? and params[:qr_code_preview].present?
+            - @invitees.each do |invitee|
+              .qrcodediv
+                %p
+                  %span.label Name : 
+                  %span.answer= invitee.name_of_the_invitee
+                %p
+                  %span.label Email : 
+                  %span.answer= invitee.email
+                %p
+                  %span.label view Link : 
+                  %span.answer
+                    = link_to "View QR code", admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => invitee.id, :page => 'print_preview', :qr_code_preview => true), :target => '_blank'
+          - elsif false #@invitees.blank? and params[:search] == 'manual'
+            %p.bottomText Can't find yourself? Please contact the helpdesk for more assistance. Thank you.
+          / .btnDiv.newScanBtn
+          /   %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/qr_code_scanners?qr_code_preview=#{params[:qr_code_preview]}"} New Scan
+
+    :javascript
+      $(document).ready(function(){
+        var correct_arr = $('#email.inputType').data('autocomplete-source').filter(arrayWithoutNull);
+
+        $('#email.inputType').autocomplete({
+          source: correct_arr,
+          position: { my : 'center+50 bottom+155', at: 'center-50' },
+          select: function(e, ui) {
+            window.location.href = window.location.href.split('?')[0] + "?utf8=✓&qr_code_preview=&page=manual_search&search=manual&email=" + ui.item.value;
+          },
+          classes: {
+            'ui-menu-item': 'highlight'
+          },
+          messages: {
+            noResults: '',
+            results: function() {}
+          }
+        });
+      });
+
+      function arrayWithoutNull(value) {
+        return value != null;
+      }
+
+    :css
+      .ui-menu-item {
+        display: block;
+      }
+
+  - elsif params[:page] == 'thank_you'
+    .container
+      .wrapper.thankYouWrapper
+        .thankyou-text
+          %p.thanktest 
+            = "Thank you for visiting #{@event.event_name}"
+        .tableDiv
+          - if @invitee.present?
+            %table
+              %thead
+                %tr
+                  - if false
+                    %th Id
+                  %th Name
+                  %th Company Name
+                  %th Designation
+                  %th Email
+              %tbody
+                %tr
+                  - if false
+                    %td
+                      = @invitee.id
+                  %td
+                    -#%a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview]), :target => '_blank'}
+                    = @invitee.name_of_the_invitee
+                  %td
+                    = @invitee.company_name
+                  %td
+                    = @invitee.designation
+                  %td
+                    -#%a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview]), :target => '_blank'}
+                    = @invitee.email
+            .btnDiv.thankyouPage
+              - if @invitee.present?
+                / %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview]), :target => '_blank'} Print Badge
+                %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview]), :onclick => "window.open('#{admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview])}','Print','width=1000,height=800'); return false;", :target => "popup"} Print Badge
+              %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/qr_code_scanners?qr_code_preview=#{params[:qr_code_preview]}"} New Scan
+            .searchManuallyDiv
+              %a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id)} Stop Scan 
+          - else
+            %p.subText
+              = "We are sorry, we couldn’t verify your QR code."
+            .btnDiv.thankyouPage
+              / %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :page => 'manual_search', :qr_code_preview => params[:qr_code_preview])} Search Manually 
+              - if @invitee.present?
+                %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :invitee_id => @invitee.id, :page => 'print_preview', :qr_code_preview => params[:qr_code_preview]), :target => '_blank'} Preview Badge
+              %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/qr_code_scanners?qr_code_preview=#{params[:qr_code_preview]}"} New Scan
+            .searchManuallyDiv
+              %a{:href => admin_event_qr_code_scanners_path(:event_id => @event.id)} Stop Scan 
+  - elsif params[:page] == 'scanning_text'
+    #main
+      #header
+        %div{:style => "position:relative;top:+20px;left:0px;"}
+          %g:plusone{:size => "medium"}
+        %ul
+      #mainbody
+        %table.tsel{:border => "0", :width => "100%"}
+          %tr.camera
+            %td{:align => "center", :valign => "top"}
+              %table.tsel{:border => "0"}
+                %tr
+                  %td{:align => "center", :colspan => "2"}
+                    #outdiv
+          %tr
+            %td{:align => "center", :colspan => "3"}
+          %tr
+            %td{:align => "center", :colspan => "3"}
+              #result
+              %a{:id => 'btnPrint', :style => 'float:center;display:none', :href => 'javascript:void(0)'} Print
+      / .btnDiv.searchManuallyDiv.searchManuallyBtn
+      .btnDiv.thankyouPage
+        %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id)} Stop Scan 
+        %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :page => 'manual_search', :qr_code_preview => params[:qr_code_preview])} Search Manually 
+      / #footer
+      /   %br
+      /     %h5{:align => "center"}
+      /       Copyright &copy; 2016
+      /       %a{:href => "http://www.hobnobspace.com", :target => "_blank"} Hobnobspace
+    %canvas#qr-canvas{:height => "600", :width => "800"}
+    :javascript
+      load();
+      var APP_URL = "#{SAPP_URL}"
+      var EVENT_ID = "#{@event.id}"
+      $("#btnPrint").on("click", function () {
+        var divContents = $("#result").html();
+        var printWindow = window.open('', '', 'height=400,width=800');
+        printWindow.document.write('<html><head><title>Invitee Profile</title>');
+        printWindow.document.write('</head><body >');
+        printWindow.document.write(divContents);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+      });
+
+  - else
+    .container
+      .title     
+      .description{ style: "color: ##{@badge_pdf.try(:qr_code_page_color) || ''}"}
+        %p.welcomeText
+          = "Welcome to </br> #{@event.event_name}".html_safe
+        / %p.subText Please scan your QR Code from the My Profile feature in the App to continue.
+      .scanbtn
+        - if @badge_pdf.try(:allow_qr_code_scanner)
+          %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/qr_code_texts"} Scan
+        - else
+          %a.linkBtn{:href => "#{SAPP_URL}/admin/events/#{@event.id}/qr_code_scanners?page=scanning_text&qr_code_preview=#{params[:qr_code_preview]}"} Scan
+        %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :page => 'manual_search', :qr_code_preview => params[:qr_code_preview])} Search Manually     
+
+:javascript
+  $(document).ready(function(){
+
+    $(".loadMore_div").click(function(){
+      $(this).siblings('.loadLess').show()
+      $(this).hide()
+      $(this).siblings('#column1_head').find('.row1_display_div11').show();
+      $(this).siblings('#column2_data').find('.row1_display_div22').show();
+    });
+    $(".loadLess").click(function(){
+      $(this).siblings('.loadMore_div').show()
+      $(this).hide()
+      $(this).siblings('#column1_head').find('.row1_display_div11').hide();
+      $(this).siblings('#column2_data').find('.row1_display_div22').hide();
+    });
+  });

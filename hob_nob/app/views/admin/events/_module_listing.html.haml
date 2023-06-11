@@ -1,0 +1,54 @@
+.mdl-grid.mdl-shadow--1dp
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+    %h4.heading-border.p-t-10
+      Copy Mobile Application
+  %div.text_center
+    Please note that you will be able to edit any of the copied assets, features, data, properties and menu from the App Dashboard of the new event.
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess.md-checkboxsocialcheck.socialIconChkbox
+    .form-group.mobiappstype
+      .col-lg-4.mdl-typography--text-right
+        %p.displayInlineBlock.multicitytxt
+          Mobile application modules
+      .col-lg-7.p-h-12.socialchk
+        -hash_of_feature_list = {"abouts" => "About", "activity_feeds" => "Activity Feed","all_events" => "Event Listing", "agendas" => "Agenda", "awards" => "Awards", "courses" => "Courses", "contacts" => "Contact Us", "chats" => "One on One Chat","my_travels" => "My Travel","social_sharings" => "Social Sharing", "conversations" => "Conversations", "custom_page1s" => "Custom Page 1", "custom_page2s" => "Custom Page 2", "custom_page3s" => "Custom Page 3", "custom_page4s" => "Custom Page 4", "custom_page5s" => "Custom Page 5", "custom_page6s" => "Custom Page 6", "custom_page7s" => "Custom Page 7", "custom_page8s" => "Custom Page 8", "custom_page9s" => "Custom Page 9", "custom_page10s" => "Custom Page 10", "e_kits" => "e-KIT", "event_highlights" => "Event Highlights", "favourites" => "My Favourites", "faqs" => "FAQ", "feedbacks" => "Feedback", "galleries" => "Gallery", "highlight_images" => "Highlight Images","sponsors" => "Sponsors", "invitees" => "Invitees", "leaderboard" => "Leaderboard", "maps" => "Map", "my_profile" => "My Profile", "notes" => "Notes", "networks" => "My Network","exhibitors" => "Exhibitors", "polls" => "Polls", "qnas" => "Q&A" , "qr_code" => "QR Code Scanner", "quizzes" => "Quiz", "speakers" => "Speakers", "venue" => "Venue", }
+        - mobile_application_modules = %w{app_info look_and_feel features menu content engagement }
+        - mobile_application_modules.each_with_index do |mobile_application_module|
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+            - if mobile_application_module == "app_info"
+              - value = 'mobile_application'
+            - elsif mobile_application_module == 'look_and_feel'
+              - value = 'theme'
+            - elsif mobile_application_module == 'features'
+              - value = 'event_features'   
+            - elsif mobile_application_module == 'menu'
+              - value = 'icon_library'
+            - else
+              - value = mobile_application_module
+            %label.help-tip.l_w{:for => "copy_event_#{mobile_application_module}"}
+              = check_box_tag "[copy_modules][]",value,false, :id => "copy_event_#{mobile_application_module}"
+              %span.checkbox.p_t_r
+              %span.top3
+                = mobile_application_module.humanize
+            - if mobile_application_module =="content"
+              #content_section{:style=>"display:none;"}
+                %span
+                  - enabled_content_features =  @event.event_features.pluck(:name) - ["activity_feeds", "chats", "conversations", "e_kits", "feedbacks", "favourites", "feedback_forms", "invitees", "leaderboard" , "leaderboards", "my_profile", "my_travels", "notifications", "notes", "polls", "panels", "qnas", "quizzes", "qna_settings" , "qr_code", "social_sharings", "my_calendar"]
+                  - enabled_content_features.each do |event_content|
+                    %label.help-tip.l_w.content_check{:for => "copy_event_#{event_content}"}
+                      = check_box_tag "[event_content][]",event_content,false, :id => "copy_event_#{event_content}"
+                      %span.checkbox.p_t_r
+                      %span.top3
+                        =# event_content.humanize
+                        = hash_of_feature_list[event_content]
+            - if mobile_application_module =="engagement"
+              #engagement_section{:style=>"display:none;"}
+                - enabled_engagement_features = @event.event_features.pluck(:name) - ["abouts", "agendas", "awards", "contacts", "conversations", "chats", "custom_page1s", "custom_page2s", "custom_page3s", "custom_page4s", "custom_page5s", "custom_page6s", "custom_page7s", "custom_page8s", "custom_page9s", "custom_page10s", "event_highlights", "exhibitors", "feedback_forms", "favourites", "galleries", "invitees", "leaderboard", "faqs", "my_profile", "my_travels", "my_travels", "maps", "notes", "panels", "qna_settings", "qr_code", "speakers", "sponsors", "social_sharings", "venue", "my_calendar"]
+                - enabled_engagement_features.each do |event_engagement|
+                  %label.help-tip.l_w.engage_check{:for => "copy_event_#{event_engagement}"}
+                    = check_box_tag "[event_engagement][]",event_engagement,false, :id => "copy_event_#{event_engagement}"
+                    %span.checkbox.p_t_r
+                    %span.top3
+                      =# event_engagement.humanize  
+                      = hash_of_feature_list[event_engagement]  
+            = hidden_field_tag "copy_association","true"
+

@@ -1,0 +1,3 @@
+- title = 'Edit Profile'
+- title = 'Change Password' if params[:change_password].present? or (params[:user].present? and params[:user].include? 'password_confirmation')
+= render :partial => 'layouts/layout_form', :locals => {:page => title}

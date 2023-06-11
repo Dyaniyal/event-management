@@ -1,0 +1,44 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "manage_mobile_apps", :url => "#", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("manage_mobile_apps")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16{"template-pagination" => "custom/pager"}
+    %tr
+      %th Application Name
+      %th Application Type
+      %th Preview ID
+      %th Events
+      / %th Add Events
+      %th Status
+      %th
+      - if objs.present?
+        - objs.each do |mob_application|         
+          %tr
+            %td.font16= mob_application.name 
+            %td.font16= mob_application.application_type.capitalize rescue nil
+            %td.font16= mob_application.preview_code
+            %td.font16
+              - mob_application.events.order(start_event_date: :desc).each_with_index do |event, index|
+                = ', ' if index > 0
+                / = link_to "#{event.event_name}", admin_event_mobile_application_path(:event_id => event.id, :id => event.mobile_application_id)
+                = event.event_name
+            / %td.font16
+            /   - if mob_application.application_type == 'multi event' or (mob_application.application_type == 'single event' and mob_application.events.count == 0)
+            /     = link_to admin_client_events_path(:client_id => @client.id, :feature => 'mobile_application', :mobile_application_id => mob_application.id),:class => "rightBtn hvr-sweep-to-right tableBtnTxt addeventlist" do
+            /       Add Event
+            /     - if false #mob_application.events.count > 1
+            /       = link_to admin_client_events_path(:client_id => @client.id, :feature => 'mobile_application', :mobile_application_id => mob_application.id, :type => 'remove'),:class => "rightBtn hvr-sweep-to-right tableBtnTxt addeventlist" do
+            /         Remove Event
+            %td.font16= mob_application.status.humanize.capitalize rescue nil
+            %td.IconDrp
+              = more_vert_button(mob_application.id)
+              %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{mob_application.id}"}
+                = link_to admin_manage_mobile_app_path(mob_application.id),:class => "mdl-menu__item" do
+                  Show store info
+                - mob_application.aasm.events.each do |eve|
+                  = link_to "#{eve.name.to_s.titlecase}".html_safe,{:action=>"update", :controller=>"admin/manage_mobile_apps", :id => mob_application.id, :status => eve.name.to_s, :page => params[:page]}, :method => "put", :data => { confirm: 'Are you sure, you want to change the status.'},:class => "mdl-menu__item"  
+  = will_paginate objs_paginate
+

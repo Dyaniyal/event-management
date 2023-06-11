@@ -1,0 +1,61 @@
+.save_button.mdl-card.agendaHeight
+  = form_for [:admin, @event, @panel],:html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information
+          / %a{:href => '/whats_this/Panel/general_information/panel_generalInfo.jpg', :class =>'helpTag testhelp fancybox'}
+          /   what's this?
+      = #render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "panel_generalInfo.jpg", :section_id => "panel_general_section"}
+      = f.hidden_field_tag :panel_type, "speaker"
+      / .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+      /   .form-group.set_highlight_select
+      /     %label.col-lg-4.control-label.ml-color--shades-white
+      /       Select Type*
+      /     .col-lg-7
+      /       %i.arrow.single
+      /       = f.select("panel_type", "panel_type", [["speaker", "speaker"]], { :prompt => "select type *"},{:class=> 'select2-single form-control', :id => "selected_type"})
+      = render :partial => "select_data", :locals => { :f => f}
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+        #add_speaker{:style => "display:#{f.object.speaker_email.present? ? "" : "none"}"}
+          #add_speaker_name
+            = f.custom_text_field :speaker_name, "Speaker/Expert name *","background" => "false"
+          -#if (@event.qna_settings.present? and  @event.qna_settings.first.display_qna_on_app.present? and  @event.qna_settings.first.display_qna_on_app == "yes")
+          - if @email_validation.present? and @email_validation.display_qna_on_app =="yes"
+            = f.custom_text_field :speaker_email, "Speaker/Expert Email *","background" => "false"
+          - else
+            = f.custom_text_field :speaker_email, "Speaker/Expert Email","background" => "false"
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.col-md-4
+          .md-checkbox
+            %label
+              = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated         
+    .fixed-activon-btn-new
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+
+:javascript
+  if ("#{@panel.panel_id}" == "0"){
+    $("#panel_speaker_name").val("#{@panel.name}");
+    $("#add_speaker").show();
+  }else if("#{@panel.panel_id}" != "" && "#{@panel.panel_id}" != "0"){
+    $("#add_speaker").show();
+    $("#email_section").show();
+    $("#add_speaker_name").hide();
+  }else{
+    $("#add_speaker_name").hide();
+  }
+
+  $('#selected_speaker').on('change', function() {
+    $("#add_speaker").show();
+    value = $(this).val();
+    if(value == 0){
+      $("#add_speaker_name").show();
+    }else{
+      $("#add_speaker_name").hide();
+    }
+  });

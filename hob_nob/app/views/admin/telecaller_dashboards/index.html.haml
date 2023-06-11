@@ -1,0 +1,220 @@
+- if params[:user_id].present?  and params[:search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    - if current_user.has_role? :telecaller 
+      .mdl-typography--text-center.BlnkTxt.p-t-10
+        = render :partial => "admin/telecaller_dashboards/search.html.haml", :locals => {:page => "Telecaller", :name => params[:controller]}       
+- if params[:user_id].present? or params[:from].present?
+  %main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+    %section#content_wrapper
+      = render :partial => "admin/dashboards/breadcumb_links",:locals => {:page => "Telecaller",:name => params[:controller]}
+      .col-lg-6.pb25.negative-mt#tele_filter_page
+        .text-right
+          = form_tag "/admin/events/#{params[:event_id]}/telecaller_dashboards", :class => 'form-group HideDateEvent', :method => :get do |f|
+            - if params[:user_id].present?
+              = hidden_field_tag :user_id, params[:user_id]
+            - else
+              = hidden_field_tag :from,params[:from]
+            = hidden_field_tag :filter_date, 'date range'
+            .col-lg-5.startdatePadding
+              %input.form-control{:col => "12", :name => "start_date", :type => "text", :value => params[:start_date].present? ? params[:start_date].to_date.strftime('%d/%m/%Y') : "", :id => "date-start", :placeholder => "Start Date"}
+            .col-lg-5
+              %input.form-control{:col => "12", :name => "end_date", :type => "text", :value => params[:end_date].present? ? params[:end_date].to_date.strftime('%d/%m/%Y') : "", :id => "date-end", :placeholder => "End Date"}
+            .col-lg-2.mdl-color--light-blue-900.borderradius
+              %span.publishBtn
+                = submit_tag 'Filter'
+            - if @date_filter_error.present?
+              .field_with_errors
+                %span.errorMessage
+                  = "Date range can't be more than 1 month"
+          = form_tag "/admin/events/#{params[:event_id]}/telecaller_dashboards", :class => 'form-group FilterTab', :id => 'FirstFilterTab', :method => :get do |f|
+            .col-lg-10
+              %i.arrow.single
+              - if params[:user_id].present?
+                = hidden_field_tag :user_id, params[:user_id]
+              - else
+                = hidden_field_tag :from,params[:from]
+              = select_tag 'filter_date', options_for_select([['Today', 'today'], ['Last 7 Days', "last 7 days"], ['Pick a Date Range', "date range"]], :selected => params[:filter_date].present? ? params[:filter_date] : ''), :class => 'select2-single form-control'
+      %section#content.table-layout.animated.fadeIn.tele_table
+        .chute.chute-center
+          .row.DashPage.eventShowCard.telecaller_cards
+            .col-sm-3.col-xl-3
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-5.ph10
+                      = image_tag("coloured_icons/client.png")
+                    .col-xs-7.pl5
+                      %h6.text-muted Calling Target
+                      %h2.fs30.mt5.mbn
+                        - if params[:user_id].present? and @telecaller_group.present?
+                          = @telecaller_group.target_assigned.present? ? @telecaller_group.target_assigned : 0
+                        - else
+                          = @target_assigned.present? ? @target_assigned : 0
+                  .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+            .col-sm-3.col-xl-3
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-5.ph10
+                      = image_tag("coloured_icons/client.png")
+                    .col-xs-7.pl5
+                      %h6.text-muted  Registration Target
+                      %h2.fs30.mt5.mbn
+                        - if params[:user_id].present? and @telecaller_group.present?
+                          = @telecaller_group.registration_target
+                        - else
+                          = @telecaller_group.present? ? @telecaller_group : 0
+                            
+                  .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+            .col-sm-3.col-xl-3
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-5.ph10
+                      = image_tag("coloured_icons/client.png")
+                    .col-xs-7.pl5
+                      %h6.text-muted  Calling target achieved
+                      %h2.fs30.mt5.mbn
+                        - if (current_user.has_any_role?(:response_manager))
+                          = @achieved_number.present? ? (params[:user_id].present? ? @achieved_number.count : (link_to "#{@achieved_number.count}",admin_event_telecaller_dashboard_path(:event_id => @event.id,:id => 1,:status=>"assigned",:params=>params))): 0
+                        - else
+                          = @achieved_number.present? ? @achieved_number.count : 0
+                  .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+            .col-sm-3.col-xl-3
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-5.ph10
+                      = image_tag("coloured_icons/client.png")
+                    .col-xs-7.pl5
+                      %h6.text-muted Registered Status
+                      %h2.fs30.mt5.mbn
+                        =# @registerd_status.present? ? @registerd_status : 0
+                        = @registerd_status.present? ? (params[:user_id].present? ? @registerd_status.count : (link_to "#{@registerd_status.count}",admin_event_telecaller_dashboard_path(:event_id => @event.id,:id => 1,:status=>"registered",:params=>params))): 0
+                  .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+            .col-sm-3.col-xl-3
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-5.ph10
+                      = image_tag("coloured_icons/client.png")
+                    .col-xs-7.pl5
+                      %h6.text-muted Hot Status
+                      %h2.fs30.mt5.mbn
+                        = @hot_status.present? ? (params[:user_id].present? ? @hot_status.count : (link_to "#{@hot_status.count}",admin_event_telecaller_dashboard_path(:event_id => @event.id,:id => 1,:status=>"hot",:params=>params))): 0
+                  .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+            .col-sm-3.col-xl-3
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-5.ph10
+                      = image_tag("coloured_icons/client.png")
+                    .col-xs-7.pl5
+                      %h6.text-muted Warm Status
+                      %h2.fs30.mt5.mbn
+                        =# @warm_status.present? ? @warm_status : 0
+                        = @warm_status.present? ? (params[:user_id].present? ? @warm_status.count : (link_to "#{@warm_status.count}",admin_event_telecaller_dashboard_path(:event_id => @event.id,:id => 1,:status=>"warm",:params=>params))): 0
+                  .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+            .col-sm-3.col-xl-3
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-5.ph10
+                      = image_tag("coloured_icons/client.png")
+                    .col-xs-7.pl5
+                      %h6.text-muted Regret Status
+                      %h2.fs30.mt5.mbn
+                        =# @regret_status.present? ? @regret_status : 0
+                        = @regret_status.present? ? (params[:user_id].present? ? @regret_status.count : (link_to "#{@regret_status.count}",admin_event_telecaller_dashboard_path(:event_id => @event.id,:id => 1,:status=>"regret",:params=>params))): 0
+                  .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+            
+            .col-sm-3.col-xl-3
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-5.ph10
+                      = image_tag("coloured_icons/client.png")
+                    .col-xs-7.pl5
+                      %h6.text-muted Other Status
+                      %h2.fs30.mt5.mbn
+                        =# @regret_status.present? ? @regret_status : 0
+                        = @other_status.present? ? (params[:user_id].present? ? @other_status.count : (link_to "#{@other_status.count}",admin_event_telecaller_dashboard_path(:event_id => @event.id,:id => 1,:status=>"other",:params=>params))): 0
+                  .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+            .col-sm-3.col-xl-3
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-5.ph10
+                      = image_tag("coloured_icons/client.png")
+                    .col-xs-7.pl5
+                      %h6.text-muted Un-called Users
+                      %h2.fs30.mt5.mbn
+                        =# @no_called.present? ? @no_called.count : 0
+                        = @no_called.present? ? (params[:user_id].present? ? @no_called.count : (link_to "#{@no_called.count}",admin_event_telecaller_dashboard_path(:event_id => @event.id,:id => 1,:status=>"un_called"))): 0
+                  .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" } 
+
+            .col-sm-3.col-xl-3
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-5.ph10
+                      = image_tag("coloured_icons/client.png")
+                    .col-xs-7.pl5
+                      %h6.text-muted Re-opened Users
+                      %h2.fs30.mt5.mbn
+                        = @reopened_invitee_datum.present? ? (params[:user_id].present? ? @reopened_invitee_datum.count : (link_to "#{@reopened_invitee_datum.count}",admin_event_telecaller_dashboard_path(event_id: @event.id, id: 1, status: "reopened", params: params))): 0
+                  .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+    .row{:style => "margin-top: -2%;"}
+      -if params[:user_id].present?
+        .col-lg-12.botttom-btn-block
+          %a.legend-item.btn.btn-sm.btn{:type => 'button', :href =>admin_event_telecaller_path(:event_id => @event.id,:id =>params[:user_id]), :class => params[:detailed_analytics].present? ? 'btn-deactive' : 'mdl-color--light-blue-900'} Start Calling
+
+.callBckAlertPopup
+  = render :partial => "layouts/callback_box"
+
+- if  (@achieved_number.present? or @no_called.present?) and  params[:from].present? and params[:from] == "dashboard"
+  =# render :partial => 'admin/layouts/more_links'
+:css
+  .mobileventSearch{
+    margin-top: 63%;
+  }
+  .botttom-btn-block{
+    text-align:center;
+  }
+- if params[:filter_date].present? and params[:filter_date] == 'date range'
+  :javascript
+    $(".HideDateEvent").css('display', 'inline-block');
+:javascript
+  $(window).load(function(){
+    $(".select2-single").change(function(){
+      $(this).find("option:selected").each(function(){
+      if($(this).val() == 'date range'){
+        $(".HideDateEvent").css('display', 'inline-block');
+        $(".FilterTab").css('display', 'inline-block');
+      }
+      else{
+        $("#FirstFilterTab").submit();
+
+      }
+
+    }).change();
+    });
+  });
+  $('#date-end').bootstrapMaterialDatePicker({
+    weekStart: 0,
+    format: 'DD/MM/YYYY',
+    time: false,
+    maxDate : "#{Date.today.strftime("%d/%m/%Y") rescue nil}"
+  })
+  setInterval(function(){
+    $.ajax({
+      url: "/admin/events/#{@event.id}/telecaller_dashboards/new",
+      type: 'get',
+      data: {'user_id' : "#{current_user.id}", 'event_id' : "#{@event.id}"},
+      dataType: 'script',
+    });
+  }, 30000);

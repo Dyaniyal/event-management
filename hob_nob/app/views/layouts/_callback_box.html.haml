@@ -1,0 +1,10 @@
+- if ((@need_to_call.present? and @need_to_call == "true" and @callback_data.present?) or @callback_data.present?) and (current_user.present? and current_user.telecaller)
+  .callBckAlert
+    = link_to admin_event_telecaller_path(:event_id => @event.id,:id => current_user.id, :callback_id => @callback_data.id) do
+      .callBackText
+        Call back alert 
+      %span.callBack
+      %span.callBackDesc
+        = @callback_data.status
+        %p
+          = (@callback_data.callback_datetime).strftime("%d %b %Y %l:%M %p ")

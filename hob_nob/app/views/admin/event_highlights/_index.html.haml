@@ -1,0 +1,27 @@
+- if !(objs.summary.present? or objs.description.present?) and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "event_highlights", :url => "/admin/events/#{params[:event_id]}/event_highlights/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("event highlight")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    - if true #objs.about.present?
+      %tr
+        %th Highlight
+        / %th Summary
+        %th
+        %tr
+          %td.font16= objs.description rescue nil 
+          / %td.font16= objs.summary rescue nil 
+          %td.IconDrp
+            = more_vert_button(objs.id)
+            %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{objs.id}"}
+              = edit_link(params, objs.id)
+        %tr.galleryTab.mdl-grid.mdl-grid--no-spacing
+          - @highlight_image.each do |image|
+            %td.mdl-cell.mdl-cell--3-col.mdl-cell--4-col-tablet
+              = link_to admin_event_highlight_image_path(:event_id => image.event_id, :id => image.id), :method => 'delete', :class => "galleryImg" do
+                %span.galleryclose
+                  X
+              = image_tag(image.highlight_image_url(:thumb))      

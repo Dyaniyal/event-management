@@ -1,0 +1,28 @@
+- if !objs.present? and !params[:admin_search].present? and params[:from] == "microsites"
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "contacts", :url => "/admin/events/#{params[:event_id]}/contacts/new?from=microsites", :msg => 'test'} 
+- elsif !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "contacts", :url => "/admin/events/#{params[:event_id]}/contacts/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("contacts")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      %th Name
+      %th Email id 
+      %th Mobile No.
+      %th
+    - objs.each do |contact|  
+      %tr
+        %td.font16= contact.name.capitalize rescue nil 
+        %td.font16= contact.email rescue nil 
+        %td.font16= contact.mobile rescue nil
+        %td.IconDrp
+          = more_vert_button(contact.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{contact.id}"}
+            = edit_link(params, contact.id)
+            - if @event.is_parent?
+              = delete_link(params, contact.id)
+          

@@ -1,0 +1,49 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope               
+  %section.tables-data
+    .ml-header.relative.clear.mdl-color--light-blue-800
+      .mdl-grid.mdl-grid--no-spacing
+        .mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet
+          %h3.mdl-color-text--white.m-t-15.p-l-40.p-v-20 Manage e_kits
+        /= render :partial => 'poll_search'
+    .mdl-grid.mdl-grid--no-spacing
+      .mdl-cell.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+        .p-35.ml-card-holder.ml-card-holder-first.HeaderHeight
+          .mdl-card.mdl-shadow--1dp.m-b-30.clients
+            .mdl-card__title.mdl-color--light-blue-600.mdl-typography--text-right.displayBlock
+              %h2.mdl-card__title-text.mdl-color-text--white.displayBlock.mdl-typography--text-right.displayBlock.mdl-typography--text-right 
+                = @e_kits_with_tags.count rescue nil
+                Kits
+            %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+              %tr
+               
+                %th 
+                  Name
+                / %th 
+                /   Tags
+                %th 
+                  Attachment
+                  
+              - @e_kits.each do |e_kit|
+                %tr
+                  
+                  %td.description_adjust.font16
+                    = link_to "#{e_kit.name} ", admin_event_e_kit_path(e_kit.event_id, e_kit.id),:class => "collection-item" rescue nil
+                  / %td.font16
+                  /   = e_kit.tag_name
+                  %td.description_adjust.font16
+                    = link_to "#{e_kit.attachment_file_name.present? ? e_kit.attachment_file_name : "e_kit attachment :"} ", admin_event_send_pdf_file_path(e_kit.event_id, e_kit.id), :class => "collection-item" rescue nil
+
+                  / %td.font16
+                  /   = (e_kit.attachment_file_name.present? ? e_kit.attachment_file_name : "e_kit attachment :")
+                 
+                  %td.IconDrp
+                    %button.mdl-button.mdl-js-button.mdl-button--icon{:id => "demo-menu-lower-right#{e_kit.id}"}
+                      %i.material-icons more_vert
+                    %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{e_kit.id}"}
+                      = link_to  edit_admin_event_e_kit_path(e_kit.event_id, e_kit.id),:class => "mdl-menu__item" do
+                        Edit
+                      = link_to  admin_event_e_kit_path(e_kit.event_id, e_kit.id),method: :delete,:class =>"mdl-menu__item" do
+                        / %i.material-icons.center  
+                        Delete
+
+      =  render :partial => 'admin/layouts/more_links', :locals => {:page => 'e_kit'}

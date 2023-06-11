@@ -1,0 +1,11 @@
+.rightBtn.ManageeventBtn
+  = link_to "UPCOMING EVENT", '#', {:class => "waves-effect waves-light btn event1", :for => "upcoming" }
+  = link_to "ONGOING EVENT", '#', {:class => "waves-effect waves-light btn event1", :for => "today" }
+  = link_to "PAST EVENT", '#', {:class => "waves-effect waves-light btn event1", :for => "past" }
+  = link_to "ALL EVENT", '#', {:class => "waves-effect waves-light btn event1", :for => "all" }
+:javascript
+  $('.event1').click(function(){
+    $('.event_type').val($(this).attr('for'))
+    $('form').submit();
+  })
+

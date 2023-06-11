@@ -1,0 +1,30 @@
+@media screen and (max-width: 767px){
+	.container {
+		width: 90%;
+	}
+	.header-inner{
+		bottom: 12px;
+	}
+	.header-inner h1{
+		font-size: 1.5rem;
+	}
+}
+
+@media screen and (max-width: 450px){
+	.header-inner h1 {
+		font-size: 1.2rem;
+	}
+	.header-inner p{
+		font-size: 1.2rem;
+		line-height: 1.5rem;
+	}
+}
+@media screen and (max-width: 320px){
+	.header-inner h1 {
+		font-size: 1.1rem;
+	}
+	.header-inner p {
+		font-size: 0.9rem;
+		line-height: 1rem;
+	}
+}

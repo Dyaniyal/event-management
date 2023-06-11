@@ -1,0 +1,211 @@
+= javascript_include_tag "jquery-1.11.3.min", "pick-a-color-1.2.0.min", "tinycolor", "jquery.fancybox", "theme_color_pick"
+.save_button.mdl-card
+  = form_for [:admin, @event, @registration_look_and_feel], :html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.pollInfo.mdl-shadow--1dp.feedbackFormPage 
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information
+      =# f.new_custom_file_browser_field :logo, "Logo (450x70px) png only *", :id => "uploadBtnLogo", :value => f.object.logo_file_name, :action=> params[:action], "background" => "false"
+      
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+        .bs-component
+          .form-group
+            .span.col-lg-4
+              = f.label "Logo (450x70px) png only ",:class =>"control-label", style: "float: right;"
+            .col-lg-7.Closetheme
+              %label.field.file
+                %span.button.btn-primary
+                  Choose File 
+                = f.file_field :logo,:id => "uploadBtnLogo", :class=>"gui-file"
+                = text_field_tag("text_file_name","", id: "1uploadBtnLogo", class: "gui-input", :value => "#{f.object.logo_file_name.nil? ? "there is no Attachment Available !" : f.object.logo_file_name}", :read_only => true)
+            - if @event.present? and f.object.logo_file_name.present? 
+              .col-lg-1
+                = link_to admin_event_registration_look_and_feel_path(:event_id => @event.id, :id => @registration_look_and_feel.id,:remove_image => true,:logo => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                  %span
+                    X
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet
+        .form-group
+          %label.col-lg-4.control-label.ml-color--shades-white
+            Logo Alignment
+          .col-lg-7.m-8
+            - drop_down_items_logo_alignment = ['Left', 'Right', 'Center']
+            %i.arrow.single
+            = f.select("registration_look_and_feel",:logo_alignment, drop_down_items_logo_alignment, {:selected => f.object["logo_alignment"].present? ? f.object["logo_alignment"] : '' , :prompt => 'Select Alignment'}, {include_blank: 'None', :class=> 'select2-single form-control'})
+            / .field_with_errors
+            /   .span{:class => "errorMessage"}
+            /     = f.object.errors.messages[key.to_sym].join("") rescue nil
+      = f.custom_text_field :logo_back_color, "Logo Background Color", :value => f.object.logo_back_color, :class => 'pick-a-color',"background" => "false"
+      
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+        .bs-component
+          .form-group
+            .span.col-lg-4
+              = f.label "Banner Image (1600x500px or above) png only",:class =>"control-label", style: "float: right;"
+            .col-lg-7.Closetheme
+              %label.field.file
+                %span.button.btn-primary
+                  Choose File 
+                = f.file_field :banner_image,:id => "uploadBtnbannerImage", :class=>"gui-file"
+                = text_field_tag("text_file_name","", id: "1uploadBtnbannerImage", class: "gui-input", :value => "#{f.object.banner_image_file_name.nil? ? "there is no Attachment Available !" : f.object.banner_image_file_name}", :read_only => true)
+            - if @event.present? and f.object.banner_image_file_name.present? 
+              .col-lg-1
+                = link_to admin_event_registration_look_and_feel_path(:event_id => @event.id, :id => @registration_look_and_feel.id,:remove_image => true,:banner_image => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                  %span
+                    X
+      =# f.new_custom_file_browser_field :banner_image, "Banner Image (950x430px) png only", :id => "uploadBtnbannerImage", :value => f.object.banner_image_file_name, :action=> params[:action], "background" => "false"
+      
+      = f.label "Banner Text"
+      = f.cktext_area :header_formatter
+      %br
+      = f.label "Registration form Heading"
+      = f.cktext_area :registration_form_header
+      .mdl-cell--12-col.mdl-cell--12-col-tablet
+        .form-group
+          %label.col-lg-4.control-label.ml-color--shades-white
+            Font
+          .col-lg-7.m-8
+            - font_style = Font::DEFAULT_FONTS + @client.fonts.map { |font| [font.font_name] * 2 }
+            %i.arrow.single
+            = f.select("registration_look_and_feel",:page_font, font_style, {:selected => f.object["page_font"].present? ? f.object["page_font"] : '' , :prompt => 'Select font'}, {include_blank: 'None', :class=> 'select2-single form-control'})
+            / .field_with_errors
+            /   .span{:class => "errorMessage"}
+            /     = f.object.errors.messages[key.to_sym].join("") rescue nil
+      
+      
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+        .bs-component
+          .form-group
+            .span.col-lg-4
+              = f.label "Body background image(width 1600px) png only",:class =>"control-label", style: "float: right;"
+            .col-lg-7.Closetheme
+              %label.field.file
+                %span.button.btn-primary
+                  Choose File 
+                = f.file_field :body_background_image,:id => "uploadBtnBackgroundImage", :class=>"gui-file"
+                = text_field_tag("text_file_name","", id: "1uploadBtnBackgroundImage", class: "gui-input", :value => "#{f.object.body_background_image_file_name.nil? ? "there is no Attachment Available !" : f.object.body_background_image_file_name}", :read_only => true)
+            - if @event.present? and f.object.body_background_image_file_name.present? 
+              .col-lg-1
+                = link_to admin_event_registration_look_and_feel_path(:event_id => @event.id, :id => @registration_look_and_feel.id,:remove_image => true,:body_background_image => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                  %span
+                    X
+      =# f.new_custom_file_browser_field :body_background_image, "Body background image png only", :id => "uploadBtnBackgroundImage", :value => f.object.body_background_image_file_name, :action=> params[:action], "background" => "false"
+      
+      = f.custom_text_field :body_background_color, "Body Background Color", :value => f.object.body_background_color, :class => 'pick-a-color',"background" => "false"
+      
+      = f.custom_text_field :button_color, "Button Color", :value => (f.object.new_record? ? "00b1bb" : f.object.button_color), :class => 'pick-a-color',"background" => "false"
+      = f.custom_text_field :button_font_color, "Button Font Color", :value => (f.object.new_record? ? "ffffff" : f.object.button_font_color), :class => 'pick-a-color',"background" => "false"
+      = f.custom_text_field :button_text, "Button Text", :value => (f.object.new_record? ? "REGISTER" : f.object.button_text),"background" => "false"
+      = f.custom_text_field :footer_color, "Footer Color", :value => (f.object.footer_color), :class => 'pick-a-color',"background" => "false"
+      = f.label "Footer Formatter"
+      = f.cktext_area :footer_formatter
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.m-t-15
+        .form-group
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+            .bs-component
+              .form-group
+                .span.col-lg-4
+                  = f.label "Footer image (200x50px) png only",:class =>"control-label", style: "float: right;"
+                .col-lg-7.Closetheme
+                  %label.field.file
+                    %span.button.btn-primary
+                      Choose File 
+                    = f.file_field :footer_image,:id => "uploadBtnFooterImage", :class=>"gui-file"
+                    = text_field_tag("text_file_name","", id: "1uploadBtnFooterImage", class: "gui-input", :value => "#{f.object.footer_image_file_name.nil? ? "there is no Attachment Available !" : f.object.footer_image_file_name}", :read_only => true)
+                - if @event.present? and f.object.footer_image_file_name.present?  
+                  .col-lg-1
+                    = link_to admin_event_registration_look_and_feel_path(:event_id => @event.id, :id => @registration_look_and_feel.id,:remove_image => true,:footer_image => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                      %span
+                        X
+    .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-10.feedbackFormPage 
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          Thank You message
+      = f.cktext_area :thank_text 
+    #registration_setting_submit_msg_div
+      = f.label "Registration Closed message"
+      = f.cktext_area :submit_msg
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Do you want to show footer in thank you page?
+          .col-lg-3.p-h-12   
+            = f.custom_radio_button :footer_require, "yes","Yes", :id => "option-w-1"
+            = f.custom_radio_button :footer_require, "no", "No", :id => "option-w-2"
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.col-md-4
+          .md-checkbox
+            %label
+              = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated
+        
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          / = link_to edit_admin_event_registration_path(:event_id => @event.id,:id=>@event.registrations.first.id),:class => "waves-effect waves-light btn" do
+          /   Cancel
+          = back_button(:back)
+      / .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+      /   .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+      /     = back_button(:back)
+/ :javascript
+/   $(window).load(function(){
+/     $('.gui-file').change(function(){
+/       filename = $(this)[0].files[0].name;
+/       file_id = $(this).attr("id")
+/       $("#1" + file_id).val(filename);
+/       });
+    
+/     $(".pick-a-color").pickAColor({
+/       showSpectrum            : true,
+/       showSavedColors         : true,
+/       saveColorsPerElement    : true,
+/       fadeMenuToggle          : true,
+/       showAdvanced            : true,
+/       showHexInput            : true,
+/       showBasicColors         : true,
+/       allowBlank              : true
+/     });
+    
+/     abc();
+    
+/     $("input").on("change", function () {
+/         abc();
+/     });
+/   });
+/   function abc(){
+/     var logo_back_color = $('#registration_look_and_feel_logo_back_color').val();
+/      $('.hex-pound.input-group-addon').css('opacity', '0');
+/     if(logo_back_color != ''){
+/        $('#registration_look_and_feel_logo_back_color').prev('.input-group-addon').css('opacity', '1');
+/     }  
+/     else{
+/       $(this).parent('.pick-a-color-markup').children('.input-group-addon').hide();
+/     }
+/     var body_back_color = $('#registration_look_and_feel_body_background_color').val();
+/      $('.hex-pound.input-group-addon').css('opacity', '0');
+/     if(body_back_color != ''){
+/        $('#registration_look_and_feel_body_background_color').prev('.input-group-addon').css('opacity', '1');
+/     }  
+/     else{
+/       $(this).parent('.pick-a-color-markup').children('.input-group-addon').hide();
+/     }
+/     var button_color = $('#registration_look_and_feel_button_color').val();
+/      $('.hex-pound.input-group-addon').css('opacity', '0');
+/     if(button_color != ''){
+/        $('#registration_look_and_feel_button_color').prev('.input-group-addon').css('opacity', '1');
+/     }  
+/     else{
+/       $(this).parent('.pick-a-color-markup').children('.input-group-addon').hide();
+/     }
+/     var button_font_color = $('#registration_look_and_feel_button_font_color').val();
+/      $('.hex-pound.input-group-addon').css('opacity', '0');
+/     if(button_font_color != ''){
+/       $('#registration_look_and_feel_button_font_color').prev('.input-group-addon').css('opacity', '1');
+/     }  
+/     else{
+/       $(this).parent('.pick-a-color-markup').children('.input-group-addon').hide();
+/     }
+/   }

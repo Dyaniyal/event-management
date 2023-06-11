@@ -1,0 +1,230 @@
+- if params[:import].present?
+  = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+- else
+  .save_button.mdl-card.feedbackFormPage
+    = form_for [:admin, @event, @poll], :html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+      .mdl-grid.mdl-shadow--1dp
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            Visibility Settings
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            .mdl-grid.p-v-5
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt Show this data element to:
+              .col-lg-3.p-h-12  
+                = f.custom_radio_button_menu :show_poll_feature, "all","All", :id => "feature_option_1#{f.object.id}", :default_checked => "#{f.object.show_poll_feature =="all" || f.object.show_poll_feature.blank? ? "checked" : ""}",:class => "show_poll_feature"
+                = f.custom_radio_button_menu :show_poll_feature, "group", "Group", :id => "feature_option_2#{f.object.id}", :default_checked => "#{f.object.show_poll_feature == "group" ? "checked" : ""}",:class => "show_poll_feature"
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8{:style => ((f.object.show_poll_feature == 'all' or f.object.show_poll_feature.blank?)? 'margin-top:30px;display:none;' : 'margin-top:30px'), :id => 'group_check_boxes'}
+              .form-group
+                %label.col-lg-4.control-label.ml-color--shades-white
+                  Select Groups *
+                  %br
+                  / %a{:href => admin_event_invitee_groups_path(:event_id => @event.id), :class =>'', :title => "Invitee Groups", :target => '_blank'}
+                  /   (View Available Groups)
+                - er = f.object.errors.messages[:group_ids].join(',') rescue nil
+                .col-lg-7.notification
+                  - default_group_list = [['No Polls taken', 'No Polls taken'], ['No Feedback given', 'No Feedback given'], ['No Quiz taken', 'No Quiz taken'], ['No Q&A', 'No Q&A'], ['NO QR code scanned', 'NO QR code scanned'], ['No Chat', 'No Chat']]
+                  - default_group_list = @default_groups.collect{|group| [ group.name, group.id ]}
+                  - default_group_list.each_with_index do |group, index|
+                    - if index == 0
+                      .usersep
+                        Default Groups
+                    .md-checkbox
+                      %label
+                        %span.checkbox 
+                        = group[0]
+                  - default_group_list = @other_groups.collect{|group| [ group.name, group.id ]}
+                  - default_group_list.each_with_index do |group, index|
+                    - if index == 0
+                      .usersep
+                        Groups created by you
+                    .md-checkbox
+                      %label
+                        = f.check_box :group_ids, {:multiple => true, :class => "myclass", :style => "mystyle", include_hidden: false}, group[1].to_s
+                        %span.checkbox 
+                        = group[0]                
+                .clear
+                .field_with_errors.marginErrMgs
+                  .span{:class => "errorMessage"}
+                    = er 
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10
+            General Information
+        - if (@event.event_features.present? and (@event.event_features.pluck(:name).include?("agendas") or @event.event_features.pluck(:name).include?("sponsors")))
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            .mdl-grid.p-v-5.form-group
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt Show Poll at 
+              .col-lg-6.p-h-12   
+                = f.custom_radio_button_menu :show_poll_at, "top_level","Top Level", :id => "show_poll_at_top_level", :default_checked => (f.object.show_poll_at == 'top_level' or f.object.show_poll_at.blank?) ? 'checked' : ''
+                - if @event.event_features.pluck(:name).include?("agendas")
+                  = f.custom_radio_button_menu :show_poll_at, "session_level","Session Level", :id => "show_poll_at_session_level", :default_checked => (f.object.show_poll_at == 'session_level') ? 'checked' : ''
+                - if @event.event_features.pluck(:name).include?("sponsors")
+                  = f.custom_radio_button_menu :show_poll_at, "sponsor_level","Sponsor Level", :id => "show_poll_at_sponsor_level", :default_checked => (f.object.show_poll_at == 'sponsor_level') ? 'checked' : ''
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.select_session#select_session{:style=> f.object.show_poll_at == "session_level" ? "display:block;" : "display:none;"}
+            .form-group
+              %label.col-lg-4.control-label.ml-color--shades-white
+                Select Session
+              .col-lg-7
+                - sessions = [["Select Session",""]] + @event.agendas.collect {|p| [ p.title, p.id ] }.uniq
+                %i.arrow.single
+                = f.select("poll", "select_session", sessions, {:selected => f.object.select_session.present? ? f.object.select_session : ""}, {:class=> 'select2-single form-control'})
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = f.object.errors.messages[:select_session].join("") rescue nil
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.sponsor_id#sponsor_id{:style=> f.object.show_poll_at == "sponsor_level" ? "display:block;" : "display:none;"}
+            .form-group
+              %label.col-lg-4.control-label.ml-color--shades-white
+                Select Sponsor
+              .col-lg-7
+                - sponsors = [["Select Sponsor",""]] + @event.sponsors.collect {|p| [ p.name, p.id ] }.uniq
+                %i.arrow.single
+                = f.select("poll", "sponsor_id", sponsors, {:selected => f.object.sponsor_id.present? ? f.object.sponsor_id : ""}, {:class=> 'select2-single form-control'})
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = f.object.errors.messages[:sponsor_id].join("") rescue nil
+        - else
+          = f.hidden_field :show_poll_at, :value => 'top_level'
+        = f.custom_text_field :question, "Question *","background" => "false"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+          .form-group
+            %label.col-lg-4.control-label.ml-color--shades-white
+              Select Option Type*
+            .col-lg-7
+              %i.arrow.single
+              = f.select("poll", "option_type", [["Radio buttons (for single choice)","Radio"], ["Checkboxes (for multiple choice)","Checkbox"], ["Textbox","Textbox"], ['Rating (1 to 5)','Rating']], {:selected => f.object.option_type, :prompt => 'Select Option Type'}, {include_blank: 'None', :class=> 'select2-single form-control'})
+              - if @poll.present? and @poll.errors.present? and @poll.errors.messages.include? :option_type
+                .field_with_errors{:style => 'color:red'}
+                  %span{:for => "poll_option2", :class => "errorMessage"} 
+                  = "This field is required."
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Display Results? 
+            .col-lg-3.p-h-12   
+              = f.custom_radio_button_menu :option_visible, "yes","Yes", :id => "url_page_type", :default_checked => (f.object.option_visible == 'yes' or f.object.option_visible.blank?) ? 'checked' : ''
+              = f.custom_radio_button_menu :option_visible, "no","No", :id => "build_new_page_type", :default_checked => (f.object.option_visible == 'no') ? 'checked' : ''
+        - @show_options = (f.object.option_type == "Radio" or f.object.option_type == "Checkbox") ? true : false
+        - @show_rating_options = f.object.option_type == "Rating" ? true : false
+        = f.custom_text_field :option1, "Option1 *","background" => "false", class: "poll_hide_field"
+        = f.custom_text_field :option2, "Option2 *","background" => "false", class: "poll_hide_field"
+        = f.custom_text_field :option3, "Option3","background" => "false", class: "poll_hide_field"
+        = f.custom_text_field :option4, "Option4","background" => "false", class: "poll_hide_field"
+        = f.custom_text_field :option5, "Option5","background" => "false", class: "poll_hide_field"
+        = f.custom_text_field :option6, "Option6","background" => "false", class: "poll_hide_field"
+        = f.custom_text_field :option7, "Option7","background" => "false", class: "poll_hide_field"
+        = f.custom_text_field :option8, "Option8","background" => "false", class: "poll_hide_field"
+        = f.custom_text_field :option9, "Option9","background" => "false", class: "poll_hide_field"
+        = f.custom_text_field :option010, "Option10","background" => "false", class: "poll_hide_field"   
+        = f.custom_text_field :rating_first_text, "Text for 1","background" => "false", class: "rating_hide_field"
+        = f.custom_text_field :rating_second_text, "Text for 5","background" => "false", class: "rating_hide_field"   
+
+        / .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.p-b-5
+        /   .mdl-grid.p-v-5.form-group.poll_hide_field1
+        /     .col-lg-4.mdl-typography--text-right
+        /       %p.displayInlineBlock.multicitytxt Text box to be shown after options?
+        /     .col-lg-7.p-h-12  
+        /       = f.custom_radio_button :description, true, "Yes", :id => "option-1"
+        /       = f.custom_radio_button :description, false, "No", :id => "option-2"
+        = hidden_field_tag "type","#{params[:type]}" if params[:type].present?
+        - if @event.present? and @event.parent_id.present?
+          .mdl-grid.p-v-5.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.col-md-4
+            .md-checkbox
+              %label
+                = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+                %span.checkbox 
+                Is language updated
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)
+:javascript
+  $(window).load(function(){
+    flightTime();
+    minutes();
+    times();  
+  })
+- if params[:action] == "new" and @show_options == true
+  :javascript
+    $('.poll_hide_field').parent().parent().show()
+    $(".poll_hide_field1").show();   
+- elsif @show_options == false
+  :javascript
+    $('input.poll_hide_field').parent().parent().hide();
+    $(".poll_hide_field1").hide();
+
+- if params[:action] == "new" and @show_rating_options == true
+  :javascript
+    $('input.rating_hide_field').parent().parent().show();
+    $(".rating_hide_field").show();  
+- elsif @show_rating_options == false
+  :javascript
+    $('input.rating_hide_field').parent().parent().hide();
+    $(".rating_hide_field").hide();
+
+:javascript
+  $('input.col-lg-7.p-h-12').parent().parent().hide();
+  $('#poll_option_type').on('change', function() {
+    val = $(this).val();
+    if(val == "Checkbox" || val == "Radio"){
+      $('.poll_hide_field').parent().parent().show()
+      $(".poll_hide_field1").show();
+      $('input.rating_hide_field').parent().parent().hide();
+    }
+    if(val == "Textbox"){
+      $('input.poll_hide_field').parent().parent().hide();
+      $(".poll_hide_field1").hide();
+      $('input.rating_hide_field').parent().parent().hide();
+    }
+    if(val == "Rating"){
+      $('input.rating_hide_field').parent().parent().show();
+      $(".rating_hide_field").show();
+      $('.poll_hide_field').parent().parent().hide()
+      $(".poll_hide_field1").hide();
+    }
+  });
+  if ("#{params[:action]}" == "edit")
+    $(window).load(function(){
+      if ("#{@poll.option_type}" == "Textbox"){
+       $('input.poll_hide_field').parent().parent().hide();
+       $(".poll_hide_field1").hide();
+      } 
+    }) 
+
+  $('#show_poll_at_top_level').on('click', function() {
+    $('.select_session').hide();
+  });
+ 
+  $('#show_poll_at_top_level').on('click', function() {
+    $('.sponsor_id').hide();
+  }); 
+
+  $('#show_poll_at_session_level').on('click', function() {
+    $('.sponsor_id').hide();
+  });
+
+  $('#show_poll_at_session_level').on('click', function() {
+    $('.select_session').show();
+  });   
+
+  $('#show_poll_at_sponsor_level').on('click', function() {
+    $('.sponsor_id').show();
+  }); 
+
+  $('#show_poll_at_sponsor_level').on('click', function() {
+    $('.select_session').hide();
+  });
+  
+:javascript
+  $(window).load(function(){
+    $(".show_poll_feature").change(function(){
+      selected_value = $(this).val();
+      if (selected_value == "group"){
+        $("#group_check_boxes").show();
+      }else{
+        $("#group_check_boxes").hide();
+      }  
+    });
+  })  

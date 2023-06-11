@@ -1,0 +1,6 @@
+%form.ng-pristine.ng-valid{:action => "#"}
+  .mdl-grid
+    = show_field("Email Address", obj.license).html_safe
+    = show_field("First Name", obj.first_name.capitalize).html_safe
+    / = show_field("Last Name", oobj.last_name.capitalize).html_safe
+    = show_field("Email Address", obj.email).html_safe

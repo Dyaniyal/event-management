@@ -1,0 +1,474 @@
+%html{:lang => "en"}
+  %head
+    %title Hobnob
+    = favicon_link_tag 'fevicon.png'
+    %meta{"http-equiv" => "refresh", :content => "60"}
+    %link{:href => "https://fonts.googleapis.com/icon?family=Material+Icons", :rel => "stylesheet"}
+    %link{:href => "/assets/css/qna_wall.css", :rel => "stylesheet"}
+    %script{:src => "/assets/jquery-1.11.3.min.js"}
+    %script{:src => "/assets/bootstrap.js"}
+  - @qna_wall = QnaWall.find_by_event_id(params[:event_id])  
+  - if @qna_wall.present?
+    - if @qna_wall.background_image.present?
+      %body{:style=>"background-image: url(#{@qna_wall.background_image.url(:large)});background-size:cover;background-repeat: no-repeat;"}
+        .main.QnaWall{:class => "#{@event.event_name.present? and @event.event_name == "Karnival de Kochi".strip ? "bg-wall" : ""}"}  
+          .top.qna_wall
+            -if @event.qna_wall.present?
+              - if @qna_wall.logo.present?
+                .QnaImg 
+                  %img.logo{:alt => "LOGO", :src => "#{@qna_wall.logo.url(:large)}"} 
+                  / %img.logo{:alt => "LOGO", :src => "/assets/hob_nob_web.png"}
+            %p.qa.ref-icon
+              %a{:href => "", :onclick => "window.location.reload();"}
+                %i.material-icons refresh
+          - unanswer_qnas = Qna.get_unanswer(objs,nil)
+          - if @qna_wall.title.present?
+            %p.qa.QnaTitle{:style=>"color:#{@qna_wall.title_color};"} 
+              = @qna_wall.title
+          .bs-example
+            #accordion.panel-group
+              .panel.panel-default
+                .panel-heading
+                  %h4.panel-title
+                    %a.clickLink{"data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseOne", :onclick => "show_menu()", :onclick => "show_menu()",:style=>"background-color:#{@qna_wall.tab_color}"}
+                      %i#down.material-icons keyboard_arrow_down
+                      %i#up.material-icons keyboard_arrow_up
+                      %span.name{:style=>"color:#{@qna_wall.font_color};"} UNANSWERED
+                      %span.count= unanswer_qnas.count rescue 0
+                #collapseOne.panel-collapse.collapse.in
+                  .panel-body
+                    .tabDiv
+                      %table{:border => "0", :bordercolor => "#FF0000", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+                        %tbody
+                          %tr{:align => "center", :bgcolor => "#e8e8e8", :valign => "middle"}
+                            %td{:align => "center", :valign => "middle", :width => "15%"}
+                              %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} To
+                            %td{:align => "center", :valign => "middle", :width => "15%"}
+                              %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} From
+                            %td{:align => "center", :valign => "middle", :width => "15%"}
+                              %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Company
+                            %td{:align => "center", :valign => "middle", :width => "40%"}
+                              %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Question
+                            %td{:align => "center", :valign => "middle", :width => "15%"}
+                              %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Answer/Ignore
+                          - unanswer_qnas.each do |qna|
+                            %tr
+                              %td
+                                %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                  = qna.get_receiver_user_name
+                              %td
+                                %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                  = qna.anonymous_on_wall == "true" ? "" : qna.get_user_name
+                                %br
+                                  %p.companyTxt
+                              %td
+                                %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                  = qna.anonymous_on_wall == "true" ? "" : qna.get_company_name 
+                              %td
+                                %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                  = qna.question
+                              %td{:align => "center", :valign => "middle"}
+                                = link_to admin_event_qna_path(event_id: qna.event_id, id: qna.id, wall_answer: "approved"), :method => "put" do
+                                  %img.cross{:alt => "check", :src => "/assets/check.PNG", :style => ""}
+                                = link_to admin_event_qna_path(event_id: qna.event_id, id: qna.id, wall_answer: "rejected"), :method => "put" do
+                                  %img.cross{:alt => "check", :src => "/assets/cross.PNG", :style => ""}
+              - answered_qnas = Qna.get_unanswer(objs,"approved")
+              .panel.panel-default
+                .panel-heading
+                  %h4.panel-title
+                    %a.clickLink{"data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseTwo", :onclick => "show_menu1()",:style=>"background-color:#{@qna_wall.tab_color}"}
+                      %i#down1.material-icons keyboard_arrow_down
+                      %i#up1.material-icons keyboard_arrow_up
+                      %span.name{:style=>"color:#{@qna_wall.font_color};"} ANSWERED
+                      %span.count= answered_qnas.count rescue 0
+                #collapseTwo.panel-collapse.collapse
+                  .panel-body
+                    %table{:border => "0", :bordercolor => "#FF0000", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+                      %tbody
+                        %tr{:align => "center", :bgcolor => "#e8e8e8", :valign => "middle"}
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} To
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} From
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Company
+                          %td{:align => "center", :valign => "middle", :width => "55%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Question
+                          / <td width="15%" valign="middle" align="center"><p class="tabHead"></p></td>
+                        - answered_qnas.each do |qna|
+                          %tr
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.get_receiver_user_name
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.anonymous_on_wall == "true" ? "" : qna.get_user_name
+                              %br
+                                %p.companyTxt
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.anonymous_on_wall == "true" ? "" : qna.get_company_name
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.question  
+              - rejected_qnas = Qna.get_unanswer(objs,"rejected")
+              .panel.panel-default
+                .panel-heading
+                  %h4.panel-title
+                    %a.clickLink{"data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseThree", :onclick => "show_menu2()",:style=>"background-color:#{@qna_wall.tab_color}"}
+                      %i#down2.material-icons keyboard_arrow_down
+                      %i#up2.material-icons keyboard_arrow_up
+                      %span.name{:style=>"color:#{@qna_wall.font_color};"} IGNORED
+                      %span.count= rejected_qnas.count rescue 0
+                #collapseThree.panel-collapse.collapse
+                  .panel-body
+                    %table{:border => "0", :bordercolor => "#FF0000", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+                      %tbody
+                        %tr{:align => "center", :bgcolor => "#e8e8e8", :valign => "middle"}
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} To
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} From
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Company
+                          %td{:align => "center", :valign => "middle", :width => "55%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Question
+                          / <td width="15%" valign="middle" align="center"><p class="tabHead"></p></td>
+                        - rejected_qnas.each do |qna|
+                          %tr
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.get_receiver_user_name
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.anonymous_on_wall == "true" ? "" : qna.get_user_name
+                              %br
+                                %p.companyTxt
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.anonymous_on_wall == "true" ? "" : qna.get_company_name
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.question
+    - elsif @qna_wall.bg_color.present?
+      %body{:style=>"background-color: #{@qna_wall.bg_color};"}
+        .main.QnaWall{:class => "#{@event.event_name.present? and @event.event_name == "Karnival de Kochi".strip ? "bg-wall" : ""}"}  
+          - if @qna_wall.logo.present?
+            .top.qna_wall
+              -if @event.qna_wall.present?
+                - if @qna_wall.logo.present?
+                  .QnaImg 
+                    %img.logo{:alt => "LOGO", :src => "#{@qna_wall.logo.url(:large)}"} 
+                    / %img.logo{:alt => "LOGO", :src => "/assets/hob_nob_web.png"}
+              %p.qa.ref-icon
+                %a{:href => "", :onclick => "window.location.reload();"}
+                  %i.material-icons refresh
+          - unanswer_qnas = Qna.get_unanswer(objs,nil)
+          - if @qna_wall.title.present?
+            %p.qa.QnaTitle{:style=>"color:#{@qna_wall.title_color};"}  
+              = @qna_wall.title
+          .bs-example
+            #accordion.panel-group
+              .panel.panel-default
+                .panel-heading
+                  %h4.panel-title
+                    %a.clickLink{"data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseOne", :onclick => "show_menu()",:style=>"background-color:#{@qna_wall.tab_color}"}
+                      %i#down.material-icons keyboard_arrow_down
+                      %i#up.material-icons keyboard_arrow_up
+                      %span.name{:style=>"color:#{@qna_wall.font_color};"} UNANSWERED
+                      %span.count= unanswer_qnas.count rescue 0
+                #collapseOne.panel-collapse.collapse.in
+                  .panel-body
+                    .tabDiv
+                      %table{:border => "0", :bordercolor => "#FF0000", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+                        %tbody
+                          %tr{:align => "center", :bgcolor => "#e8e8e8", :valign => "middle"}
+                            %td{:align => "center", :valign => "middle", :width => "15%"}
+                              %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} To
+                            %td{:align => "center", :valign => "middle", :width => "15%"}
+                              %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} From
+                            %td{:align => "center", :valign => "middle", :width => "15%"}
+                              %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Company
+                            %td{:align => "center", :valign => "middle", :width => "40%"}
+                              %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Question
+                            %td{:align => "center", :valign => "middle", :width => "15%"}
+                              %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Answer/Ignore
+                          - unanswer_qnas.each do |qna|
+                            %tr
+                              %td
+                                %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                  = qna.get_receiver_user_name
+                              %td
+                                %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                  = qna.anonymous_on_wall == "true" ? "" : qna.get_user_name
+                                %br
+                                  %p.companyTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                              %td
+                                %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                  = qna.anonymous_on_wall == "true" ? "" : qna.get_company_name 
+                              %td
+                                %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                  = qna.question
+                              %td{:align => "center", :valign => "middle"}
+                                = link_to admin_event_qna_path(event_id: qna.event_id, id: qna.id, wall_answer: "approved"), :method => "put" do
+                                  %img.cross{:alt => "check", :src => "/assets/check.PNG", :style => ""}
+                                = link_to admin_event_qna_path(event_id: qna.event_id, id: qna.id, wall_answer: "rejected"), :method => "put" do
+                                  %img.cross{:alt => "check", :src => "/assets/cross.PNG", :style => ""}
+              - answered_qnas = Qna.get_unanswer(objs,"approved")
+              .panel.panel-default
+                .panel-heading
+                  %h4.panel-title
+                    %a.clickLink{"data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseTwo", :onclick => "show_menu1()",:style=>"background-color:#{@qna_wall.tab_color}"}
+                      %i#down1.material-icons keyboard_arrow_down
+                      %i#up1.material-icons keyboard_arrow_up
+                      %span.name{:style=>"color:#{@qna_wall.font_color};"} ANSWERED
+                      %span.count= answered_qnas.count rescue 0
+                #collapseTwo.panel-collapse.collapse
+                  .panel-body
+                    %table{:border => "0", :bordercolor => "#FF0000", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+                      %tbody
+                        %tr{:align => "center", :bgcolor => "#e8e8e8", :valign => "middle"}
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} To
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} From
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Company
+                          %td{:align => "center", :valign => "middle", :width => "55%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Question
+                          / <td width="15%" valign="middle" align="center"><p class="tabHead"></p></td>
+                        - answered_qnas.each do |qna|
+                          %tr
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.get_receiver_user_name
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.anonymous_on_wall == "true" ? "" : qna.get_user_name
+                              %br
+                                %p.companyTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.anonymous_on_wall == "true" ? "" : qna.get_company_name
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.question  
+              - rejected_qnas = Qna.get_unanswer(objs,"rejected")
+              .panel.panel-default
+                .panel-heading
+                  %h4.panel-title
+                    %a.clickLink{"data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseThree", :onclick => "show_menu2()",:style=>"background-color:#{@qna_wall.tab_color}"}
+                      %i#down2.material-icons keyboard_arrow_down
+                      %i#up2.material-icons keyboard_arrow_up
+                      %span.name{:style=>"color:#{@qna_wall.font_color};"} IGNORED
+                      %span.count= rejected_qnas.count rescue 0
+                #collapseThree.panel-collapse.collapse
+                  .panel-body
+                    %table{:border => "0", :bordercolor => "#FF0000", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+                      %tbody
+                        %tr{:align => "center", :bgcolor => "#e8e8e8", :valign => "middle"}
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} To
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} From
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Company
+                          %td{:align => "center", :valign => "middle", :width => "55%"}
+                            %p.tabHead{:style=>"color:#{@qna_wall.sub_text_color};"} Question
+                          / <td width="15%" valign="middle" align="center"><p class="tabHead"></p></td>
+                        - rejected_qnas.each do |qna|
+                          %tr
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.get_receiver_user_name
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.anonymous_on_wall == "true" ? "" : qna.get_user_name
+                              %br
+                                %p.companyTxt
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.anonymous_on_wall == "true" ? "" : qna.get_company_name
+                            %td
+                              %p.userTxt{:style=>"color:#{@qna_wall.sub_text_color};"}
+                                = qna.question
+  - else
+    %body{:style=>"background-color: #808080;"}
+      .main.QnaWall{:class => "#{@event.event_name.present? and @event.event_name == "Karnival de Kochi".strip ? "bg-wall" : ""}"}  
+        / - if @qna_wall.logo.present?
+        /   .top.qna_wall
+        /     -if @event.qna_wall.present?
+        /       - if @qna_wall.logo.present?
+        /         .QnaImg 
+        /           %img.logo{:alt => "LOGO", :src => "#{@qna_wall.logo.url(:large)}"} 
+        /           / %img.logo{:alt => "LOGO", :src => "/assets/hob_nob_web.png"}
+        %p.qa.ref-icon
+          %a{:href => "", :onclick => "window.location.reload();"}
+            %i.material-icons refresh
+        - unanswer_qnas = Qna.get_unanswer(objs,nil)
+        / - if @qna_wall.title.present?
+        /   %p.qa.QnaTitle{:style=>"color:#{@qna_wall.title_color};"}  
+        /     = @qna_wall.title
+        .bs-example
+          #accordion.panel-group
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title
+                  %a.clickLink{"data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseOne", :onclick => "show_menu()",:style=>""}
+                    %i#down.material-icons keyboard_arrow_down
+                    %i#up.material-icons keyboard_arrow_up
+                    %span.name{:style=>""} UNANSWERED
+                    %span.count= unanswer_qnas.count rescue 0
+              #collapseOne.panel-collapse.collapse.in
+                .panel-body
+                  .tabDiv
+                    %table{:border => "0", :bordercolor => "#FF0000", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+                      %tbody
+                        %tr{:align => "center", :bgcolor => "#e8e8e8", :valign => "middle"}
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>""} To
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>""} From
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>""} Company
+                          %td{:align => "center", :valign => "middle", :width => "40%"}
+                            %p.tabHead{:style=>""} Question
+                          %td{:align => "center", :valign => "middle", :width => "15%"}
+                            %p.tabHead{:style=>""} Answer/Ignore
+                        - unanswer_qnas.each do |qna|
+                          %tr
+                            %td
+                              %p.userTxt{:style=>""}
+                                = qna.get_receiver_user_name
+                            %td
+                              %p.userTxt{:style=>""}
+                                = qna.anonymous_on_wall == "true" ? "" : qna.get_user_name
+                              %br
+                                %p.companyTxt{:style=>""}
+                            %td
+                              %p.userTxt{:style=>""}
+                                = qna.anonymous_on_wall == "true" ? "" : qna.get_company_name 
+                            %td
+                              %p.userTxt{:style=>""}
+                                = qna.question
+                            %td{:align => "center", :valign => "middle"}
+                              = link_to admin_event_qna_path(event_id: qna.event_id, id: qna.id, wall_answer: "approved"), :method => "put" do
+                                %img.cross{:alt => "check", :src => "/assets/check.PNG", :style => ""}
+                              = link_to admin_event_qna_path(event_id: qna.event_id, id: qna.id, wall_answer: "rejected"), :method => "put" do
+                                %img.cross{:alt => "check", :src => "/assets/cross.PNG", :style => ""}
+            - answered_qnas = Qna.get_unanswer(objs,"approved")
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title
+                  %a.clickLink{"data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseTwo", :onclick => "show_menu1()",:style=>""}
+                    %i#down1.material-icons keyboard_arrow_down
+                    %i#up1.material-icons keyboard_arrow_up
+                    %span.name{:style=>""} ANSWERED
+                    %span.count= answered_qnas.count rescue 0
+              #collapseTwo.panel-collapse.collapse
+                .panel-body
+                  %table{:border => "0", :bordercolor => "#FF0000", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+                    %tbody
+                      %tr{:align => "center", :bgcolor => "#e8e8e8", :valign => "middle"}
+                        %td{:align => "center", :valign => "middle", :width => "15%"}
+                          %p.tabHead{:style=>""} To
+                        %td{:align => "center", :valign => "middle", :width => "15%"}
+                          %p.tabHead{:style=>""} From
+                        %td{:align => "center", :valign => "middle", :width => "15%"}
+                          %p.tabHead{:style=>""} Company
+                        %td{:align => "center", :valign => "middle", :width => "55%"}
+                          %p.tabHead{:style=>""} Question
+                        / <td width="15%" valign="middle" align="center"><p class="tabHead"></p></td>
+                      - answered_qnas.each do |qna|
+                        %tr
+                          %td
+                            %p.userTxt{:style=>""}
+                              = qna.get_receiver_user_name
+                          %td
+                            %p.userTxt{:style=>""}
+                              = qna.anonymous_on_wall == "true" ? "" : qna.get_user_name
+                            %br
+                              %p.companyTxt{:style=>""}
+                          %td
+                            %p.userTxt{:style=>""}
+                              = qna.anonymous_on_wall == "true" ? "" : qna.get_company_name
+                          %td
+                            %p.userTxt{:style=>""}
+                              = qna.question  
+            - rejected_qnas = Qna.get_unanswer(objs,"rejected")
+            .panel.panel-default
+              .panel-heading
+                %h4.panel-title
+                  %a.clickLink{"data-parent" => "#accordion", "data-toggle" => "collapse", :href => "#collapseThree", :onclick => "show_menu2()",:style=>""}
+                    %i#down2.material-icons keyboard_arrow_down
+                    %i#up2.material-icons keyboard_arrow_up
+                    %span.name{:style=>""} IGNORED
+                    %span.count= rejected_qnas.count rescue 0
+              #collapseThree.panel-collapse.collapse
+                .panel-body
+                  %table{:border => "0", :bordercolor => "#FF0000", :cellpadding => "0", :cellspacing => "0", :width => "100%"}
+                    %tbody
+                      %tr{:align => "center", :bgcolor => "#e8e8e8", :valign => "middle"}
+                        %td{:align => "center", :valign => "middle", :width => "15%"}
+                          %p.tabHead{:style=>""} To
+                        %td{:align => "center", :valign => "middle", :width => "15%"}
+                          %p.tabHead{:style=>""} From
+                        %td{:align => "center", :valign => "middle", :width => "15%"}
+                          %p.tabHead{:style=>""} Company
+                        %td{:align => "center", :valign => "middle", :width => "55%"}
+                          %p.tabHead{:style=>""} Question
+                        / <td width="15%" valign="middle" align="center"><p class="tabHead"></p></td>
+                      - rejected_qnas.each do |qna|
+                        %tr
+                          %td
+                            %p.userTxt{:style=>""}
+                              = qna.get_receiver_user_name
+                          %td
+                            %p.userTxt{:style=>""}
+                              = qna.anonymous_on_wall == "true" ? "" : qna.get_user_name
+                            %br
+                              %p.companyTxt
+                          %td
+                            %p.userTxt{:style=>""}
+                              = qna.anonymous_on_wall == "true" ? "" : qna.get_company_name
+                          %td
+                            %p.userTxt{:style=>""}
+                              = qna.question
+
+:javascript
+  function show_menu(){
+      var down = document.getElementById('down');
+    var up = document.getElementById('up');
+  
+      if(down.style.display == 'block'){
+          down.style.display = 'none';
+      up.style.display = 'block';
+      }else {
+          down.style.display = 'block';                    
+      up.style.display = 'none';                    
+      }
+  }
+  function show_menu1(){
+      var down1 = document.getElementById('down1');
+    var up1 = document.getElementById('up1');
+  
+      if(down1.style.display == 'none'){
+          down1.style.display = 'block';
+      up1.style.display = 'none';
+      }else {
+          down1.style.display = 'none';                    
+      up1.style.display = 'block';                    
+      }
+  }
+  function show_menu2(){
+      var down2 = document.getElementById('down2');
+    var up2 = document.getElementById('up2');
+  
+      if(down2.style.display == 'none'){
+          down2.style.display = 'block';
+      up2.style.display = 'none';
+      }else {
+          down2.style.display = 'none';                    
+      up2.style.display = 'block';                    
+      }
+  }

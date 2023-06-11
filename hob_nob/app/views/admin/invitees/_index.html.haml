@@ -1,0 +1,126 @@
+.overlayBg
+  / %img{:src => "/assets/loader.gif", :class =>"loader-img"}/
+  .spinner
+    .rect1
+    .rect2
+    .rect3
+    .rect4
+    .rect5
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "invitees", :url => "/admin/events/#{params[:event_id]}/invitees/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("invitees")
+- else
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.manage-event{"template-pagination" => "custom/pager"}
+    %tr
+      %th Invitee Name 
+      %th Email id
+      %th.test
+        .event_select123
+          COMPANY NAME
+        .invitee_com12
+          = form_tag admin_event_invitees_path(:event_id => @event.id) , :method => :get , id: "search_invitee_by_cname" , :class => "category_dropdown" do
+            -  @invitee_comanies = Invitee.where( event_id: @event.id).pluck('DISTINCT company_name').compact.delete_if(&:empty?)
+            = select_tag 'search[company_name]', options_for_select(['All'] + @invitee_comanies, selected: (params[:search][:company_name] if params[:search].present?))
+            = hidden_field_tag :admin_search, "true"
+            = hidden_field_tag :adv_search, "true"
+
+      %th.test
+        .event_select123
+          DESIGNATION
+        .invitee_com12
+        = form_tag admin_event_invitees_path(:event_id => @event.id) , :method => :get , id: "search_invitee_by_designation" , :class => "category_dropdown invitee_designation" do
+          -  @invitee_designation = Invitee.where( event_id: @event.id).pluck('DISTINCT designation').compact.delete_if(&:empty?)
+          = select_tag 'search[designation]', options_for_select(['All'] + @invitee_designation, selected: (params[:search][:designation] if params[:search].present?))
+          = hidden_field_tag :admin_search, "true"      
+          = hidden_field_tag :adv_search, "true"
+      %th.test
+        .event_select123
+          STATUS
+        .invitee_com12
+        = form_tag admin_event_invitees_path(:event_id => @event.id) , :method => :get , id: "search_invitee_by_invitee_status" , :class => "category_dropdown invitee_status_title" do
+          = select_tag "search[invitee_status]",options_for_select([['All','All'],["Yes","yes"],["No", "no"]], selected: (params[:search][:invitee_status] if params[:search].present?))
+          = hidden_field_tag :admin_search, "true"
+          = hidden_field_tag :adv_search, "true"
+      %th.test
+        .event_select123
+          VISIBLE STATUS
+        .invitee_com12
+        = form_tag admin_event_invitees_path(:event_id => @event.id) , :method => :get , id: "search_invitee_by_visible_status" , :class => "category_dropdown" do
+          = select_tag "search[visible_status]",options_for_select([['All','All'],["Active","active"],["Deactive", "deactive"]], selected: (params[:search][:visible_status] if params[:search].present?))
+          = hidden_field_tag :admin_search, "true"  
+          = hidden_field_tag :adv_search, "true"
+      %th.test
+        .event_select123.invitee_logged_in
+          LOGGED IN
+        .invitee_com12
+        = form_tag admin_event_invitees_path(:event_id => @event.id) , :method => :get , id: "search_invitee_by_login_status" , :class => "category_dropdown invitee_loggegIn" do
+          = select_tag "search[login_status]",options_for_select([['All','All'],["Yes","yes"],["No", "no"]], selected: (params[:search][:login_status] if params[:search].present?))
+          = hidden_field_tag :admin_search, "true"
+          = hidden_field_tag :adv_search, "true"
+      %th Mark records
+      .check_box_class{:style =>"display: inline-block;position: absolute;right: 240px;"}
+        = label_tag 'Select All', 'Select All', :style => "font-size:14px; color:#333;"
+        = check_box_tag 'checkAll'
+      = form_for @invitee, :url => admin_event_invitees_path, :method => "get" do |f|
+        = f.submit "submit", :class => "mdl-color--light-blue-400 btn btn-default user-reg-dd",:style => "color :#fff;"
+        = select_tag "my_status", options_for_select(["Select status","Delete"]), :class => "btn btn-default user-reg-dd"
+        %th
+          - objs.each do |invitee|
+            - invitee_attrs = invitee.attributes
+            %tr
+              %td.font16= show_link(params, invitee.id, invitee.name_of_the_invitee) rescue nil
+              %td.font16= invitee.email rescue nil
+              %td.font16= invitee.company_name.capitalize rescue nil
+              %td.font16= invitee.designation.capitalize rescue nil
+              %td.font16= invitee.invitee_status.capitalize rescue nil
+              %td.font16= invitee.visible_status.capitalize rescue nil
+              %td.font16= invitee.analytics.where(:action => 'Login').present? ? 'Yes' : 'No'
+              %td= check_box_tag 'invitee_ids[]',"#{invitee_attrs['id']}",false, class: 'selectable'
+              %td.IconDrp{:style => "left: -83px;right:15px;"}
+                = more_vert_button1(invitee.id)
+                %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{invitee.id}"}
+                  = edit_link(params, invitee.id)
+                  - if @event.is_parent?
+                    = delete_link(params, invitee.id)
+                    = send_mail_to_invitee(params,invitee.id)
+                    - invitee.aasm.events.each do |eve|
+                      = link_to "#{eve.name.to_s.titlecase}".html_safe,{:action=>"update", :controller=>"admin/invitees", :id => invitee.id, :visible_status => eve.name.to_s, :page => params[:page]}, :method => "put", :data => { confirm: 'Are you sure, you want to change the status.'},:class => "mdl-menu__item"
+  = will_paginate objs 
+              
+:javascript
+  $(".send-password-btn").click(function(){
+    $(".overlayBg").show();
+    $(".fixed-activon-btn-new.morefixed-activon-btn").css({"pointer-events":"none","opacity":"0.5"});
+  });
+  $(".send-password-confirm").click(function(){
+    if(confirm('Are you sure you want to send passwords to all new invitees?')) {
+      var url1 = window.location.href
+      var url = url1.split('?').shift();
+      window.location.href = url + '?send_mail=true'
+      $(".overlayBg").show();
+      $(".fixed-activon-btn-new.morefixed-activon-btn").css({"pointer-events":"none","opacity":"0.5"});
+    }
+    else {
+      $(".overlayBg").hide();
+    }
+  })
+  $( document ).ready(function() {   
+    $('#search_company_name').select2();
+    $('#search_designation').select2();
+    $('#search_invitee_status').select2();
+    $('#search_visible_status').select2();
+    $('#search_login_status').select2();
+  }); 
+  
+  $("#checkAll").select_all();
+
+:css
+  .user-reg-dd {
+    float : right;
+    height: 35px;
+    background: #eee;
+    color: black;
+  }

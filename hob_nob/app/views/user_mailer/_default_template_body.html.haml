@@ -1,0 +1,24 @@
+%tr
+  %td{:height => "20", :width => "600"}
+%tr
+  %td
+    %table{:border => "0", :cellpadding => "0", :cellspacing => "0", :width => "600"}
+      %tr
+        %td{:width => "50"}
+        %td{:style => "background-color: #fff;text-align:center;", :width => "500"}
+          %table{:border => "0", :cellpadding => "0", :cellspacing => "0", :width => "500"}
+            %tr
+              %td
+                %p{:style => "font-size:13px;margin-top:0;margin-bottom:0px;"}
+                - if (@db_data.present? || @user_registration.present?) and @database_email_field.present?
+                  - db_record = @db_data.present? ? @db_data.where("#{@database_email_field} =?","#{@email}").first : @user_registration
+                  - edm_body = @edm.body
+                  - if db_record.present?
+                    = hash_val(db_record).inject(edm_body) { |m, (k,v)| m.gsub(k, v.nil? ? '' : v) }.html_safe
+                - else
+                  = @edm.body.html_safe rescue nil
+        %td{:width => "50"}
+- if @smtp_setting.blank? and params[:controller] == "admin/edms" and params[:action] == "show"
+  = render :partial => '/user_mailer/default_template_footer.html.haml', :locals => {:@edm => @edm}
+- else
+  = render :partial => 'default_template_footer.html.haml'

@@ -1,0 +1,52 @@
+.save_button.mdl-card.agendaheight.feedbackFormPage 
+  = form_for [:admin, @event, @custom_page1], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          General Information
+          %span.titleQuestion
+            = link_to("?" ,"/whats_this/custom_pages/general_information/Custom_Pages.png", rel: "custom_pages", title: "Custom Page1", :class =>"fancybox whatsImg") 
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Page Type
+          .col-lg-3.p-h-12   
+            = f.custom_radio_button_menu :page_type, "url","URL", :id => "url_page_type_custom1", :default_checked => (f.object.page_type == 'url' or f.object.page_type.blank?) ? 'checked' : ''
+            = f.custom_radio_button_menu :page_type, "build_new","Build New", :id => "build_new_page_type_custom1", :default_checked => (f.object.page_type == 'build_new') ? 'checked' : ''
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.show_hide_custome_page1
+        .mdl-grid.p-v-5
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Open with *
+          .col-lg-5.p-h-12
+            - er = f.object.errors.messages[:open_with].join(',') rescue nil
+            - f.object.errors.messages[:open_with].clear if f.object.errors.messages[:open_with].present?   
+            = f.custom_radio_button_menu :open_with, "mobile_browser","External Browser", :id => "open_with_mobile_browser_custom1", :default_checked => (f.object.open_with == 'mobile_browser') ? 'checked' : ''
+            = f.custom_radio_button_menu :open_with, "in_app","in App Browser", :id => "open_with_in_app_custom1", :default_checked => (f.object.open_with == 'in_app') ? 'checked' : ''
+            .field_with_errors
+              .span{:class => "errorMessage"}
+                = er
+      = f.custom_text_field :site_url, "URL *",:message_display => (f.object.page_type == 'url' or f.object.page_type.blank?) ? "" : "none","background" => "false"
+      .ckeditor_custom{:style => "display: #{(f.object.page_type == 'build_new') ? "" : "none"}"}
+        = f.label "Create New Page *"
+        = f.cktext_area :description
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.form-group{:style=>"width:32%;"}
+          .md-checkbox
+            %label
+              = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated
+      = hidden_field_tag "from","#{params[:from]}" if params[:from].present? 
+    = render :partial => 'admin/custom_pages/mapping_form', :locals => {:f => f, :table => "custom_page1"}
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+
+- if @custom_page1.present? and @custom_page1.page_type == "build_new"
+  :javascript
+    $(".show_hide_custome_page1").hide();
+  
+= javascript_include_tag "custom_page"
+

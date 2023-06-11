@@ -1,0 +1,32 @@
+= stylesheet_link_tag "signup.css"
+- if @background_image.present?
+  - style = "background-image: url(#{@background_image});background-size:cover;background-repeat: no-repeat; background-attachment:fixed;"
+- else
+  - style = "background:##{@background_color};"
+.signupBg.signUpMobile{:style=>style} 
+  .mdl-grid.mdl-card.mdl-shadow--1dp.signupDiv
+    .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+      %h4.heading-border.p-t-10.m-b-15
+        Sign Up 
+    = form_for [:admin, @event, @invitee], :url => url_for(:controller => 'visitor_registrations', :action => 'create'), :html => {:class =>'form-horizontal signup-form'}, :builder => CustomFormBuilder do |f|
+      = f.custom_text_field_for_sign_up :first_name, "First Name *"
+      = f.custom_text_field_for_sign_up :last_name, "Last Name *"  
+      = f.custom_text_field_for_sign_up :email, "Email Id *"
+      = f.custom_text_field_for_sign_up :password, "Password *"
+      = f.custom_text_field_for_sign_up :password_confirmation, "Confirm Password *"
+      = f.custom_text_field_for_sign_up :company_name, "Company"
+      = f.custom_text_field_for_sign_up :designation, "Designation"
+      = f.custom_text_field_for_sign_up :mobile_no, "Phone No"
+      - if params[:mobile_application_code].present?
+        = f.hidden_field :mobile_application_code, :value => params[:mobile_application_code] 
+      - else
+        = f.hidden_field :mobile_application_code, :value => params[:invitee][:mobile_application_code]
+      = f.hidden_field :visitor_registration, :value => "true"
+      .submit-btn
+        = f.custom_submit_button "SUBMIT" 
+
+
+    
+:javascript
+  var documentHeight = $(document).height();
+  $('.signupBg').css('height' ,documentHeight );

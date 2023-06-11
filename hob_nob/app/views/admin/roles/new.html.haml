@@ -1,0 +1,10 @@
+%section#content
+  / start container
+  .container
+    %section#tab_part
+      .adminHeading
+        %h1 Add Role
+        .rightBtn
+          = back_button(:back)
+      = render :partial => 'form'
+    = render :partial => 'layouts/right_side_user_event_manage'

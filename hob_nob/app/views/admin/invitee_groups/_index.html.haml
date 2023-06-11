@@ -1,0 +1,25 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "invitee_groups", :url => "/admin/events/#{params[:event_id]}/invitee_groups/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("invitee_groups")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16.ng-scope.ng-table{"template-pagination" => "custom/pager"}
+    %tr
+      %th Name
+      %th group members
+      %th
+        - objs.each do |invitee_group|
+          %tr
+            %td.font16= invitee_group.name rescue nil
+            %td.font16
+              - if !invitee_group.default_logical_group?
+                = invitee_group.get_invitee_name
+            %td.IconDrp
+              -if current_user.has_role? :db_manager
+                = more_vert_button(invitee_group.id)
+                %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{invitee_group.id}"}
+                  - if !invitee_group.default_logical_group?
+                    = edit_link(params, invitee_group.id)
+                    = delete_link(params, invitee_group.id)

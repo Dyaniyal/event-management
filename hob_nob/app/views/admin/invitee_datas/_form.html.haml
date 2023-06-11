@@ -1,0 +1,79 @@
+- if params[:import].present?
+  = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+- else
+  .save_button.mdl-card
+    = form_for [:admin, @event ,@invitee_data],:url => admin_event_invitee_data_path(:event_id => @event.id,:id => @invitee_data.id), :method => :PUT, :builder => CustomFormBuilder do |f|
+      .mdl-grid.mdl-card.mdl-shadow--1dp.p-b-15
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            General Information
+            / %a{:href => 'javascript:void(0);', :class =>'helpTag testhelp'}
+            /   what's this?
+        -# data_present = @invitee_structure.check_invitee_data_present?
+        - invitee_structure = @invitee_structure
+        - data_present = @invitee_data
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "database.png", :section_id => "speaker_general_section"}
+        = f.custom_text_field :attr1, invitee_structure["attr1"], :value => f.object.attr1.present? ? f.object.attr1 : "" if invitee_structure["attr2"].present?
+        = f.custom_text_field :attr2, invitee_structure["attr2"], :value => f.object.attr2.present? ? f.object.attr2 : "" if invitee_structure["attr3"].present?
+        = f.custom_text_field :attr3, invitee_structure["attr3"], :value => f.object.attr3.present? ? f.object.attr3 : "" if invitee_structure["attr4"].present?
+        = f.custom_text_field :attr4, invitee_structure["attr4"], :value => f.object.attr4.present? ? f.object.attr4 : "" if invitee_structure["attr4"].present?
+        = f.custom_text_field :attr5, invitee_structure["attr5"], :value => f.object.attr5.present? ? f.object.attr5 : "" if invitee_structure["attr5"].present?
+        = f.custom_text_field :attr6, invitee_structure["attr6"], :value => f.object.attr6.present? ? f.object.attr6 : "" if invitee_structure["attr6"].present?
+        = f.custom_text_field :attr7, invitee_structure["attr7"], :value => f.object.attr7.present? ? f.object.attr7 : "" if invitee_structure["attr7"].present?
+        = f.custom_text_field :attr8, invitee_structure["attr8"], :value => f.object.attr8.present? ? f.object.attr8 : "" if invitee_structure["attr8"].present?
+        = f.custom_text_field :attr9, invitee_structure["attr9"], :value => f.object.attr9.present? ? f.object.attr9 : "" if invitee_structure["attr9"].present?
+        = f.custom_text_field :attr10, invitee_structure["attr10"], :value => f.object.attr10.present? ? f.object.attr10 : "" if invitee_structure["attr10"].present?
+        = f.custom_text_field :attr11, invitee_structure["attr11"], :value => f.object.attr11.present? ? f.object.attr11 : "" if invitee_structure["attr11"].present?
+        = f.custom_text_field :attr12, invitee_structure["attr12"], :value => f.object.attr12.present? ? f.object.attr12 : "" if invitee_structure["attr12"].present?
+        = f.custom_text_field :attr13, invitee_structure["attr13"], :value => f.object.attr13.present? ? f.object.attr13 : "" if invitee_structure["attr13"].present?
+        = f.custom_text_field :attr14, invitee_structure["attr14"], :value => f.object.attr14.present? ? f.object.attr14 : "" if invitee_structure["attr14"].present?
+        = f.custom_text_field :attr15, invitee_structure["attr15"], :value => f.object.attr15.present? ? f.object.attr15 : "" if invitee_structure["attr15"].present?
+        = f.custom_text_field :attr16, invitee_structure["attr16"], :value => f.object.attr16.present? ? f.object.attr16 : "" if invitee_structure["attr16"].present?
+        = f.custom_text_field :attr17, invitee_structure["attr17"], :value => f.object.attr17.present? ? f.object.attr17 : '' if invitee_structure["attr17"].present?
+        = f.custom_text_field :attr18, invitee_structure["attr18"], :value => f.object.attr18.present? ? f.object.attr18 : '' if invitee_structure["attr18"].present?
+        = f.custom_text_field :attr19, invitee_structure["attr19"], :value => f.object.attr19.present? ? f.object.attr19 : '' if invitee_structure["attr19"].present?
+        = f.custom_text_field :attr20, invitee_structure["attr20"], :value => f.object.attr20.present? ? f.object.attr20 : '' if invitee_structure["attr20"].present?
+        = f.custom_text_field :attr21, invitee_structure["attr21"], :value => f.object.attr21.present? ? f.object.attr21 : '' if invitee_structure["attr21"].present?
+        = f.custom_text_field :attr22, invitee_structure["attr22"], :value => f.object.attr22.present? ? f.object.attr22 : "" if invitee_structure["attr22"].present?
+        = f.custom_text_field :attr23, invitee_structure["attr23"], :value => f.object.attr23.present? ? f.object.attr23 : "" if invitee_structure["attr23"].present?
+        = f.custom_text_field :attr24, invitee_structure["attr24"], :value => f.object.attr24.present? ? f.object.attr24 : "" if invitee_structure["attr24"].present?
+        = f.custom_text_field :attr25, invitee_structure["attr25"], :value => f.object.attr25.present? ? f.object.attr25 : "" if invitee_structure["attr25"].present?
+        = f.custom_text_field :attr26, invitee_structure["attr26"], :value => f.object.attr26.present? ? f.object.attr26 : "" if invitee_structure["attr26"].present?
+        = f.custom_text_field :attr27, invitee_structure["attr27"], :value => f.object.attr27.present? ? f.object.attr27 : '' if invitee_structure["attr27"].present?
+        = f.custom_text_field :attr28, invitee_structure["attr28"], :value => f.object.attr28.present? ? f.object.attr28 : '' if invitee_structure["attr28"].present?
+        = f.custom_text_field :attr29, invitee_structure["attr29"], :value => f.object.attr29.present? ? f.object.attr29 : '' if invitee_structure["attr29"].present?
+        = f.custom_text_field :attr30, invitee_structure["attr30"], :value => f.object.attr30.present? ? f.object.attr30 : '' if invitee_structure["attr30"].present?
+        = f.custom_text_field :attr31, invitee_structure["attr31"], :value => f.object.attr31.present? ? f.object.attr31 : '' if invitee_structure["attr31"].present?
+        = f.custom_text_field :attr32, invitee_structure["attr32"], :value => f.object.attr32.present? ? f.object.attr32 : '' if invitee_structure["attr32"].present?
+        = f.custom_text_field :attr33, invitee_structure["attr33"], :value => f.object.attr33.present? ? f.object.attr33 : '' if invitee_structure["attr33"].present?
+        = f.custom_text_field :attr34, invitee_structure["attr34"], :value => f.object.attr34.present? ? f.object.attr34 : '' if invitee_structure["attr34"].present?
+        = f.custom_text_field :attr35, invitee_structure["attr35"], :value => f.object.attr35.present? ? f.object.attr35 : '' if invitee_structure["attr35"].present?
+        = f.custom_text_field :attr36, invitee_structure["attr36"], :value => f.object.attr36.present? ? f.object.attr36 : '' if invitee_structure["attr36"].present?
+        = f.custom_text_field :attr37, invitee_structure["attr37"], :value => f.object.attr37.present? ? f.object.attr37: '' if invitee_structure["attr37"].present?
+        = f.custom_text_field :attr38, invitee_structure["attr38"], :value => f.object.attr38.present? ? f.object.attr38 : '' if invitee_structure["attr38"].present?
+        = f.custom_text_field :attr39, invitee_structure["attr39"], :value => f.object.attr39.present? ? f.object.attr39 : '' if invitee_structure["attr39"].present?
+        = f.custom_text_field :attr40, invitee_structure["attr40"], :value => f.object.attr40.present? ? f.object.attr40 : '' if invitee_structure["attr40"].present?
+        = f.custom_text_field :attr41, invitee_structure["attr42"], :value => f.object.attr42.present? ? f.object.attr42 : '' if invitee_structure["attr42"].present?
+        = f.custom_text_field :attr42, invitee_structure["attr42"], :value => f.object.attr42.present? ? f.object.attr42 : '' if invitee_structure["attr42"].present?
+        = f.custom_text_field :attr43, invitee_structure["attr43"], :value => f.object.attr43.present? ? f.object.attr43 : '' if invitee_structure["attr43"].present?
+        = f.custom_text_field :attr44, invitee_structure["attr44"], :value => f.object.attr44.present? ? f.object.attr44 : '' if invitee_structure["attr44"].present?
+        = f.custom_text_field :attr45, invitee_structure["attr45"], :value => f.object.attr45.present? ? f.object.attr45 : '' if invitee_structure["attr45"].present?
+        = f.custom_text_field :attr46, invitee_structure["attr46"], :value => f.object.attr46.present? ? f.object.attr46 : '' if invitee_structure["attr46"].present?
+        = f.custom_text_field :attr47, invitee_structure["attr47"], :value => f.object.attr47.present? ? f.object.attr47 : '' if invitee_structure["attr47"].present?
+        = f.custom_text_field :attr48, invitee_structure["attr48"], :value => f.object.attr48.present? ? f.object.attr48 : '' if invitee_structure["attr48"].present?
+        = f.custom_text_field :attr49, invitee_structure["attr49"], :value => f.object.attr49.present? ? f.object.attr49 : '' if invitee_structure["attr49"].present?
+        = f.custom_text_field :attr50, invitee_structure["attr50"], :value => f.object.attr50.present? ? f.object.attr50 : '' if invitee_structure["attr50"].present?
+        = f.hidden_field :skip_status_update, :value => "true"
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)
+         
+:javascript
+  $(window).load(function(){
+    $('.fileUpload input').change(function(){
+      filename = $(this)[0].files[0].name;
+      $(".file_name").text(filename);
+    });
+  })   

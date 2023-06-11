@@ -1,0 +1,15 @@
+%section#content
+  / start container
+  .container
+    %section#tab_part
+      .adminHeading
+        %h1 Edit Role
+        .rightBtn
+          = back_button(:back)
+          / %a.waves-effect.waves-light.btn{:href => "javascript:void(0);"} ADD USER
+          /
+            <a class="waves-effect waves-light btn" href="javascript:void(0);">PUBLISH CHANGES</a>
+            
+            <a class="waves-effect waves-light btn" href="javascript:void(0);">UPLOAD CSV</a>
+      = render :partial => 'form'
+    = render :partial => 'layouts/right_side_user_event_manage'

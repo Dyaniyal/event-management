@@ -1,0 +1,34 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "winners", :url => "/admin/events/#{params[:event_id]}/awards/#{params[:award_id]}/winners/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("winners")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      - if @event.is_parent?
+        %th Sequence
+      %th Winner 
+      %th
+    - objs.each_with_index do |winner, index|
+      %tr
+        - if @event.is_parent?
+          %td.sortable
+            .sort-indicator.frstsequence
+              =# winner.sequence.to_i rescue nil
+            .orderseq
+              - if index != 0
+                %span= link_to "",admin_event_sequence_path(:event_id => winner.award.event_id, :id => winner.id, :seq_type => "up", :feature_type => "winners"),:class => "uparrow", :method => "put", :remote => true
+              - if winner.sequence.to_i != 0 and (@winners.length - 1) != index
+                %span= link_to "",admin_event_sequence_path(:event_id => winner.award.event_id, :id => winner.id, :type => "down", :feature_type => "winners"),:class => "downarrow", :method => "put", :remote => true
+        %td.font16= link_to "#{winner.name} ", admin_event_award_winner_path(winner.award.event_id,winner.award_id, winner.id),:class => "collection-item" rescue nil
+        %td.IconDrp
+          = more_vert_button(winner.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{winner.id}"}
+            = link_to edit_admin_event_award_winner_path(winner.award.event_id, winner.award_id,winner.id),:class => "mdl-menu__item" do
+              Edit
+            - if @event.is_parent?
+              = link_to admin_event_award_winner_path(winner.award.event_id, winner.award_id,winner.id),method: :delete,:class =>"mdl-menu__item" do
+                Delete
+  =# will_paginate objs 

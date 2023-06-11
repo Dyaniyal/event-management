@@ -1,0 +1,162 @@
+.save_button.theme_form
+  = form_for [:admin, @theme], :builder => CustomFormBuilder do |f|
+    - old_event = @event if @old_event.present? and @old_event == true
+    - nested_attr_obj = (f.object.new_record? ? @theme.events.build : @event)
+    = f.fields_for :events, nested_attr_obj  do |event|
+      - if !(current_user.has_role? :super_admin)#params[:step] == "event_theme"
+        .mdl-grid.mdl-card.mdl-shadow--1dp
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            %h4.heading-border.p-t-10
+              Event Logos
+              %span.editThemelinks  
+                / %a{:href => '/whats_this/look_and_feel/event_logos/Look&Feel_EventLogos_1.JPG', :class =>'helpTag testhelp fancybox', :rel=> "theme_general_section", :title => "Event Logo"}
+                /   what's this?
+          = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => {"Event Logo 1" => "Look&Feel_EventLogos_2.JPG"}, :section_id => "theme_general_section", :path => "look_and_feel/event_logos" }
+          = hidden_field_tag "step", params[:step]
+          / - old_event = @event if @old_event.present? and @old_event == true
+          / - nested_attr_obj = (f.object.new_record? ? @theme.events.build : @event)
+          / = f.fields_for :events, nested_attr_obj  do |event|
+          - if @event.present? and @event.mobile_application.present? and @event.mobile_application.application_type == "multi event" 
+            - if @event.marketing_app.blank?#(@event.mobile_application.marketing_app_event_id.blank? and @event.marketing_app.blank?)
+              = event.new_custom_file_browser_field "logo", "Event listing logo (200x200px) png only ", :id => "uploadBtn", :value => (params[:action] == "create" and @logo_file_name.present?) ? @logo_file_name : nested_attr_obj.logo_file_name, :action => params[:action], :view_popup => {:image_path => "look_and_feel/event_logos/Look&Feel_EventListingLogo.jpg", :rel=> "event_logo", :title => "Event Logo"}
+            - if old_event.present?
+              .field_with_errors{:style => "margin-left: 35%;"}
+                .span{:class => "errorMessage"}
+                  = old_event.errors.messages[:logo].join("") rescue nil
+          = event.new_custom_file_browser_field "inside_logo", "Event logo (1280x300px) png only ", :id => "uploadBtn1", :value => (params[:action] == "create" and @inside_file_name.present?) ? @inside_file_name : nested_attr_obj.inside_logo_file_name, :action => params[:action], :view_popup => {:image_path => "look_and_feel/event_logos/Look&Feel_EventLogo.jpg", :rel=> "event_listing_logo", :title => "Event Listing Logo"}
+          - if old_event.present?
+            .field_with_errors{:style => "margin-left: 35%;"}
+              .span{:class => "errorMessage"}
+                = old_event.errors.messages[:inside_logo].join("") rescue nil
+      -if current_user.has_role? :super_admin
+        .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            %h4.heading-border.p-t-10
+              Edit Look & Feel 
+              / %a{:href => 'javascript:void(0);', :class =>'helpTag testhelp'}
+              /   what's this?
+          = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "thrmr_look_feel.jpg", :section_id => "theme_look_feel_section"}
+          -if current_user.has_role? :super_admin
+            = f.custom_text_field :name, "Theme Name *"
+          -else
+            = f.hidden_field :name 
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10
+            Header & Footer
+            %span.editThemelinks  
+              / %a{:href => '/whats_this/look_and_feel/header_&_footer/Look&Feel_HeaderFooter.JPG', :class =>'helpTag testhelp fancybox', :rel=> "theme_header_footer_section", :title => "Header Footer Color"}
+              /   what's this?
+        =# render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "theme_header_footer.jpg", :section_id => "theme_header_footer_section"}    
+        = f.custom_text_field :bar_color, "Header/Footer Bar Color *", :value => @old_theme.bar_color, :class => 'pick-a-color', :view_popup => {:image_path => "look_and_feel/header_&_footer/Look&Feel_HeaderFooterColor.jpg", :rel=> "header_footer_bar_color", :title => "Header/Footer Bar Color"}, :admin_theme => "#{(@old_theme.bar_color.present?) ? "has-success" : ""}"
+        / = f.custom_text_field :header_color, "Header Color *", :value => @old_theme.header_color, :class => 'pick-a-color'
+        / = f.custom_text_field :footer_color, "Footer Color *", :value => @old_theme.footer_color, :class => 'pick-a-color'    
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40.p-b-35
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10
+            Backgrounds
+            %span.editThemelinks  
+              / %a{:href => '/whats_this/look_and_feel/backgrounds/Look&Feel_Backgrounds.JPG', :class =>'helpTag testhelp fancybox', :rel=> "theme_background_section", :title => "Background"}
+              /   what's this?
+        =# render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "theme_background.jpg", :section_id => "theme_background_section"}
+
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+          .bs-component
+            .form-group
+              .span.col-lg-4
+                = f.label "Background Image (960x1600px) png only ",:class =>"control-label", style: "float: right;"
+              .col-lg-7.Closetheme
+                %label.field.file
+                  %span.button.btn-primary
+                    Choose File 
+                  = f.file_field :event_background_image,:id => "uploadBtn2", :class=>"gui-file"
+                  = text_field_tag("text_file_name","", id: "1uploadBtn2", class: "gui-input", :value => "#{f.object.event_background_image_file_name.nil? ? "there is no Attachment Available !" : f.object.event_background_image_file_name}", :read_only => true)
+              - if @event.present? and f.object.event_background_image_file_name.present? 
+                .col-lg-1
+                  = link_to "?" ,"/whats_this/look_and_feel/backgrounds/Help_Look&Feel_BackgroundImage.jpg", rel: "event_bg_image", title: "Event Background Image", :class =>'fancybox whatsImg'
+                  - if @event.theme.present? and @event.theme_id.present?
+                    = link_to admin_event_theme_path(:event_id => @event.id, :id => @event.theme_id,:remove_image => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                      %span
+                        X
+
+        %p.OrTxt
+          or
+        = f.custom_text_field :background_color, "Background Color", :value => @old_theme.background_color, :class => 'pick-a-color', :view_popup => {:image_path => "look_and_feel/backgrounds/Help_Look&Feel_BackgroundColor.jpg", :rel=> "background_color", :title => "Background Color"}, :admin_theme => "#{(@old_theme.background_color.present?) ? "has-success" : ""}"    
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10
+            Drawer Menu
+            %span.editThemelinks  
+              / %a{:href => '/whats_this/look_and_feel/drawer_menu/Look&Feel_DrawerMenu.JPG', :class =>'helpTag testhelp fancybox', :rel=> "theme_drawer_menu_section", :title => "Drawer Menu"}
+              /   what's this?
+        =# render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "theme_drawer_menu.jpg", :section_id => "theme_drawer_menu_section"}
+        = f.custom_text_field :drawer_menu_back_color, "Drawer Menu Background Color *", :value => @old_theme.drawer_menu_back_color, :class => 'pick-a-color', :view_popup => {:image_path => "look_and_feel/drawer_menu/Help_Look&Feel_DrawerMenuBackgroundColor.jpg", :rel=> "drawer_menu_bg_color", :title => "Drawer Menu Background Color"}, :admin_theme => "#{(@old_theme.drawer_menu_back_color.present?) ? "has-success" : ""}"
+        
+        = f.custom_text_field :drawer_menu_font_color, "Drawer Menu Font Color *", :value => @old_theme.drawer_menu_font_color, :class => 'pick-a-color' , :view_popup => {:image_path => "look_and_feel/drawer_menu/Help_Look&Feel_DrawerMenuFontColor.jpg", :rel=> "drawer_menu_font_color", :title => "Drawer Menu Font Color"}, :admin_theme => "#{(@old_theme.drawer_menu_font_color.present?) ? "has-success" : ""}"  
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+          .bs-component
+            .form-group{:class => @event.footer_image.present? ? 'has-success' : ''}
+              / - old_event = @event if @old_event.present? and @old_event == true
+              / - nested_attr_obj = (f.object.new_record? ? @theme.events.build : @event)
+              / = f.fields_for :events, nested_attr_obj  do |event|
+              .span.col-lg-4
+                = f.label "Drawer footer image (500x180px) png only ",:class =>"control-label", style: "float: right;"
+              .col-lg-7.Closetheme
+                %label.field.file
+                  %span.button.btn-primary
+                    Choose File 
+                  = event.file_field :footer_image, :id => "uploadBtn3", :class=>"gui-file"
+                  = text_field_tag("text_file_name","", id: "1uploadBtn3", class: "gui-input", :value => "#{event.object.footer_image_file_name.nil? ? "there is no Attachment Available !" : event.object.footer_image_file_name}", :read_only => true)
+                .themeerrormessage &nbsp;
+                - if old_event.present?
+                  .field_with_errors
+                    .span{:class => "errorMessage"}
+                      = old_event.errors.messages[:footer_image].join("") rescue nil
+              .col-lg-1
+                = link_to "?" ,"/whats_this/template/fpo.jpg", rel: "event_bg_image", title: "Event Footer Image", :class =>'fancybox whatsImg'
+                - if @event.present? and event.object.footer_image_file_name.present? 
+                  - if @event.theme.present? and @event.theme_id.present?
+                    = link_to admin_event_theme_path(:event_id => @event.id, :id => @event.theme_id,:remove_footer_image => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                      %span
+                        X
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40.p-b-35
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10
+            Buttons & Content
+            %span.editThemelinks  
+              / %a{:href => '/whats_this/look_and_feel/buttons_&_content/Look&Feel_Buttons&Content_1.JPG', :class =>'helpTag testhelp fancybox', :rel=> "theme_button_content_section", :title => "Buttons & Content 1"}
+              /   what's this?
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => {"Buttons & Content 2" => "Look&Feel_Buttons&Content_2.JPG"}, :section_id => "theme_button_content_section",:path => "look_and_feel/buttons_&_content"} 
+
+        = f.custom_text_field :button_color, "Button Color *", :value => @old_theme.button_color, :class => 'pick-a-color' , :view_popup => {:image_path => "look_and_feel/buttons_&_content/Help_Look&Feel_ButtonColor.jpg", :rel=> "button_color", :title => "Button Color"}, :admin_theme => "#{(@old_theme.button_color.present?) ? "has-success" : ""}"
+        
+        = f.custom_text_field :button_content_color, "Button Content Color *", :value => @old_theme.button_content_color, :class => 'pick-a-color' , :view_popup => {:image_path => "look_and_feel/buttons_&_content/Help_Look&Feel_ButtonFontColor.jpg", :rel=> "button_content_color", :title => "Button Content Color"}, :admin_theme => "#{(@old_theme.button_content_color.present?) ? "has-success" : ""}"
+        
+        = f.custom_text_field :content_font_color, "Text Font Color *", :value => @old_theme.content_font_color, :class => 'pick-a-color' , :view_popup => {:image_path => "look_and_feel/buttons_&_content/Help_Look&Feel_TextFontColor.jpg", :rel=> "text_font_color", :title => "Text Font Color"}, :admin_theme => "#{@old_theme.content_font_color.present? ? "has-success" : ""}"
+
+        -if current_user.has_role? :super_admin
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            .mdl-grid.p-v-5
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt Preview Theme
+              .col-lg-7.p-h-12   
+                = f.custom_radio_button :preview_theme, "yes","Yes", :id => "option-1"
+                = f.custom_radio_button :preview_theme, "no", "No", :id => "option-2"
+
+        = f.hidden_field :licensee_id, :value => current_user.get_licensee
+        = hidden_field_tag :event_id, "#{params[:event_id].present? ? params[:event_id] : ""}"
+        = hidden_field_tag "type","#{params[:type]}" if params[:type].present?
+      - if params[:read_only] != "true"
+        .fixed-activon-btn-new  
+          = f.custom_submit_button "SAVE"
+          - if current_user.has_role? :super_admin
+            .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+                = back_button(:back)
+          - elsif @event.present? and @event.mobile_application.id.present?
+            .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+                = link_to admin_event_mobile_application_path(:event_id => @event.id, :id => @event.mobile_application.id) do
+                  %span.waves-effect.waves-light.btn
+                    CANCEL
+= javascript_include_tag "jquery-1.11.3.min", "pick-a-color-1.2.0.min", "tinycolor", "jquery.fancybox", "theme_color_pick"                   

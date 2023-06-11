@@ -1,0 +1,41 @@
+- if params[:import].present?
+  %main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+    %section.menus
+      .eventDetailSection.relative.clear
+        = render :partial => "/admin/dashboards/breadcumb_links",:locals => {:name => params[:controller],:page => 'New User Registration'}
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.p-t-75
+          .p-40.ml-card-holder
+            .mdl-card.mdl-color--grey-100
+              .p-b-40.p-r-40.p-l-40
+                = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+- else
+  = render :partial => 'form'
+/ - if @user_registration.errors.present?
+/   -# @user_registration.errors.each do |key,value|
+/     =# "#{@registration[key]["label"]} #{value} </br>".html_safe
+/ - if @registration_setting.present? and @registration_setting.template.present? and @registration_setting.template == "custom"
+/   / - if @registration.custom_js.present?
+/   /   :javascript
+/   /     #{@registration.custom_js}
+/   / - if @registration.custom_css.present?
+/   /   :css
+/   /     #{@registration.custom_css.html_safe}
+/   = @registration.custom_source_code.html_safe rescue nil
+/ - else
+/   - if params[:import].present?
+/     = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+/   - else
+/     = render :partial => 'form'
+/   - if false
+/     %main.mdl-layout__content.mdl-color--grey-100.page.ng-scope.RegistrationLayout
+/       %section.menus
+/         .eventDetailSection.relative.clear.middleHeading
+/           = render :partial => "/admin/dashboards/breadcumb_links",:locals => {:name => params[:controller],:page => 'New User Registration'}
+/           .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.p-t-75
+/             .p-40.ml-card-holder.mob-p-20
+/               .mdl-card.mdl-color--grey-100
+/                 .p-b-40.p-r-40.p-l-40.mob-p-l-0.mob-p-r-0
+/                   - if params[:import].present?
+/                     = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+/                   - else
+/                     = render :partial => 'form'

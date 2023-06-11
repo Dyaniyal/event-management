@@ -1,0 +1,86 @@
+- obj = @conversation
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section.menus
+    .relative.clear
+      %header#topbar.alt
+        .topbar-left
+          %ol.breadcrumb  
+            %li.breadcrumb-icon
+              = image_tag("coloured_icons/conversations.png")
+        .displayInlineBlock
+          %h3.mdl-color-text--red.m-t-20 
+            = @conversation.description.truncate(10) rescue nil
+            %a.editLink.rededitLink{:href => edit_admin_event_conversation_path(:event_id => @event.id, :id => @conversation.id)}
+              %i.material-icons edit
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.m-t-75
+    .p-40
+      .save_button.mdl-card.mdl-shadow--1dp.agendaheight.p-b-10
+        .mdl-tabs.mdl-js-tabs.ProfileTabLeft
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            %h4.heading-border.p-t-10.m-b-15
+              = obj.description
+              = show_field("total number of Response ", obj.comments.count) rescue nil
+          #starks-panel.mdl-tabs__panel.is-active
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+              .ml-card-holder
+                %div
+                  %form.ng-pristine.ng-valid{:action => "#"}
+                    .mdl-grid                       
+                      = show_field("Email : ", obj.user.email) rescue nil
+                      = show_field("User Name : ", obj.user.name_of_the_invitee)  rescue nil
+                      = show_field("Comments Count : ", obj.comments.count)  rescue nil
+                      = show_field("Likes Count : ", obj.likes.count) rescue nil
+                      = show_field("Company Name : ", obj.user.company_name) rescue nil
+                      .mdl-cell--5-col.mdl-cell--4-col-tablet.m-8
+                        %p.no-m-b
+                          %strong Picture:
+                          %span
+                            - if obj.image.url(:thumb) == "/images/thumb/missing.png"
+                              = ""
+                            - else
+                              = image_tag obj.image_url(:thumb) 
+          #feedback-panel
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.feed
+              %h4.heading-border.p-t-10.m-b-15
+                Comment Information
+                %a{:href => 'javascript:void(0);', :class =>'helpTag FeedBackHide'}
+                  show 
+            #starks-panel.FeedBackComment
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+                .ml-card-holder
+                  %div
+                    %form.ng-pristine.ng-valid{:action => "#"}
+                      .mdl-grid
+                        - if obj.comments.present?
+                          - obj.comments.each do |comment|
+                            - user = comment.user
+                            .m-8.mdl-cell--12-col
+                              = show_field_newQuestion("Comment : ", comment.description) rescue nil
+                            = show_field("Name : ", user.name_of_the_invitee ) rescue nil
+                            = show_field("Company : ", user.company_name) rescue nil
+                            = show_field("Date : ", formatted_time(comment.created_at_with_event_timezone, "%Y-%m-%d %H:%M"))
+                            .feedbackBorder  
+                        - else
+                          .p-20
+                            %p= "No Comments"    
+            #feedback-panel
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.feed
+              %h4.heading-border.p-t-10.m-b-15
+                Like Information
+                %a{:href => 'javascript:void(0);', :class =>'helpTag FeedBackHide'}
+                  show 
+            #starks-panel.FeedBackComment
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+                .ml-card-holder
+                  %div
+                    %form.ng-pristine.ng-valid{:action => "#"}
+                      .mdl-grid
+                        - if obj.likes.present?
+                          - obj.likes.each do |like|
+                            - user = like.user
+                            .m-8.mdl-cell--12-col
+                            = show_field("Name : ", user.name_of_the_invitee ) rescue nil
+                             
+                        - else
+                          .p-20
+                            %p= "No Likes"           

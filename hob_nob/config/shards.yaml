@@ -1,0 +1,13 @@
+octopus:
+  replicated: true
+  environments:
+    - production
+  production:
+    shard_one:
+      adapter: mysql2
+      encoding: utf8mb4
+      collation: utf8mb4_unicode_ci
+      host: dbshobizread.c6yiaaaxxz5r.ap-southeast-1.rds.amazonaws.com
+      database: shobiz_production
+      username: dbusrshobiz
+      password: pwdshobiz

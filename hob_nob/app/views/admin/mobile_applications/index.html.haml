@@ -1,0 +1,4 @@
+- if @select.present? and @mobile_applications.present?
+  = render :partial => '/layouts/select_mobile_app_popup', :locals => {:url => "/admin/clients/#{params[:client_id]}/mobile_applications", :objs => @mobile_applications, :prompt_message => 'Select Mobile Application'}
+- else
+  = render :partial => 'admin/layouts/index_header', :locals =>{:objs =>@mobile_applications}

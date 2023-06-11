@@ -1,0 +1,160 @@
+%header.mdl-color--blue-grey-900.mdl-color-text--blue-grey-50
+  .brand-logo.logoImg.leftlicenseeImg
+    - licensee_admin = current_user.get_licensee_admin
+    - if licensee_admin.present?
+      %a.brand-logo.darken-1{:href => "javascript:void(0);"}
+        %img{:alt => "materialize logo", :src => licensee_admin.licensee_logo.url(:thumb)}
+  -if false
+    .clear.leftlicenseeImg
+      .f-left.m-l-30.m-r-10.m-t-5
+        %img.demo-avatar.img-responsive{:src => "/assets/icons/workspace.svg"}
+      .f-left
+        %a.mdl-color-text--blue-grey-800.m-t-5.no-m-b{:href => "javascript:void(0);"}
+          =current_user.first_name
+        .mdl-color-text--blue-grey-700.f12.m-b-10.mailtxt
+          %span.m-b-5
+            =current_user.email   
+    .demo-avatar-dropdown.mailtxt
+      %span
+        =current_user.email
+%ul.demo-navigation.mdl-navigation.menuclickTab.mdl-color--grey-800{"close-others" => "false", "ml-menu" => ""}
+  - if !current_user.has_role? :telecaller and !current_user.has_role? :client_response_manager
+    %li
+      %a.mdl-navigation__link.menuclick{:href => admin_dashboards_path}
+        %i.mdl-color-text--white.material-icons> supervisor_account
+        Dashboard
+    - if current_user.has_role? "super_admin"    
+      %li{:class => (params[:action] == "index" and params["controller"] == "admin/licensees" ? " active" : "")}
+        = link_to admin_licensees_path, :class=> "mdl-navigation__link" do
+          %i.mdl-color-text--white.material-icons> supervisor_account
+          Manage Licensees
+    - if current_user.has_role? 'super_admin'
+      %li{:class => (params["controller"] == "admin/themes" ? " active" : "")}
+        =link_to admin_themes_path,:class=>"mdl-navigation__link" do
+          %i.mdl-color-text--white.material-icons> settings
+          Manage Themes
+    - if current_user.has_role? 'super_admin'
+      %li{:class => (params["controller"] == "admin/manage_mobile_apps" ? " active" : "")}
+        -if false
+          =link_to  admin_manage_mobile_apps_path,:class=>"mdl-navigation__link" do
+            %i.mdl-color-text--white.material-icons> settings
+            Manage Mobile Apps
+        %a.mdl-navigation__link.menuclick{:href => "/admin/manage_mobile_apps"}
+          = image_tag("black_&_white_icons/mobileapp_img.png")
+          Manage Mobile Apps
+    - if !current_user.has_role? "super_admin"
+      - if @check_mo_app_status
+        - if params[:client_id].present? 
+          - url = "/admin/clients/#{params[:client_id]}/mobile_applications"
+        -elsif params[:event_id].present?
+          - client_id = Event.get_event_by_id(params[:event_id]).client_id
+          - url = "/admin/clients/#{client_id}/mobile_applications"
+        - else
+          - url = "/admin/clients?feature=mobile_applications"
+        %a.mdl-navigation__link.menuclick{:href => url}
+          = image_tag("black_&_white_icons/mobileapp_img.png")
+          Mobile Apps
+      -if false
+        - if params[:client_id].present? 
+          - url = "/admin/clients/#{params[:client_id]}/events?feature=invitee_structures"
+        -elsif params[:event_id].present?
+          - url = "/admin/events/#{params[:event_id]}/invitee_structures"
+        - else
+          - url = "/admin/clients?feature=invitee_structures" 
+        %a.mdl-navigation__link.menuclick{:href => url}
+          = image_tag("black_&_white_icons/database_img.png")
+          Database
+        %a.mdl-navigation__link.menuclick{:href => 'javascript:void(0);'}
+          = image_tag("black_&_white_icons/communication_img.png")
+          Communication 
+        %a.mdl-navigation__link.menuclick{:href => 'javascript:void(0);'}
+          = image_tag("black_&_white_icons/microsite_img.png")
+          Microsite
+        - action = @event.registrations.present? ? "#{@event.registrations.first.id}/edit" : "new"
+        - if params[:client_id].present? 
+          - url = "/admin/clients/#{params[:client_id]}/events?feature=registrations"
+        -elsif params[:event_id].present?
+          - path = @event.registrations.present? ? "#{@event.registrations.first.id}/edit" : "new"
+          - url = "/admin/events/#{params[:event_id]}/registrations/#{path}"
+        - else
+          - url = "/admin/clients?feature=registrations" 
+        %a.mdl-navigation__link.menuclick{:href => url}
+          = image_tag("black_&_white_icons/registration_img.png")
+          Registration
+        %a.mdl-navigation__link.menuclick{:href => 'javascript:void(0);'}
+          = image_tag("black_&_white_icons/travel_img.png")
+          Travel
+        %a.mdl-navigation__link.menuclick{:href => 'javascript:void(0);'}
+          = image_tag("black_&_white_icons/housing_img.png")
+          Housing
+        %a.mdl-navigation__link.menuclick{:href => 'javascript:void(0);'}
+          = image_tag("black_&_white_icons/social-media_img.png")
+          Social Media
+        %a.mdl-navigation__link.menuclick{:href => 'javascript:void(0);'}
+          = image_tag("black_&_white_icons/social-media_img.png")
+          Engagement
+        %a.mdl-navigation__link.menuclick{:href => 'javascript:void(0);'}
+          = image_tag("black_&_white_icons/feedback_img.png")
+          Feedback
+        %a.mdl-navigation__link.menuclick{:href => 'javascript:void(0);'}
+          = image_tag("black_&_white_icons/leads_img.png")
+          Leads
+      - if !(current_user.has_role? :db_manager) and @check_mo_app_status    
+        -if @event.present? #params[:id].present?
+          - url = "/admin/clients/#{@event.client_id}/events/#{@event.id}?analytics=true"
+        - elsif @client.present? #params[:client_id].present? 
+          - url = "/admin/clients/#{@client.id}/events?feature=analytics"
+        - else
+          - url = "/admin/clients?feature=analytics" 
+        %a.mdl-navigation__link.menuclick{:href => url}
+          = image_tag("black_&_white_icons/Analytics_img.png")
+          Analytics
+      / - if current_user.roles.pluck(:name).uniq.count > 1
+      /   - url = "/admin/change_roles/new" 
+      /   %a.mdl-navigation__link.menuclick{:href => url}
+      /     = image_tag("black_&_white_icons/Role_Change.png")
+      /     Change Role
+  .brand-logo.bdrtop.hobnobBottom
+    %a.brand-logo.darken-1{:href => "javascript:void(0);"}
+      = image_tag("hb_reverse")
+     
+    -if false
+      .collapseHide
+      
+      ///////////mobile application down side menu//////////////////
+
+      
+      - if @event.present?
+        - mobile_application = @event.mobile_application
+      - if params[:event_id].present? and mobile_application.present? or (params[:controller] == "admin/events" and params[:action] == "show" and params[:id].present? and mobile_application.present?)     
+        %ul.mdl-navigation{:style => "display: #{ul_setup(params[:action],params[:controller])}"}
+          - features = ["speakers", "invitees", "agendas", "polls", "conversations", "faqs", "qnas", "awards", "feedbacks", "e_kits", "images"]
+          - constant_features = ['themes','event_features','event_highlights', 'highlight_images', 'abouts', 'contacts', 'emergency_exits', 'notifications']
+          - if params[:event_id].present?
+            - @event = Event.get_event_by_id(params[:event_id]) #Event.find(params[:event_id])
+            - constant_features.each do |feature|   
+              = render :partial => "layouts/feature_link", :locals => {:feature => feature}
+            - selected_features = @event.event_features.map{|ef| ef.name.pluralize.downcase}
+            - selected_features.each do |feature|
+              - if feature == 'galleries'
+                = render :partial => "layouts/feature_link", :locals => {:feature => 'images'}
+                - features = features - ['images']
+              - elsif feature != 'notes' and feature != 'abouts'
+                = render :partial => "layouts/feature_link", :locals => {:feature => feature}
+            - features = features - selected_features
+            - if features.length > 0
+              %li      
+                %a.mdl-navigation__link.menuSubclick{:href => 'javascript:void(0)'}
+                  .absolute.rightarrow
+                    %i.material-icons
+                      %span.mdl-color-text--green.ng-binding arrow_drop_up
+                  %i.mdl-color-text--blue-grey-400.material-icons> apps
+                  Add More
+                %ul.mdl-navigation.SubMenucollapseHide{:style => "display: #{ul_setup(params[:action],params[:controller])}"}
+                  - features.each do |feature|   
+                    = render :partial => "layouts/feature_link", :locals => {:feature => feature}
+          - else
+            - constant_features.each do |feature|   
+              = render :partial => "layouts/feature_link", :locals => {:feature => feature}
+            - features.each do |feature|   
+              = render :partial => "layouts/feature_link", :locals => {:feature => feature}

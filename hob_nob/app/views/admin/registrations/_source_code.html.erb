@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hobnob</title>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <%= javascript_include_tag "user_registration" %>
+    <%= csrf_meta_tags %>
+    <style>
+    .clear{clear: both;}
+    .formInfo {
+      margin: 40px auto 0px;
+      max-width: 600px;
+      text-align: center;
+      width: 100%;
+      }
+      .field{
+      clear: both;
+      display: block;
+      margin-bottom: 2px;
+      overflow: hidden;
+      }
+      label {
+        float: left;
+        margin-right: 15px;
+        text-align: right;
+        width: 30%;
+        }
+      .formfield {
+      float: left;
+      margin-left: 15px;
+      text-align: left;
+      width: 60%;
+      margin-bottom: 15px;
+      }
+      .formfield > span {
+      display: block;
+    }
+    </style>
+    <script type="text/javascript">
+
+    </script>
+  </head>
+  <body>
+    <div class="formInfo">
+      <%= form_for [:admin, @event, @user_registration] do |f| %>
+        <p>Registration</p>
+        <% @registration.attributes.except('id', 'created_at', 'updated_at', 'event_id', 'custom_css','custom_js', 'custom_source_code','email_field','parent_id').map{|key, value| (value['label'].present? and value['option_type'].present?) ? [key,value] : nil}.compact!.each do |key,hsh| %>
+          <% if hsh['label'].present? and hsh['option_type'] == 'Radio Button' %>
+            <div class="field">
+              <%= f.label "#{hsh['label']}" %>
+              <% if hsh['option_1'].present? %>
+              <div class="formfield">
+                <span>
+                  <%= f.radio_button key, "#{hsh['option_1']}" %>
+                  <%= hsh['option_1'] %>
+                </span>
+              <% end %>
+              <% if hsh['option_2'].present? %>
+                <span>
+                  <%= f.radio_button key, "#{hsh['option_2']}" %>
+                  <%= hsh['option_2'] %>
+                </span>
+              <% end %>
+              <% if hsh['option_3'].present? %>
+                <span>
+                  <%= f.radio_button key, "#{hsh['option_3']}" %>
+                  <%= hsh['option_3'] %>
+                </span>
+              <% end %>
+              <% if hsh['option_4'].present? %>
+                <span>
+                  <%= f.radio_button key, "#{hsh['option_4']}" %>
+                  <%= hsh['option_4'] %>
+                </span>
+              </div>
+              <% end %>
+            </div>
+          <% end %>
+        <% if hsh['label'].present? and hsh['option_type'] == 'Check Box' %>
+          <div class="field">
+            <%= f.label "#{hsh['label']}" %>
+            <% if hsh['option_1'].present? %>
+            <div class="formfield">
+              <span>
+                <%= check_box_tag "user_registration[#{key}][]","#{hsh['option_1']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_1']}") ? "checked" : false), :id => "user_registration_#{key}_1" %>
+                <%= "#{hsh['option_1']}" %>
+              </span>
+            <% end %>
+            <% if hsh['option_2'].present? %>
+              <span>
+                <%= check_box_tag "user_registration[#{key}][]","#{hsh['option_2']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_2']}") ? "checked" : false), :id => "user_registration_#{key}_2" %>
+                <%= "#{hsh['option_2']}" %>
+              </span>
+            <% end %>
+            <% if hsh['option_3'].present? %>
+              <span>
+                <%= check_box_tag "user_registration[#{key}][]","#{hsh['option_3']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_3']}") ? "checked" : false), :id => "user_registration_#{key}_3" %>
+                <%= "#{hsh['option_3']}" %>
+              </span>
+            <% end %>
+            <% if hsh['option_4'].present? %>
+              <span>
+                <%= check_box_tag "user_registration[#{key}][]","#{hsh['option_4']}",(params[:action] == "create" and params[:user_registration].present? and params[:user_registration].key? (key.to_sym) and params[:user_registration][key.to_sym].include?("#{hsh['option_4']}") ? "checked" : false), :id => "user_registration_#{key}_4" %>
+                <%= "#{hsh['option_4']}" %>
+              </span>
+            </div>
+            <% end %>
+          </div>
+        <% end %>
+        <% if hsh['label'].present? and hsh['option_type'] == 'Text Box' %>
+          <div class="field">
+            <%= f.label "#{hsh['label']}" %>
+            <div class="formfield">
+            <%= f.text_field key %>
+            </div>
+          </div>
+        <% end %>
+        <% if hsh['label'].present? and hsh['option_type'] == 'Text Area' %>
+          <div class="field">
+            <%= f.label "#{hsh['label']}" %>
+             <div class="formfield"> 
+              <%= f.text_area key %>
+              </div>
+          </div>
+        <% end %>
+        <% if hsh['label'].present? and hsh['option_type'] == 'Date Picker' %>
+          <div class="field">
+            <%= f.label "#{hsh['label']}" %>
+            <div class="formfield">
+              <%= f.text_field key %>
+            </div>
+          </div>
+        <% end %>
+          <% if hsh['label'].present? and hsh['option_type'] == 'Drop-Down list' %>
+            <div class="field">
+              <%= f.label "#{hsh['label']}" %>
+              <div class="formfield">
+                <% drop_down_items = [] %>
+                <% if "#{hsh['option_1']}".present? %>
+                  <% drop_down_items << "#{hsh['option_1']}" %>
+                <% end %>
+                <% if "#{hsh['option_2']}".present? %>
+                  <% drop_down_items = drop_down_items << "#{hsh['option_2']}" %>
+                <% end %>
+                <% if "#{hsh['option_3']}".present? %>
+                  <% drop_down_items = drop_down_items << "#{hsh['option_3']}" %>
+                <% end %>
+                <% if "#{hsh['option_4']}".present? %>
+                  <% drop_down_items = drop_down_items << "#{hsh['option_4']}" %>
+                <% end %>
+                <%= f.select(key, drop_down_items.collect{|p|[p,p]}, {:selected => f.object["#{key}"].present? ? f.object["#{key}"] : '' , :prompt => 'Select Option Type'}) %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+        <div class="clear"></div>
+        <div class="field">
+          <%= f.submit "REGISTER" %>
+        </div>
+      <% end %>
+    </div>
+  </body>
+</html>

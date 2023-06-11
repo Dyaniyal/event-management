@@ -1,0 +1,39 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin
+      - if params[:feature] == "mobile_application" and params[:mobile_application_id].present?
+        - url = new_admin_client_event_path(:client_id => @client.id, :mobile_application_id => params[:mobile_application_id]) 
+      - else 
+        - url = admin_clients_path(:client_id => @client.id,:feature=>"events", :redirect_page=>"new")      
+      = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "events", :url => url, :msg => 'test'}
+    - else
+      = index_nodata_message("events") 
+- else      
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+    %tr
+      %th Event Name
+      %th Language
+      %th Status
+      %th
+    - objs.each_with_index do |event,index|
+      %tr
+        %td.font16
+          - if event.status == "rejected"
+            = event.event_name
+          - else
+            = link_to event.event_name, admin_event_mobile_application_path(:event_id => event.id, :id => event.mobile_application.id)
+        %td.font16
+          = event.primary_language
+        %td.font16
+          %button{:class => get_status_class(event)}
+            = event.status.capitalize rescue nil
+        %td.IconDrp
+          - if !current_user.has_role? :moderator or !(@resource_role.present? and @resource_role.name == 'moderator') and !(current_user.has_role? :db_manager)
+            = more_vert_button(event.id)
+            %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{event.id}"}
+              - if user_signed_in? and (current_user.has_role?(:licensee_admin))
+                - event.aasm.events.each do |eve|
+                  - if ['publish', 'unpublish','rejected'].exclude? eve.name.to_s
+                    = link_to "#{eve.name.to_s.titlecase}".html_safe,{:action=>"update", :controller=>"admin/multi_lng_events", :id => event.id, :status => eve.name.to_s}, :method => "put", :data => { confirm: 'Are you sure, you want to change the status.'},:class => "mdl-menu__item"
+                    
+  = will_paginate objs

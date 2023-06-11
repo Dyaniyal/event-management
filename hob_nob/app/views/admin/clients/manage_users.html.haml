@@ -1,0 +1,52 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope               
+  %section.tables-data
+    .ml-header.relative.clear.mdl-color--light-blue-800
+      .mdl-grid.mdl-grid--no-spacing
+        .mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet
+          %h3.mdl-color-text--white.m-t-15.p-l-40.p-v-20 Manage Users
+        = render :partial => 'search_users', :locals => {:@url => manage_users_admin_client_path(:id => @client.present? ? @client.id : params[:id])}
+    .mdl-grid.HideSearchBlog
+      .p-h-25.ml-card-holder
+        = render :partial => 'users_advance_search', :locals => {:@url => manage_users_admin_client_path(:id => @client.present? ? @client.id : params[:id])}
+    .mdl-grid.mdl-grid--no-spacing
+      .mdl-cell.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+        .p-35.ml-card-holder.ml-card-holder-first.HeaderHeight
+          .mdl-card.mdl-shadow--1dp.m-b-30.clients
+            .mdl-card__title.mdl-color--light-blue-600.mdl-typography--text-right.displayBlock
+              %h2.mdl-card__title-text.mdl-color-text--white.displayBlock.mdl-typography--text-right.displayBlock.mdl-typography--text-right
+                = @users.count rescue nil
+                User 
+            %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16{"template-pagination" => "custom/pager"}
+              %tr
+                %th
+                  Name
+                %th 
+                  Email
+                %th 
+                  Status
+                %th
+                
+                - if @users.present?
+                  - @users.each do |user|         
+                    %tr
+                      %td.font16
+                        = user.first_name.capitalize rescue nil
+                      %td.font16
+                        = user.email rescue nil
+                      %td.font16
+                        = user.status.capitalize rescue nil
+                      %td.IconDrp
+                        %button.mdl-button.mdl-js-button.mdl-button--icon{:id => "demo-menu-lower-right#{user.id}"}
+                          %i.material-icons more_vert
+                        %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{user.id}"}
+                          - if user_signed_in? and (current_user.has_any_role? :super_admin, :licensee_admin)
+                            = link_to edit_admin_user_path(:id => user.id), :class => "mdl-menu__item" do
+                              Edit
+                            - user.aasm.events.each do |eve|
+                              = link_to "#{eve.name.to_s.titlecase}".html_safe,{:action=>"update", :controller=>"admin/licensees", :id => user.id, :status => eve.name.to_s}, :method => "put", :class => "mdl-menu__item"
+                            = link_to "/admin/assign_role_to_user?resource_type=client&resource_id=#{@client.id}&user_id=#{user.id}&role=client_admin&link=#{request.path_info}", :class => "mdl-menu__item" do
+                              Add Client Admin
+        
+      = render :partial => 'admin/users/add_user_link', :locals => {:page => 'client'}   
+
+      

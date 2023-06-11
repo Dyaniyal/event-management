@@ -1,0 +1,35 @@
+!!!
+%html
+  %title Hobnob
+  = favicon_link_tag 'fevicon.png'
+  %body{:bgcolor => "#f5f5f5", :leftmargin => "0", :marginheight => "0", :marginwidth => "0", :offset => "0", :topmargin => "0"}
+    %table#bgtable.tableMail{:align => "center", :bgcolor => "#f5f5f5", :border => "0", :cellpadding => "0", :cellspacing => "20", :height => "100%", :width => "100%"}
+      %tr
+        %td{:align => "center", :valign => "top"}
+          %p{:style =>"padding:0%;"}
+            - if @edm.opt_for_unsubscribe == true
+              = link_to "#{APP_URL}/admin/events/#{@event.id}/campaigns/#{@edm.campaign_id}/edms/#{@edm.id}?user_email=#{@email}&preview=true", :target => "_blank",:style => "color: #C0C0C0;" do
+                Click here
+
+              if you cannot view this email correctly.
+              = link_to "#{APP_URL}/admin/events/#{@event.id}/campaigns/#{@edm.campaign_id}/edms/#{@edm.id}?user_email=#{@email}&unsubscribe=true&preview=true",:style => "color: #C0C0C0;" do
+                Unsubscribe
+
+          %table{:align => "center", :bgcolor => "#fff", :cellpadding => "0", :cellspacing => "0", :style => " font-family:Arial,Helvetica,sans-serif;border-collapse:collapse;font-size:14px; color: #3f3f3f;top:25%;left:0;right:0;", :width => "600" , }
+            %tr
+              %td 
+            - if @edm.header_image_file_name.present?
+              %tr{:style => "text-align:center;"}
+                %td{:height => "105", :width => "600"}
+                  %p{:style => "margin:0 auto;"}
+                    %a{:href => "javascript:void(0);"}
+                      / - if @edm.header_image_file_name.present?
+                      = image_tag(@edm.header_image.url, :alt => "Event Logo")
+                    -# else
+
+                    / %img{:src => "assets/event-logo2.jpg", :style => "width:100%;"}/
+                / <p style="font-size:20px;">Logo</p>
+            - if @smtp_setting.blank? and params[:controller] == "admin/edms" and params[:action] == "show"
+              = render :partial => '/user_mailer/default_template_body.html.haml', :locals => {:@edm => @edm}
+            - else
+              = render :partial => 'default_template_body.html.haml'

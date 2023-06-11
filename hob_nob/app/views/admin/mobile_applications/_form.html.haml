@@ -1,0 +1,513 @@
+= javascript_include_tag "jquery-1.11.3.min", "pick-a-color-1.2.0.min", "tinycolor", "jquery.fancybox"
+.save_button
+  - path = @event.nil? ? @client : @event
+  - @client = @client.blank? ? @event.client : @client
+  = form_for [:admin, path, @mobile_application],:html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+    - if params[:step] != "look_feel"
+      .mdl-grid.mdl-shadow--1dp.mdl-card.p-b-15
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.displaybolck.p-t-10
+            General Information
+            / %a{:href => '/whats_this/app_info/general_information/AppInfo_GeneralInformation_1.JPG', :class =>'helpTag testhelp fancybox', :rel=> "mobil_app_general_section", :title => "(App Info General Information)"}
+            /   what's this?
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => {"App Icon" => "AppInfo_GeneralInformation_2.JPG"}, :section_id => "mobil_app_general_section", :path => "app_info/general_information"}
+        = hidden_field_tag :event_id, params[:event_id]
+        = f.hidden_field :client_id, :value => "#{@event.client_id rescue nil}"
+        - if params[:old_one].present?
+          = hidden_field_tag :old_one, params[:old_one]
+        - if f.object.events.count <= 1
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+            .mdl-grid.p-v-5.form-group.mobiappstype
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt  Application type *
+              - if @event.marketing_app.blank?
+                .col-lg-7.p-h-12
+                  = f.custom_radio_button :application_type, "single event", "Single Event", :id => "option1"
+                  = f.custom_radio_button :application_type, "multi event", "Multi Event", :id => "option2"
+              - elsif @event.marketing_app == true
+                .col-lg-7.p-h-12
+                  = f.custom_radio_button_for_marketing_app :application_type, "single event", "Single Event", :id => "option1", "default" => "false","read_only" => "true"
+                  = f.custom_radio_button_menu :application_type, "multi event", "Multi Event",:id => "option2",:default_checked => 'checked'
+              .col-lg-1
+                = link_to "?" ,"/whats_this/app_info/general_information/AppInfo_ApplicationType.jpg", rel: "event_bg_image", title: "Application type", :class =>'fancybox whatsImg appwhatsthis'
+        = f.custom_text_field :name, "Application Name *", :view_popup => {:image_path => "app_info/general_information/AppInfo_Application_Name.jpg", :rel=> "mobil_app_application_name", :title => "Application Name"}
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+          .form-group.set_highlight_select
+            %label.col-lg-4.control-label.ml-color--shades-white
+              Select template
+              %br
+              %a{:href => '/whats_this/template/template-01.jpg', :class =>'fancybox', :rel=> "temp_app_master_section", :title => "Splash Screen"}
+                (View Available Templates)
+            = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => {"Login Screen" => "template-02.jpg","Event Listing Screen" => "template-03.jpg","Event Highlight " => "template-04.jpg","Event Feature Screen" => "template-05.jpg","Drawer Screen" => "template-06.jpg","About" => "template-07.jpg","Agenda Listing" => "template-08.jpg","Agenda" => "template-09.jpg","Agenda Rating" => "template-10.jpg","Attendees" => "template-11.jpg","Speaker Listing" => "template-12.jpg","Speaker " => "template-13.jpg","Speaker Rating " => "template-14.jpg","FAQ's" => "template-15.jpg","Q&A" => "template-16.jpg","Conversations" => "template-17.jpg","Gallery Listing" => "template-18.jpg","Gallery" => "template-19.jpg","Awards Listing" => "template-20.jpg","Polls Listing" => "template-21.jpg","Polls" => "template-22.jpg","Polls Response" => "template-23.jpg","Feedback" => "template-24.jpg","E-kit Listing" => "template-25.jpg","E-kit Details" => "template-26.jpg","E-kit" => "template-27.jpg","Notes" => "template-28.jpg","Notes Listing" => "template-29.jpg","Venue" => "template-30.jpg","Contact Us" => "template-31.jpg"}, :section_id => "temp_app_master_section",:path => "template"}
+            .col-lg-7
+              %i.arrow.single
+              = f.select(:template_id, "", [['Template 1', 1]], {:selected => 'Template 1'},{:class=> 'select2-single form-control'})
+            .span.col-lg-1
+              = link_to("?" ,"/whats_this/app_info/general_information/AppInfo_SelectTemplate.png", rel: "selecte_template", title: "Selecte Template", :class =>"fancybox whatsImg")
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+          .bs-component
+            .form-group{:class => "#{@mobile_application.app_icon_file_name.present? ? "has-success" : "#{@mobile_application.new_record? ? "div-none" : "has-warning"}"}"}
+              .span.col-lg-4
+                = f.label "App Icon (180x180px) png only ",:class =>"control-label", style: "float: right;"
+                - if (current_user.has_role? :licensee_admin and @mobile_application.app_icon_file_name.present? and ["edit","update"].include? params[:action])
+                  %br
+                  = link_to "(Download App Icon)",edit_admin_event_mobile_application_path(:event_id => params[:event_id],:id => params[:id],:download_image => "true",:image_name => @mobile_application.app_icon_file_name,:image_url=>@mobile_application.app_icon.url), style: "float: right;"
+              .col-lg-7.Closetheme
+                %label.field.file
+                  %span.button.btn-primary
+                    Choose File
+                  = f.file_field :app_icon,:id => "uploadBtn1", :class=>"gui-file"
+                  = text_field_tag("text_file_name","", id: "1uploadBtn1", class: "gui-input", :value => "#{f.object.app_icon_file_name.nil? ? "there is no Attachment Available !" : f.object.app_icon_file_name}", :read_only => true)
+
+
+        / = f.new_custom_file_browser_field :app_icon, "App Icon (180x180px) png only", :id => "app_icon_uploadBtn", :value => f.object.app_icon_file_name, :action=> params[:action], :view_popup => {:image_path => "app_info/general_information/AppInfo_AppIcon.jpg", :rel=> "mobil_app_app_icon", :title => "App icon"}
+        / - if (current_user.has_role? :licensee_admin and @mobile_application.app_icon_file_name.present?)
+        /   = link_to "(Download App Icon)",edit_admin_event_mobile_application_path(:event_id => params[:event_id],:id => params[:id],:download_image => "true",:image_name => @mobile_application.app_icon_file_name,:image_url=>@mobile_application.app_icon.url)
+      - if @event.present? and @event.marketing_app == true
+        .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+            %h4.heading-border.displaybolck.p-t-10
+              Time Zone
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+            .form-group.set_highlight_select
+              %label.col-lg-4.control-label.ml-color--shades-white
+                Time Zone *
+              .col-lg-7
+                - if @event.start_event_time.present?
+                  - @zones = ActiveSupport::TimeZone.all.uniq{|e| ["GMT#{e.at(@event.start_event_time).formatted_offset}"]}
+                  = f.select :timezone_landing_app, :timezone, @zones.map{|e| ["GMT#{e.at(@event.start_event_time).formatted_offset}", e.name]}.sort,{:prompt => "Please select the Time Zone" ,:selected => (@event.timezone)}, {:class => 'select2-single form-control'}
+                  / - if @event.errors.present? and @event.errors[:timezone].present?
+                  /   .field_with_errors
+                  /     %span.errorMessage{:for => "event_timezone"} This field is required.
+                - else
+                  - @zones = ActiveSupport::TimeZone.all.uniq{|e| ["GMT#{e.now.formatted_offset}"]}
+                  = f.select :timezone_landing_app, :timezone, @zones.map{|e| ["GMT#{e.now.formatted_offset}", e.name]}.sort,{:prompt => "Please select the Time Zone" ,:selected => (@event.timezone)}, {:class => 'select2-single form-control'}
+                  - if @event.errors.present? and @event.errors[:timezone].present?
+                    .field_with_errors
+                      %span.errorMessage{:for => "event_timezone"} This field is required.
+
+      .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+          %h4.heading-border.displaybolck.p-t-10
+            Master Screens
+            / %a{:href => '/whats_this/app_info/master_screens/AppInfo_MasterScreens_1.JPG', :class =>'helpTag testhelp fancybox', :rel=> "mobil_app_master_section", :title => "(App Info Master Screens)", :path => "app_info/master_screens"}
+            /   what's this?
+        = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => {"Master Screen 2" => "AppInfo_MasterScreens_2.JPG","Master Screen 3" => "AppInfo_MasterScreens_3.JPG"}, :section_id => "mobil_app_master_section", :path => "app_info/master_screens"}
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+          .bs-component
+            .form-group{:class => "#{@mobile_application.splash_screen_file_name.present? ? "has-success" : "#{@mobile_application.new_record? ? "div-none" : "has-warning"}"}"}
+              .span.col-lg-4
+                = f.label "Splash Screen (960X1600px) png only ",:class =>"control-label", style: "float: right;"
+                - if (current_user.has_role? :licensee_admin and @mobile_application.splash_screen_file_name.present? and ["edit","update"].include? params[:action])
+                  %br
+                  = link_to "(Download Splash Screen)",edit_admin_event_mobile_application_path(:event_id => params[:event_id],:id => params[:id],:download_image => "true",:image_name => @mobile_application.splash_screen_file_name,:image_url=>@mobile_application.splash_screen.url), style: "float: right;"
+              .col-lg-7.Closetheme
+                %label.field.file
+                  %span.button.btn-primary
+                    Choose File
+                  = f.file_field :splash_screen,:id => "uploadBtn2", :class=>"gui-file"
+                  = text_field_tag("text_file_name","", id: "1uploadBtn2", class: "gui-input", :value => "#{f.object.splash_screen_file_name.nil? ? "there is no Attachment Available !" : f.object.splash_screen_file_name}", :read_only => true)
+        / = f.new_custom_file_browser_field :splash_screen, "Splash Screen (960X1600px) png only", :id => "splash_screen_uploadBtn", :value => f.object.splash_screen_file_name, :action=> params[:action], :view_popup => {:image_path => "app_info/master_screens/master_AppInfo_SplashScreen.jpg", :rel=> "mobil_app_splash_screen", :title => "Splash Screen"}
+        / - if (current_user.has_role? :licensee_admin and @mobile_application.splash_screen_file_name.present?)
+        /   = link_to "(Download Splash Screen)",edit_admin_event_mobile_application_path(:event_id => params[:event_id],:id => params[:id],:download_image => "true",:image_name => @mobile_application.splash_screen_file_name,:image_url=>@mobile_application.splash_screen.url)
+        - if false #f.object.new_record? or f.object.events.count == 1
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.errorMess
+            .mdl-grid.p-v-5.form-group
+              .col-lg-4.mdl-typography--text-right.m-b-10
+                %p.displayInlineBlock.multicitytxt Do you need login after splash screen? *
+              .col-lg-7.p-h-12
+                = f.custom_radio_button :login_at, "Yes", "Yes", :id => "option4"
+                = f.custom_radio_button :login_at, "No", "No", :id => "option5"
+
+        =# f.new_custom_file_browser_field :listing_screen_background, "Listing Screen Background (960X1600px) only", :id => "listing_screen_uploadBtn", :value => f.object.listing_screen_background_file_name, :action=> params[:action], :display => "#{(f.object.application_type == 'multi event' or params[:action] == "new") ? "true" : "false"}", :view_popup => {:image_path => "app_info/master_screens/master_AppInfo_ListingScreenBackground.jpg", :rel=> "mobil_app_listing_screen_background", :title => "Listing Screen Background"}
+        - if (f.object.marketing_app_event_id.blank? and @event.marketing_app.blank?)
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+            .bs-component{:style => "display: #{(f.object.application_type == 'multi event' or params[:action] == "new") ? "" : "none"}"}
+              .form-group{:class => "#{@mobile_application.listing_screen_background.present? ? "has-success" : "#{@mobile_application.new_record? ? "div-none" : "has-warning"}"}"}
+                .span.col-lg-4#listing_screen_background_label
+                  = f.label "Listing Screen Background (960X1600px) only ",:class =>"control-label", style: "float: right;"
+                  - if (current_user.has_role? :licensee_admin and @mobile_application.listing_screen_background.present? and ["edit","update"].include? params[:action])
+                    %br
+                    = link_to "(Download Listing Screen Background)",edit_admin_event_mobile_application_path(:event_id => params[:event_id],:id => params[:id],:download_image => "true",:image_name => @mobile_application.listing_screen_background_file_name,:image_url=>@mobile_application.listing_screen_background.url), style: "float: right;"
+                .col-lg-7.Closetheme
+                  %label.field.file
+                    %span.button.btn-primary
+                      Choose File
+                    = f.file_field :listing_screen_background,:id => "listing_screen_uploadBtn", :class=>"gui-file"
+                    = text_field_tag("text_file_name","", id: "1listing_screen_uploadBtn", class: "gui-input", :value => "#{f.object.listing_screen_background_file_name.nil? ? "there is no Attachment Available !" : f.object.listing_screen_background_file_name}", :read_only => true)
+          = f.custom_text_field_display :listing_screen_text_color, "Listing Screen Text Color *", :value => @mobile_application.listing_screen_text_color, :class => 'pick-a-color', :display => "#{(f.object.application_type == 'multi event' or params[:action] == "new") ? "true" : "false"}", :view_popup => {:image_path => "app_info/master_screens/master_AppInfo_ListingScreenTextColor.jpg", :rel=> "mobil_app_listing_screen_text_color", :title => "Listing Screen Text Color"}
+        - else
+          = f.hidden_field :listing_screen_text_color, :value => "000000"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.errorMess.allEventListing{:style => "display: #{((f.object.application_type.present? and f.object.application_type == "multi event") and (@event.present? and @event.login_at.present? and @event.login_at == "After Splash")) ? "" : "none"}"}
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right.m-b-10
+              %p.displayInlineBlock.multicitytxt Display all events on Listing Screen? 
+            .col-lg-7.p-h-12  
+              = f.custom_radio_button :all_events_listing, 'yes', "Yes", :id => "option4", :default_checked => (f.object.all_events_listing == 'yes') ? 'checked' : ''
+              = f.custom_radio_button :all_events_listing, 'no', "No", :id => "option5", :default_checked => (f.object.all_events_listing == 'no') ? 'checked' : ''
+            .col-lg-4.mdl-typography--text-right.m-b-10
+            .col-lg-7.p-h-12
+              By selecting No, the logged-in User will only see events he is invited to.
+      .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+          %h4.heading-border.displaybolck.p-t-10
+            Login
+        - if params[:event_id].present?
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+            / {:style => "display: #{select_login_at}"}
+            .form-group{:class => "#{params[:action] == "new" ? "" : "has-success"}"}
+              %label.col-lg-4.control-label.ml-color--shades-white
+                Where do you need Login?
+              .col-lg-7
+                %i.arrow.single
+                - data = [["After Splash Screen", "After Splash"],["Before User Interaction","Before Interaction"]]
+                - data << ["After Event Highlights","After Highlight"] if @mobile_application.application_type != "single event"
+                = f.select("event", "login_at", data , {:selected => "#{@event.login_at if @event.present?}"}, {include_blank: 'None',:class=> 'select2-single form-control',:onclick =>"answers();"})
+                - if f.object.new_record? or @event.present? and @event.event_features.pluck(:name).exclude? 'event_highlights'
+                  .field_with_errors#displayhighlight_message{:style => "display: #{(f.object.new_record? or @event.present? and @event.event_features.pluck(:name).exclude? 'event_highlights' and @event.login_at != 'After Highlight' ) ? 'none' : ''}"}
+                    .span{:class => "errorMessage"}
+                      = 'Kindly active Event Highlights feature to set login at After highlights'
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8
+          .bs-component
+            .form-group{:style => "display: #{ get_login_at(@event,f.object)}", :class => "#{get_highlight_class(f.object)}" }
+              .span.col-lg-4
+                = f.label "Login screen background (960X1600px) only",:class =>"control-label", style: "float: right;"
+                - if (current_user.has_role? :licensee_admin and @mobile_application.login_background.present? and ["edit","update"].include? params[:action])
+                  %br
+                  = link_to "(Download Login screen background)",edit_admin_event_mobile_application_path(:event_id => params[:event_id],:id => params[:id],:download_image => "true",:image_name => @mobile_application.login_background_file_name,:image_url=>@mobile_application.login_background.url), style: "float: right;"
+              .col-lg-7
+                %label.field.file
+                  %span.button.btn-primary
+                    Choose File
+                  = f.file_field :login_background,:id => "login_background_uploadBtn", :class=>"gui-file"
+                  = text_field_tag("text_file_name","", id: "1login_background_uploadBtn", class: "gui-input", :value => "#{f.object.login_background_file_name.nil? ? "there is no Attachment Available !" : f.object.login_background_file_name}", :read_only => true)
+              - if @mobile_application.present? and @event.present? and params[:action] == "edit" and @mobile_application.login_background_file_name.present?
+                .col-lg-1
+                  = link_to admin_event_mobile_application_path(:event_id => @event.id, :id => @event.mobile_application_id,:remove_image => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                    %span
+                      X
+              .span.col-lg-1
+                = link_to("?" ,"/whats_this/app_info/master_screens/AppInfo_LoginScreenBackground.png", rel: "login_background_popup", title: "Login screen background", :class =>"fancybox whatsImg")
+        - if true
+          %p.OrTxt.login_background_color{:style => "display: #{(@event.login_at == 'Before Interaction' or @event.login_at == 'After Highlight') ? "none" : "" if @event.present?} "}
+            or
+          = f.custom_text_field_display1 :login_background_color, "Login screen background Color", :value => @mobile_application.login_background_color, :class => 'pick-a-color', :display => "#{(@event.login_at == 'Before Interaction'or @event.login_at == 'After Highlight') ? "false" : "true" if @event.present?}", :view_popup => {:image_path => "app_info/master_screens/AppInfo_LoginScreenBackground.png", :rel=> "login_background_color", :title => "Login screen background Color"}, :highlight_class => "#{get_highlight_class1(f.object)}"
+        
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.errorMess.agreeTerms
+          .mdl-grid.p-v-5.form-group
+            .col-lg-4.mdl-typography--text-right.m-b-10
+              %p.displayInlineBlock.multicitytxt Require User agreeing to T&C's? *
+            .col-lg-7.p-h-12  
+              - er = f.object.errors.messages[:agreeing_terms_and_conditions].join(',') rescue nil
+              - f.object.errors.messages[:agreeing_terms_and_conditions].clear if f.object.errors.messages[:agreeing_terms_and_conditions].present?
+              = f.custom_radio_button :agreeing_terms_and_conditions, 'yes', "Yes", :id => "option6", :default_checked => (f.object.agreeing_terms_and_conditions == 'yes') ? 'checked' : ''
+              = f.custom_radio_button :agreeing_terms_and_conditions, 'no', "No", :id => "option7", :default_checked => (f.object.agreeing_terms_and_conditions == 'no') ? 'checked' : ''
+              .field_with_errors
+                .span{:class => "errorMessage"}
+                  = er
+
+        = f.custom_text_field :user_agreement_text, "Disclaimer Text (max 100 characters) *",'background' => "false"
+        
+        = f.custom_text_field :url_1_text, "URL 1 text",'background' => "false"
+        
+        = f.custom_text_field :url_1_link, "URL 1 link",'background' => "false"
+        
+        = f.custom_text_field :url_2_text, "URL 2 text",'background' => "false"
+        
+        = f.custom_text_field :url_2_link, "URL 2 link",'background' => "false"
+        
+
+        -if (f.object.marketing_app_event_id.blank? and @event.marketing_app.blank?)
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            .mdl-grid.p-v-5.socialMediaRadioBtn
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt  Do you need Social Media Login?
+              .col-lg-3.p-h-12
+                = f.custom_radio_button_menu :social_media_status, "active","Yes", :id => "url_page_type", :default_checked => (f.object.social_media_status == 'active') ? 'checked' : ''
+                = f.custom_radio_button_menu :social_media_status, "deactive","No", :id => "build_new_page_type", :default_checked => (f.object.social_media_status == 'deactive') ? 'checked' : ''
+
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess.md-checkboxsocialcheck.socialIconChkbox.socialMedialogins{:style => "display: #{(f.object.social_media_status.present? and f.object.social_media_status == "active") ? "" : "none"}"}
+          .form-group.mobiappstype
+            .col-lg-4.mdl-typography--text-right
+            .col-lg-7.p-h-12.socialchk.paddingChkbox
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                - er = f.object.errors.messages[:social_media_logins].join(',') rescue nil
+                - f.object.errors.messages[:social_media_logins].clear if f.object.errors.messages[:social_media_logins].present?
+                %label.help-tip{:for => "social_login_1"}
+                  = check_box_tag "mobile_application[social_media_logins][]","facebook",(f.object.social_media_logins.present? and f.object.social_media_logins.include?("facebook") ? "checked" : false), :id => "social_login_1"
+                  %span.checkbox
+                  %span.top3
+                    Facebook
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                %label.help-tip{:for => "social_login_2"}
+                  = check_box_tag "mobile_application[social_media_logins][]","twitter",(f.object.social_media_logins.present? and f.object.social_media_logins.include?("twitter") ? "checked" : false), :id => "social_login_2"
+                  %span.checkbox
+                  %span.top3
+                    Twitter
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                %label.help-tip{:for => "social_login_3"}
+                  = check_box_tag "mobile_application[social_media_logins][]","instagram",(f.object.social_media_logins.present? and f.object.social_media_logins.include?("instagram") ? "checked" : false), :id => "social_login_3"
+                  %span.checkbox
+                  %span.top3
+                    Instagram
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                %label.help-tip{:for => "social_login_4"}
+                  = check_box_tag "mobile_application[social_media_logins][]","google_plus",(f.object.social_media_logins.present? and f.object.social_media_logins.include?("google_plus") ? "checked" : false), :id => "social_login_4"
+                  %span.checkbox
+                  %span.top3
+                    Google +
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8.chkbox_input_div
+                %label.help-tip{:for => "social_login_5"}
+                  = check_box_tag "mobile_application[social_media_logins][]","linked_in",(f.object.social_media_logins.present? and f.object.social_media_logins.include?("linked_in") ? "checked" : false), :id => "social_login_5"
+                  %span.checkbox
+                  %span.top3
+                    LinkedIn
+                .field_with_errors
+                  .span{:class => "errorMessage"}
+                    = er
+
+      / .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15
+      /   .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+      /     %h4.heading-border.displaybolck.p-t-10
+      /       Login details
+      /     = f.custom_text_area_field :message_above_login_page, "Login Message"
+      /     = f.custom_text_area_field :registration_message, "Registration Message"
+      /     = f.custom_text_field :registration_link, "Registration Link"
+
+      .mdl-grid.mdl-shadow--1dp.mdl-card.m-t-40.p-b-15
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5
+          %h4.heading-border.displaybolck.p-t-10
+            Registration
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Allow Sign Ups *
+            .col-lg-3.p-h-12   
+              - er = f.object.errors.messages[:visitor_registration].join(',') rescue nil
+              - f.object.errors.messages[:visitor_registration].clear if f.object.errors.messages[:visitor_registration].present?
+              = f.custom_radio_button :visitor_registration, "yes","Yes", :id => "visitor_registration_yes"
+              = f.custom_radio_button :visitor_registration, "no", "No", :id => "visitor_registration_no"
+              .field_with_errors
+                .span{:class => "errorMessage"}
+                  = er
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8
+          .bs-component.registration_background_image{:style => "display: #{(f.object.visitor_registration.present? and f.object.visitor_registration == "yes") ? "" : "none"}"}
+            .form-group{:class => "#{get_highlight_class(f.object)}" }
+              .span.col-lg-4
+                = f.label "Registration background Image",:class =>"control-label", style: "float: right;"
+              .col-lg-7
+                %label.field.file
+                  %span.button.btn-primary
+                    Choose File 
+                  = f.file_field :visitor_registration_background_image,:id =>"registration_background_image_uploadBtn", :class=>"gui-file"
+                  = text_field_tag("text_file_name","", id:"1registration_background_image_uploadBtn", class: "gui-input", :value => "#{f.object.visitor_registration_background_image_file_name.nil? ? "there is no Attachment Available !" : f.object.visitor_registration_background_image_file_name}")
+        %p.OrTxt.registration_background_image{:style => "display: #{(f.object.visitor_registration.present? and f.object.visitor_registration == "yes") ? "" : "none"}"}
+          or
+        .registration_background_color.col-lg-12{:style => "display: #{(f.object.visitor_registration.present? and f.object.visitor_registration == "yes") ? "" : "none"}"}
+          = f.custom_text_field :visitor_registration_background_color, "Registration Background Color", :value => f.object.visitor_registration_background_color, :class => 'pick-a-color',:admin_theme => "#{(f.object.visitor_registration_background_color.present?) ? "has-success" : ""}"
+      /***********************/
+      
+
+    / .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+    /   .form-group.set_highlight_select
+    /     %label.col-lg-4.control-label.ml-color--shades-white
+    /       Time Zone *
+    /     .col-lg-7
+    /       - if @event.start_event_time.present?
+    /         - @zones = ActiveSupport::TimeZone.all.uniq{|e| ["GMT#{e.at(@event.start_event_time).formatted_offset}"]}
+    /         = f.select :event, :timezone, @zones.map{|e| ["GMT#{e.at(@event.start_event_time).formatted_offset}", e.name]}.sort,{:prompt => "Please select the Time Zone" ,:selected => (@event.timezone)}, {:class => 'select2-single form-control'}
+    /         - if @event.errors.present? and @event.errors[:timezone].present?
+    /           .field_with_errors
+    /             %span.errorMessage{:for => "event_timezone"} This field is required.
+    /       - else
+    /         - @zones = ActiveSupport::TimeZone.all.uniq{|e| ["GMT#{e.now.formatted_offset}"]}
+    /         = f.select :event, :timezone, @zones.map{|e| ["GMT#{e.now.formatted_offset}", e.name]}.sort,{:prompt => "Please select the Time Zone" ,:selected => (@event.timezone)}, {:class => 'select2-single form-control'}
+    /         - if @event.errors.present? and @event.errors[:timezone].present?
+    /           .field_with_errors
+    /             %span.errorMessage{:for => "event_timezone"} This field is required.
+
+    - if false#f.object.events.count > 0
+      .mdl-grid.mdl-shadow--1dp.m-t-40
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.displaybolck
+            Manage Event
+          - f.object.events.each do |event|
+            .mdl-cell--12-col.mdl-cell--12-col-tablet
+              .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mobileeventTxt
+                = event.event_name
+                = link_to "  View Features", admin_event_mobile_application_path(:event_id => event.id, :id => @mobile_application.id), :class => "centerAlign mobileditSize"
+                = ' | '
+                = link_to 'Remove Event', admin_client_events_path(:client_id => f.object.client_id, :event_id => event.id, :feature => 'mobile_application', :type => 'remove'), :data => {:confirm => 'Do you want to remove the event from the mobile application'}, :class => 'mobileditSize'
+    - if params[:event_id].present? and params[:step] == "look_feel"
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.m-b-30.p-t-10
+            Look & Feel
+        = hidden_field_tag :type, "edit_event"
+        = hidden_field_tag :step, "select_theme"
+        = f.fields_for :event do |event|
+          .mdl-cell--8-col.mdl-cell--8-col-tablet.m-8
+            .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+              = label_tag 'Your App is currently using the '
+              = link_to "Default Template Theme","https://www.google.com", :target => "_blank"
+          .mdl-cell--6-col.mdl-cell--4-col-tablet.ml-color--shades-white.m-8.m-t-30
+            %p.displayInlineBlock.multicitytxt You can
+            = event.custom_radio_button2 :event_theme, "select from available theme","select from available theme", :id => "option-1"
+            = f.fields_for :event do |event|
+              .mdl-cell--6-col.mdl-cell--4-col-tablet.m-8
+                .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                  = event.select(:theme_id, "", @themes.collect {|p| [ p.name, p.id ]}, {:prompt => 'Theme Name'}, {include_blank: 'None'})
+            = event.custom_radio_button2 :event_theme, "create your own theme", "create your own theme", :id => "option-2"
+    .fixed-activon-btn-new
+      = f.custom_submit_button "SAVE" if params[:step] != "look_feel" #f.object.new_record?
+      = f.custom_submit_button "NEXT" if params[:step] == "look_feel"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+
+- if (@mobile_application.agreeing_terms_and_conditions.present? and @mobile_application.agreeing_terms_and_conditions == "no") or (@mobile_application.agreeing_terms_and_conditions.blank?)
+  :javascript
+    $("#user_agreement_text_label").parent().parent().hide()
+    $("#mobile_application_url_1_text").parent().parent().hide()
+    $("#mobile_application_url_1_link").parent().parent().hide()
+    $("#mobile_application_url_2_text").parent().parent().hide()
+    $("#mobile_application_url_2_link").parent().parent().hide()
+- elsif (@mobile_application.agreeing_terms_and_conditions.present? and @mobile_application.agreeing_terms_and_conditions == "yes")
+  :javascript
+    $("#user_agreement_text_label").parent().parent().show()
+    $("#mobile_application_url_1_text").parent().parent().show()
+    $("#mobile_application_url_1_link").parent().parent().show()
+    $("#mobile_application_url_2_text").parent().parent().show()
+    $("#mobile_application_url_2_link").parent().parent().show()
+
+:javascript
+  $(window).load(function(){
+    $(".pick-a-color").pickAColor({
+      showSpectrum            : true,
+      showSavedColors         : true,
+      saveColorsPerElement    : true,
+      fadeMenuToggle          : true,
+      showAdvanced            : true,
+      showHexInput            : true,
+      showBasicColors         : true,
+      allowBlank              : true
+    });
+
+    abc();
+
+    $("input").on("change", function () {
+        abc();
+    });
+
+  });
+
+  function abc(){
+    var textval1 = $('#mobile_application_login_background_color').val();
+     $('.hex-pound.input-group-addon').css('opacity', '0');
+    if(textval1 != ''){
+       $('#mobile_application_login_background_color').prev('.input-group-addon').css('opacity', '1');
+    }
+    else{
+      $(this).parent('.pick-a-color-markup').children('.input-group-addon').hide();
+    }
+
+    var textval2 = $('#mobile_application_listing_screen_text_color').val();
+     $('.hex-pound.input-group-addon').css('opacity', '0');
+    if(textval2 != ''){
+       $('#mobile_application_listing_screen_text_color').prev('.input-group-addon').css('opacity', '1');
+    }
+    else{
+      $(this).parent('.pick-a-color-markup').children('.input-group-addon').hide();
+    }
+
+  }
+
+
+  function answers(){
+    var answer=document.getElementById("event_login_at");
+    if(answer[answer.selectedIndex].value=="Before Interaction"){
+      $("#login_background_uploadBtn").parent().parent().parent().hide();
+      $("#mobile_application_login_background_color").parent().parent().parent().hide();
+      $(".login_background_color").hide();
+      $("#eventlisting_screen_uploadBtn").parent().parent().parent().parent().hide()
+      $("#displayhighlight_message").hide()
+      $(".agreeTerms").show()
+    }
+    if(answer[answer.selectedIndex].value=="After Splash"){
+      $("#login_background_uploadBtn").parent().parent().parent().show();
+      $("#mobile_application_login_background_color").parent().parent().parent().show();
+      $(".login_background_color").show();
+      $("#eventlisting_screen_uploadBtn").parent().parent().parent().parent().show()
+      $("#displayhighlight_message").hide()
+      $(".agreeTerms").show()
+    }
+    if(answer[answer.selectedIndex].value=="After Highlight"){
+      $("#login_background_uploadBtn").parent().parent().parent().hide();
+      $("#mobile_application_login_background_color").parent().parent().parent().hide();
+      $(".login_background_color").hide();
+      $("#eventlisting_screen_uploadBtn").parent().parent().parent().parent().hide()
+      $("#displayhighlight_message").show()
+      $(".agreeTerms").show()
+    }
+  }
+
+
+  $("#option1").click(function(){
+    $("#listing_screen_background_label").hide()
+    $("#listing_screen_uploadBtn").parent().parent().parent().parent().hide();
+    $("#listing_screen_uploadBtn").parent().parent().parent().prev('label').hide()
+    $("#this_listing_screen_uploadBtn").hide();
+    $("#event_login_at option[value='After Highlight']").remove();
+    $("#mobile_application_listing_screen_text_color").parent().parent().parent().hide();
+    $(".allEventListing").hide();
+  });
+
+  $("#option2").click(function(){
+    $("#listing_screen_background_label").show()
+    $("#listing_screen_uploadBtn").parent().parent().parent().parent().show()
+    $("#listing_screen_uploadBtn").parent().parent().parent().prev('label').show()
+    $("#this_listing_screen_uploadBtn").show();
+    var assignedRoleId = new Array();
+    $('#event_login_at option').each(function(){
+      assignedRoleId.push(this.value);
+    });
+    if (jQuery.inArray("After Highlight", assignedRoleId) == -1)
+    {
+      $("#event_login_at").append($("<option value='After Highlight'>After Event Highlights</option>"));
+    }
+    $("#mobile_application_listing_screen_text_color").parent().parent().parent().show();
+    $(".allEventListing").show();
+  });
+
+  $("#url_page_type").click(function(){
+    $(".socialMedialogins").show()
+  });
+
+  $("#build_new_page_type").click(function(){
+    $(".socialMedialogins").hide()
+  });
+
+  $("#visitor_registration_yes").click(function(){
+    $(".registration_background_image").show()
+    $(".registration_background_color").show()
+  });
+
+  $("#visitor_registration_no").click(function(){
+    $(".registration_background_image").hide()
+    $(".registration_background_color").hide()
+  });
+
+  $("#option6").click(function(){
+    $("#user_agreement_text_label").parent().parent().show()
+    $("#mobile_application_url_1_text").parent().parent().show()
+    $("#mobile_application_url_1_link").parent().parent().show()
+    $("#mobile_application_url_2_text").parent().parent().show()
+    $("#mobile_application_url_2_link").parent().parent().show()
+  });
+  $("#option7").click(function(){
+    $("#user_agreement_text_label").parent().parent().hide()
+    $("#mobile_application_url_1_text").parent().parent().hide()
+    $("#mobile_application_url_1_link").parent().parent().hide()
+    $("#mobile_application_url_2_text").parent().parent().hide()
+    $("#mobile_application_url_2_link").parent().parent().hide()
+  });

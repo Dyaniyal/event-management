@@ -1,0 +1,29 @@
+- if params[:controller] == "admin/invitees"
+  .mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.newsearchlaypout.HideTabularData
+    = form_tag  admin_event_invitees_path(:event_id => @event.id) , :method => :get , id: "search-form" do |f|
+      .mdl-js-textfield.mdl-textfield--floating-label.mdl-grid.f-right.m-r-25.m-t-10 
+        #select-container.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.mdl-cell--6-col.mdl-cell--5-col-tablet.mdl-cell--12-col-phone.search_header
+          = custom_basic_text_field_tag "search""[keyword]", "", basic_search_value(params)
+          = hidden_field_tag :admin_search, "true"
+        = custom_basic_button_tag "search"
+        = link_to admin_event_invitees_path(:event_id => @event.id), :class => "back_btn_header" do
+          Back
+-elsif false
+  %form#searchFrm
+    = form_tag admin_event_invitee_searches_path(:event_id => @event.id) , :method => :get , id: "search-form" do |f|
+      .tab1-searchDiv
+        %span.searchText Search:
+        = text_field_tag "search""[keyword]"#, "", basic_search_value(params)
+        = hidden_field_tag :admin_search, "true"
+        -if local_assigns[:invitee].present?
+          = hidden_field_tag :value, "printBadge"
+        -if local_assigns[:attendee].present?  
+          = hidden_field_tag :value, "attendee"
+        = hidden_field_tag :full_search, "true"
+      .tab1-searchBtn
+        = submit_tag "Search"
+  .back
+    = link_to "Back", admin_event_invitee_searches_path(:event_id => @event.id)  
+    / %input#searchBtn.search-butt{:name => "searchBtn", :type => "button", :value => "Search"}/
+
+

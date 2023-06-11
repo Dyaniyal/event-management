@@ -1,0 +1,21 @@
+<%- if @telecaller.present? and @email.present?%>
+  $("#userform").html('<%= escape_javascript(render :partial => "admin/telecallers/telecaller_form", :locals => {:@telecaller => @telecaller, :@telecaller_group => @telecaller_group}) %>');
+  $("#userform").show();
+<%- else @email.blank?%>
+  $("#userform").hide();
+<%- end%>
+
+$(document).ready(function(){
+  $('.customCheckboxClick').click(function() {
+    check_status = $(".customCheckboxClick").find(":checkbox").eq(0).prop("checked") == true;
+    if(check_status){
+      $('input:checkbox:not("#event_user_ids_All")').prop('checked', false);
+      $('input:checkbox:not("#event_user_ids_All")').prop('disabled', true);
+      $(".customCheckboxClick").find(":checkbox").eq(0).prop('checked', true);
+      $(".customCheckboxClick").find(":checkbox").eq(0).prop('disabled', false);          
+    }
+    else{
+    $('input:checkbox:not("#event_user_ids_All")').prop('disabled', false);
+    } 
+  });
+});  

@@ -1,0 +1,20 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => 'faqs', :url => "/admin/events/#{params[:event_id]}/groupings/new", :msg => " "} 
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt
+    = get_search_data("groupings")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+    %tr
+      %th Name
+      %th  
+    - objs.each_with_index do |grouping,index|
+      %tr
+        %td
+          = grouping.name rescue nil
+        %td.IconDrp
+          = more_vert_button(grouping.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{grouping.id}"}
+            = edit_link(params, grouping.id)
+            = delete_link(params, grouping.id)

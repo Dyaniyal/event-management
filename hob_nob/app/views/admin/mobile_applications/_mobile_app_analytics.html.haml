@@ -1,0 +1,190 @@
+:javascript
+  var LINECATEGORY = #{@xaxis_interval_labels_and_interval[0]}
+  var OVERALL_ENGAGEMENT = #{@user_engagements.to_json}
+  var DONUTCHART1ARRAY = #{@unique_users}
+  var DONUTCHART2ARRAY = #{@active_users}
+  var INTERVALXAXIS = #{@xaxis_interval_labels_and_interval[1]}
+
+= stylesheet_link_tag 'c3'
+= javascript_include_tag 'jquery-ui.min-dash', 'highcharts', 'd3.min', 'c3.min', 'circles', 'jquery.jvectormap.min', 'jquery-jvectormap-us-lcc-en', 'utility', 'demo-dash', 'main', 'dash-widgets', 'dash-widgets_sidebar', 'dashboard'
+- breadcrum_image = {"themes" => "themes.png","event_features"=>"menu.png","notifications" => "notification.png", "event_highlights"=>"event_highlights.png","highlight_images"=>"gallery.png","contacts"=>"contact_us.png","emergency_exits"=>"emergency_exit.png", "abouts" => "about.png", "speakers" => "speakers.png", "agendas" => "agenda.png", "invitees" => "invitees.png", "awards" => "awards_2.png", "polls" => "polls_1.png", "conversations" => "conversations.png", "faqs" => "faq.png", "e_kits" => "e-kit.png", "qnas" => "Q&A.png", "feedbacks" => "feedback.png", "images" => "galler_1y.png", "mobile_applications" => "mobile-app.png", "winners" => "winner.png", "panels" => "panel_1.png", "dashboards" => "dashboard.png", "events" => "event.png", "clients" => "client.png", "users" => "user_3.png", "licensees" => "licensee.png", "imports" => "invitees.png", "push_pem_files" => "user-permission.png", "store_infos" => "mobile-app.png", "menus" => "user-permission.png","sponsors" => "sponsor.png", "invitee_structures" => "database.png","registrations"=>"registration.png", "profiles" => "my_profile.png", "quizzes" =>"polls.png", "exhibitors" => "polls.png", 'qr codes' => 'qr_code.png',"maps" => "map.png"}
+.mobileventSearch
+  / {:style => "display: #{select_login_at}"}
+  = form_tag "/admin/events/#{params[:event_id]}/mobile_applications/#{params[:id]}?analytics=true", :class => 'form-group FilterTab', :id => 'FirstFilterTab', :method => :get do |f|
+    %label.col-lg-6.control-label
+      
+    .col-lg-6
+      %i.arrow.single
+      = hidden_field_tag :analytics, true
+      = select_tag 'filter_date', options_for_select([['today', 'Today'], ['Last 7 Days', "last 7 days"], ['Pick a Date Range', "date range"]], :selected => params[:filter_date]), :prompt => 'Apply Filter', :class => 'select2-single form-control'
+      - if false
+        %select.select2-single.form-control
+          %option{:value => "today"} Today
+          %option{:value => "last 7 days"} Last 7 Days
+          %option{:value => "date range"} Pick a Date Range
+  = form_tag "/admin/events/#{params[:event_id]}/mobile_applications/#{params[:id]}?analytics=true", :class => 'form-group HideDateEvent', :method => :get do |f|
+    = hidden_field_tag :analytics, true
+    = hidden_field_tag :filter_date, 'date range'
+    .col-lg-4
+      %i.arrow.single
+      = hidden_field_tag :analytics, true
+      = select_tag 'filter_date', options_for_select([['today', 'Today'], ['Last 7 Days', "last 7 days"], ['Pick a Date Range', "date range"]], :selected => params[:filter_date]), :prompt => 'Apply Filter', :class => 'select2-single form-control'
+      - if false
+        %select.select2-single.form-control
+          %option{:value => "today"} Today
+          %option{:value => "last 7 days"} Last 7 Days
+          %option{:value => "date range"} Pick a Date Range
+    .col-lg-3.startdatePadding
+      %input.form-control{:col => "12", :name => "start_date", :type => "text", :value => params[:start_date].present? ? params[:start_date] : "", :id => "date-start", :placeholder => "Start Date"}
+    .col-lg-3
+      %input.form-control{:col => "12", :name => "end_date", :type => "text", :value => params[:end_date].present? ? params[:end_date] : "", :id => "date-end", :placeholder => "End Date"}
+    .col-lg-2.mdl-color--light-blue-900.borderradius
+      %span.publishBtn
+        = submit_tag 'Filter'
+
+
+.allcp-panels.fade-onload
+  .row
+    .col-md-12.allcp-grid
+      #pchart6.panel
+        .panel-heading
+          %span.panel-title.text-info.fw600
+            %i.fa.fa-pencil.hidden
+            Overall engagement 
+        .panel-menu.br3.mt20
+          .chart-legend{"data-chart-id" => "#high-line3"}
+            - highColors = {'Conversation' => '#4FD8B0', 'Favorite' => '#67D3E0', 'Rating' => '#C3D62D', 'Q&A' => '#FF7022', 'Poll' => '#F5393D', 'Feedback' => '#AEBF25', 'e-Kit' => '#5A5386', 'QR code scans' => '#2a2f43', 'Quizzes' => '#FFBC0B'}.each_with_index do |feature, index|
+              %a.legend-item.btn.btn-sm{:style => "background:#{feature[1]}", "data-chart-id" => index, :type => "button"}
+                = feature[0]
+        .panel-body.pn
+          #high-line3{"data-highcharts-chart" => "6", :style => "width: 100%; height: 300px; margin: 0 auto"}/
+  = render :partial => 'admin/layouts/card_event', :locals => {:image_path => "coloured_icons/page-view_icon.png", :page_title => "Page views", :feature_count => @feature_count[0] }  
+  = render :partial => 'admin/layouts/card_event', :locals => {:image_path => "coloured_icons/conversations.png", :page_title => "Conversations", :feature_count => @feature_count[1] }
+  = render :partial => 'admin/layouts/card_event', :locals => {:image_path => "coloured_icons/Q&A.png", :page_title => "Questions asked", :feature_count => @feature_count[2] }
+  = render :partial => 'admin/layouts/card_event', :locals => {:image_path => "coloured_icons/notification.png", :page_title => "Notifications sent", :feature_count => @feature_count[3] }
+.row
+  .col-md-6
+    #tab1.panel
+      .panel-heading
+        %span.panel-title 
+          Unique users 15
+        %span.totalusers
+          (Total Users - 50 )
+       
+      .panel-body.p20.br-a.br6
+        #donut-chart2{:style => "height: 350px; width: 100%;"}
+      
+   
+    #tab2.panel
+      .panel-heading
+        %span.panel-title Top 3 Actions
+      .panel-body.scroller-sm
+        %table.table.mbn.tc-icon-bold.br-t
+          %thead
+            %tr.hidden
+              %th #
+              %th First Name
+          %tbody
+            - if @actions.present? and @actions[1].present?
+              - @actions[1].each do |action|
+                %tr
+                  %td
+                    %span
+                    = action[0]
+                  %td
+                    = action[1]
+                    =# "#{((action[1] / @actions[0].to_f) * 100).to_i} %" rescue "0 %"
+
+          
+    #tab3.panel
+      .panel-heading
+        %span.panel-title Top 3 Speakers 
+      .panel-body.scroller-sm
+        %table.table.mbn.tc-icon-bold.br-t
+          %thead
+            %tr.hidden
+              %th #
+              %th First Name
+          %tbody
+            - @speaker_ids.each do |speaker_id|
+              %tr
+                - speaker = Speaker.get_speaker(speaker_id)
+                %td
+                  %span.va-t.mr10.TopspeakerImg
+                    = image_tag('coloured_icons/speakers_2.png')
+                  = speaker.speaker_name
+                %td
+                  = calculate_rating(speaker,'speaker')
+            
+    
+  .col-md-6
+    #tab4.panel
+      .panel-heading
+        %span.panel-title Active users
+        
+      .panel-body.p20.br-a.br6
+        #donut-chart1{:style => "height: 350px; width: 100%;"}
+    #tab5.panel
+      .panel-heading
+        %span.panel-title 
+          Engagement gauge
+      .panel-body.pn
+        - if @event_features.present?
+          - @event_features[1].each do |feature|
+            .progress.progress-bar-xl.br4.mdl-color--grey-500
+              - percentage = "#{((feature[1] / @event_features[0].to_f) * 100).to_i}"
+              .progress-bar.progress-bar-system{"aria-valuemax" => "100", "aria-valuemin" => "0", "aria-valuenow" =>"#{percentage}", :role => "progressbar", :style => "width: #{percentage}%;"}
+                .pull-left.ph10.gauge
+                  = feature[0].titleize
+                  - if true#((feature[1] / @event_features[0].to_
+                    %span.pull-right.ph10.gaugevalue
+                      = "#{((feature[1] / @event_features[0].to_f) * 100).round} %" rescue "0 %" 
+              - if false#((feature[1] / @event_features[0].to_f) * 100).to_i < 30
+                %span.progressbarpercent{:style => 'float:right;padding-right:10px;'}
+                  = "#{((feature[1] / @event_features[0].to_f) * 100).round} %" rescue "0 %" 
+
+    #tab6.panel
+      .panel-heading
+        %span.panel-title Top 3 page views
+      .panel-body.scroller-sm
+        %table.table.mbn.tc-icon-bold.br-t
+          %thead
+            %tr.hidden
+              %th #
+              %th First Name
+          %tbody
+            - if @pages.present? and @pages[1].present?
+              - @pages[1].each do |page|
+                %tr
+                  %td
+                    %span.va-t.mr10.TopspeakerImg
+                      = image_tag("coloured_icons/#{breadcrum_image[page[0].pluralize.downcase]}")
+                    = page[0]
+                  %td
+                    = page[1]
+                    =# "#{((page[1] / @pages[0].to_f) * 100).to_i} %" rescue "0 %"
+- if params[:filter_date].present? and params[:filter_date] == 'date range'
+  :javascript  
+    $(".HideDateEvent").show();
+    $(".FilterTab").hide();
+:javascript
+  $(window).load(function(){
+    $(".select2-single").change(function(){
+      $(this).find("option:selected").each(function(){
+      if($(this).val() == 'date range'){
+        $(".HideDateEvent").show();
+        $(".FilterTab").hide();
+      }
+      else{
+        $("#FirstFilterTab").submit();
+      }
+
+    }).change();
+    });
+  });  
+
+
+
+  
+
+

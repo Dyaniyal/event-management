@@ -1,0 +1,54 @@
+.save_button.mdl-card.agendaHeight{:style => "margin-top: #{(@error_import.present? or @error_import == " ") ? "5%" : ""}"}
+  = form_for [:admin, @event, Import.new], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp.p-b-25
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          General Information
+          / %a{:href => 'javascript:void(0);', :class =>'helpTag testhelp'}
+          /   what's this?
+      = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "import_generalInfo.jpg", :section_id => "import_general_section"}
+      = f.new_custom_file_browser_field :import_file, 'import_file *', :id => "uploadBtn", :value => f.object.import_file_file_name, :action=> params[:action]
+      = f.hidden_field :importable_type, :value => "#{params[:importable_type] || params[:import][:importable_type] rescue nil}"
+      =# f.hidden_field :import, :value => params[:import]
+      = f.hidden_field :importable_id, :value => params[:event_id].present? ? params[:event_id] : params[:import][:importable_id]
+      = f.hidden_field :client_id, :value => @event.client_id.to_i
+      = hidden_field_tag :from, params[:from] if params[:from].present?
+      = hidden_field_tag :registration_type,params[:registration_type] if params[:registration_type].present?
+      .col-lg-4.mdl-typography--text-right 
+        - import_type = params[:importable_type] || params[:import][:importable_type] rescue ""
+        - if import_type == 'invitee_data'
+          %a{:href => "/admin/events/#{params[:event_id]}/invitee_structures.xls?sample_download=invitee_structure", :target => "_blank"}
+            %i.fa.fa-plus-square
+            %span Download Sample File
+        -elsif import_type == 'user_registration'
+          %a{:href => "/admin/events/#{params[:event_id]}/user_registrations.xls?sample_download=user_registration", :target => "_blank"}
+            %i.fa.fa-plus-square
+            %span Download Sample File
+        - elsif import_type == 'auto_status_email' and params[:registration_type] == "auto_approve"
+          %a{:href => "/admin/events/#{params[:event_id]}/imports/new?importable_type_sample=auto_approve_sample.xlsx", :target => "_blank"}
+            %i.fa.fa-plus-square
+            %span Download Sample File
+        - elsif import_type == 'auto_status_email' and params[:registration_type] == "auto_reject"
+          %a{:href => "/admin/events/#{params[:event_id]}/imports/new?importable_type_sample=auto_reject_sample.xlsx", :target => "_blank"}
+            %i.fa.fa-plus-square
+            %span Download Sample File
+        - else
+          %a{:href => "/admin/events/#{params[:event_id]}/imports/new?importable_type_sample=#{import_type}_sample.xlsx", :target => "_blank"}
+            %i.fa.fa-plus-square
+            %span Download Sample File
+      - if @error_import.present?
+        .field_with_errors
+          .span{:class => "errorMessage"}
+            = @error_import rescue nil
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+/ :javascript
+/   $(window).load(function(){
+/   $('.gui-file').change(function(){
+/     var filename = $(this)[0].files[0].name;
+/     $('.gui-input').val(filename);
+/     });
+/   })

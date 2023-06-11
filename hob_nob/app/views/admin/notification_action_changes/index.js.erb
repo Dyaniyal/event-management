@@ -1,0 +1,5 @@
+<%if @associated_data.present?%>
+	$('#notification_action_change').html("<%= escape_javascript render(:partial => 'admin/notifications/notification_action_change', :locals => { :data => @associated_data }) %>");
+<%else%>
+	$('#notification_action_change').html("")
+<%end%>

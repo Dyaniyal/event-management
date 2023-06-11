@@ -1,0 +1,21 @@
+%table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+  %tr
+    %th Email id
+    / %th Status
+    %th Remove From List
+  - objs.each do |unsubscribe_user|
+    %tr
+      %td.font16= unsubscribe_user.email
+      %td.font16= link_to 'Remove', admin_event_unsubscribe_path(@event, unsubscribe_user),method: :put, data: {confirm:'Are you sure, you want remove.'}
+      / %td.font16= unsubscribe_user.unsubscribe
+      / %td.IconDrp
+      /   = more_vert_button(unsubscribe_user.id)
+      /   %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{telecaller.id}"}
+      /     = edit_link(params, telecaller.id)
+      /     - if telecaller.telecaller_status =="active"
+      /       = link_to admin_event_telecallers_path(:event_id => params[:event_id],:id=>telecaller.id,:change_status=>"true",:status=>"deactive"), :class => "mdl-menu__item",data: {confirm:'Are you sure, you want change status.'} do
+      /         Deactive
+      /     - else
+      /       = link_to admin_event_telecallers_path(:event_id => params[:event_id],:id=>telecaller.id,:change_status=>"true",:status=>"active"), :class => "mdl-menu__item",data: {confirm:'Are you sure, you want change status.'} do
+      /         Active                        
+  = render :partial => 'admin/layouts/more_links'

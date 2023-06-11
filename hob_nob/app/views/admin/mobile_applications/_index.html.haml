@@ -1,0 +1,66 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "mobile_applications", :url => "/admin/clients/#{params[:client_id]}/events?feature=mobile_applications", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("mobile applications")
+- else 
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16.ng-scope.ng-table.manage-event{"template-pagination" => "custom/pager"}
+    %tr
+      %th Application Name
+      %th.test
+        .event_select123
+          Application Type
+        .event_cate
+          = form_tag admin_client_mobile_applications_url(:client_id => @client.id), :method => :get, :class=> "event_index_category_filter_form_for_mobile_application drop category_dropdown" do
+            = select_tag "search[order_by]",options_for_select([['All','All'],["Single Event","single event"],["Multi Event", "multi event"]], selected: (params[:search][:order_by] if params[:search].present?)), :id => 'search_application_type_by'
+            = hidden_field_tag :adv_search, true
+      %th Preview ID
+      %th.mobileEventsWidth Events
+      %th Add Events
+      %th Status
+      %th
+      - if objs.present?
+        - objs.each do |mob_application|         
+          %tr
+            %td.font16.eventNameLink
+              - if mob_application.events.length != 0
+                = link_to "#{mob_application.name}", "#{get_mobile_app_redirect_url(mob_application,"show")}" 
+              - else
+                = mob_application.name
+            -#%td.font16= mob_application.name.capitalize rescue nil
+            %td.font16= (mob_application.marketing_app_event_id.blank? ? mob_application.application_type.capitalize : mob_application.application_type == "multi event" ? "Hub Space" : "Multi event") rescue nil 
+            %td.font16= mob_application.preview_code
+            %td.font16
+              - mob_application.get_events(current_user,@events).each_with_index do |event, index|
+                = ', ' if index > 0
+                = link_to "#{event.event_name}", admin_event_mobile_application_path(:event_id => event.id, :id => event.mobile_application_id)
+            %td.font16
+              - if mob_application.application_type == 'multi event' or (mob_application.application_type == 'single event' and mob_application.events.count == 0)
+                - if !(current_user.has_role? :moderator or current_user.has_role? :db_manager)
+                  = link_to admin_client_events_path(:client_id => @client.id, :feature => 'mobile_application', :mobile_application_id => mob_application.id),:class => "rightBtn hvr-sweep-to-right tableBtnTxt addeventlist" do
+                    Add Event
+                - if false #mob_application.events.count > 1
+                  = link_to admin_client_events_path(:client_id => @client.id, :feature => 'mobile_application', :mobile_application_id => mob_application.id, :type => 'remove'),:class => "rightBtn hvr-sweep-to-right tableBtnTxt addeventlist" do
+                    Remove Event
+            %td.font16= mob_application.status.humanize.capitalize rescue nil
+            %td.IconDrp
+              -if !(current_user.has_role? :db_manager)
+                = more_vert_button(mob_application.id)
+                %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{mob_application.id}"}
+                  = link_to "#{get_mobile_app_redirect_url(mob_application,"edit")}",:class => "mdl-menu__item" do
+                    Edit
+                  - if mob_application.push_pem_file.present?
+                    = link_to edit_admin_client_mobile_application_push_pem_file_path(:client_id => mob_application.client_id, :mobile_application_id => mob_application.id, :id => mob_application.push_pem_file.id),:class => "mdl-menu__item" do
+                      Edit API Access Key
+                  - else
+                    = link_to new_admin_client_mobile_application_push_pem_file_path(:client_id => mob_application.client_id, :mobile_application_id => mob_application.id),:class => "mdl-menu__item" do
+                      Add API Access Key
+                  - mob_application.aasm.events.each do |eve|
+                    - if mob_application.store_info.present? and mob_application.store_info.published_by_hobnob == "no"
+                      = link_to "#{eve.name.to_s.titlecase}".html_safe,{:action=>"update", :controller=>"admin/mobile_applications", :id =>mob_application.id, :status => eve.name.to_s, :page => params[:page]}, :method => "put", :data => { confirm: 'Are you sure, you want to change the status.'},:class => "mdl-menu__item"
+  = will_paginate objs
+:javascript
+  $( document ).ready(function() {   
+    $('#search_application_type_by').select2();
+  });

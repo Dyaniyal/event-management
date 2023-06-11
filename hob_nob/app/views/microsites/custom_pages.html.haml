@@ -1,0 +1,49 @@
+.main-container{:style => "font-size: 20px;color: #333;"}
+  .main-content.about-content
+    .container
+      .text-center
+        - custom_page = @microsite.get_active_features.where(:name => "#{params[:page]}")
+        %h1{:style => "font-size:50px;"} #{custom_page.first.page_title}
+    .container
+      .text-center
+        - if params[:page] == "custom_page1s"
+          %p{:style => "color:#000;text-align:center;margin-top:7px !important;"}
+            %strong
+            #{@event.custom_page1s.first.present? ? @event.custom_page1s.first.description.html_safe : ""}
+        - elsif params[:page] == "custom_page2s"
+          %p{:style => "color:#000;text-align:center;margin-top:7px !important;"}
+            %strong
+            #{@event.custom_page2s.first.present? ? @event.custom_page2s.first.description.html_safe : ""}
+        - elsif params[:page] == "custom_page3s"
+          %p{:style => "color:#000;text-align:center;margin-top:7px !important;"}
+            %strong
+            #{@event.custom_page3s.first.present? ? @event.custom_page3s.first.description.html_safe : ""}
+        - elsif params[:page] == "custom_page4s"
+          %p{:style => "color:#000;text-align:center;margin-top:7px !important;"}
+            %strong
+            #{@event.custom_page4s.first.present? ? @event.custom_page4s.first.description.html_safe : ""}
+        - elsif params[:page] == "custom_page5s"
+          %p{:style => "color:#000;text-align:center;margin-top:7px !important;"}
+            %strong
+            #{@event.custom_page5s.first.present? ? @event.custom_page5s.first.description.html_safe : ""}
+        - elsif params[:page] == "custom_page6s"
+          %p{:style => "color:#000;text-align:center;margin-top:7px !important;"}
+            %strong
+            #{@event.custom_page6s.first.present? ? @event.custom_page6s.first.description.html_safe : ""}
+        - elsif params[:page] == "custom_page7s"
+          %p{:style => "color:#000;text-align:center;margin-top:7px !important;"}
+            %strong
+            #{@event.custom_page7s.first.present? ? @event.custom_page7s.first.description.html_safe : ""}
+        - elsif params[:page] == "custom_page8s"
+          %p{:style => "color:#000;text-align:center;margin-top:7px !important;"}
+            %strong
+            #{@event.custom_page8s.first.present? ? @event.custom_page8s.first.description.html_safe : ""}
+        - elsif params[:page] == "custom_page9s"
+          %p{:style => "color:#000;text-align:center;margin-top:7px !important;"}
+            %strong
+            #{@event.custom_page9s.first.present? ? @event.custom_page9s.first.description.html_safe : ""}
+        - elsif params[:page] == "custom_page10s"
+          %p{:style => "color:#000;text-align:center;margin-top:7px !important;"}
+            %strong
+            #{@event.custom_page10s.first.present? ? @event.custom_page10s.first.description.html_safe : ""}
+    .clear

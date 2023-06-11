@@ -1,0 +1,181 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section#content_wrapper
+    = render :partial => "admin/dashboards/breadcumb_links",:locals => {:page => "Communication Statistics",:name => params[:controller]}
+    - if @total_edm_sent.present? and @total_edm_sent != 0
+      = render :partial => 'admin/layouts/more_links'
+    %section#content.table-layout.animated.fadeIn
+      .chute.chute-center
+        .row.DashPage.eventShowCard
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted  Total Email Sent
+                    %h2.fs30.mt5.mbn
+                      = @total_edm_sent.present? ? @total_edm_sent : 0
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+        
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted Total Email Opened
+                    %h2.fs30.mt5.mbn
+                      - if params[:edm_id].present?
+                        = @total_edm_open.to_i > 0 ? (link_to "#{@total_edm_open}", admin_event_track_link_users_path(:edm_id => params[:edm_id], :email_count => true, :total_email => true)) : 0
+                      - else
+                        = @total_edm_open.to_i > 0 ? (link_to "#{@total_edm_open}", admin_event_track_link_users_path(:event_id => @event.id, :email_count => true, :total_email => true)) : 0                      
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted= @consent_link_1 ? 'Consent Question 1' : 'Total clicks on defined Action 1'
+                    %h2.fs30.mt5.mbn
+                      - if params[:edm_id].present?
+                        = @track_links_for_1.to_i >= 1 ? (link_to "#{@track_links_for_1}",admin_event_track_link_users_path(:event_id => @event.id, :track_link_no => 'track_link_1', :edm_id => params[:edm_id])) : 0
+                      - else
+                        = @track_links_for_1.to_i >= 1 ? (link_to "#{@track_links_for_1}",admin_event_track_link_users_path(:event_id => @event.id, :track_link_no => 'track_link_1')) : 0
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted=  @consent_link_2 ? 'Consent Question 2' : 'Total clicks on defined Action 2'
+                    %h2.fs30.mt5.mbn
+                      - if params[:edm_id].present?
+                        = @track_links_for_2.to_i >= 1 ? (link_to "#{@track_links_for_2}",admin_event_track_link_users_path(:event_id => @event.id, :track_link_no => 'track_link_2', :edm_id => params[:edm_id])) : 0
+                      - else
+                        = @track_links_for_2.to_i >= 1 ? (link_to "#{@track_links_for_2}",admin_event_track_link_users_path(:event_id => @event.id, :track_link_no => 'track_link_2')) : 0
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted=  @consent_link_3 ? 'Consent Question 3' : 'Total clicks on defined Action 3'
+                    %h2.fs30.mt5.mbn
+                      - if params[:edm_id].present?
+                        = @track_links_for_3.to_i >= 1 ? (link_to "#{@track_links_for_3}",admin_event_track_link_users_path(:event_id => @event.id, :track_link_no => 'track_link_3', :edm_id => params[:edm_id])) : 0
+                      - else
+                        = @track_links_for_3.to_i >= 1 ? (link_to "#{@track_links_for_3}",admin_event_track_link_users_path(:event_id => @event.id, :track_link_no => 'track_link_3')) : 0
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted=  @consent_link_4 ? 'Consent Question 4' : 'Total clicks on defined Action 4'
+                    %h2.fs30.mt5.mbn
+                      - if params[:edm_id].present?
+                        = @track_links_for_4.to_i >= 1 ? (link_to "#{@track_links_for_4}",admin_event_track_link_users_path(:event_id => @event.id, :track_link_no => 'track_link_4', :edm_id => params[:edm_id])) : 0
+                      - else
+                        = @track_links_for_4.to_i >= 1 ? (link_to "#{@track_links_for_4}",admin_event_track_link_users_path(:event_id => @event.id, :track_link_no => 'track_link_4')) : 0
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted=  @consent_link_5 ? 'Consent Question 5' : 'Total clicks on defined Action 5'
+                    %h2.fs30.mt5.mbn
+                      - if params[:edm_id].present?
+                        = @track_links_for_5.to_i  >= 1 ? (link_to "#{@track_links_for_5}",admin_event_track_link_users_path(:event_id => @event.id, :track_link_no => 'track_link_5', :edm_id => params[:edm_id])) : 0
+                      - else
+                        = @track_links_for_5.to_i  >= 1 ? (link_to "#{@track_links_for_5}",admin_event_track_link_users_path(:event_id => @event.id, :track_link_no => 'track_link_5')) : 0
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted=  @consent_link_6 ? 'Consent Question 6' : 'Total clicks on defined Action 6'
+                    %h2.fs30.mt5.mbn
+                      - if params[:edm_id].present?
+                        = @track_links_for_6.to_i >= 1 ? (link_to "#{@track_links_for_6}",admin_event_track_link_users_path(:event_id => @event.id, :track_link_no => 'track_link_6', :edm_id => params[:edm_id])) : 0
+                      - else
+                        = @track_links_for_6.to_i >= 1 ? (link_to "#{@track_links_for_6}",admin_event_track_link_users_path(:event_id => @event.id, :track_link_no => 'track_link_6',)) : 0
+                .row.pv5.AddmoreCard{:style => "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted=  @consent_link_7 ? 'Consent Question 7' : 'Total clicks on defined Action 7'
+                    %h2.fs30.mt5.mbn
+                      - if params[:edm_id].present?
+                        = @track_links_for_7.to_i  >= 1 ? (link_to "#{@track_links_for_7}",admin_event_track_link_users_path(event_id:  @event.id, track_link_no:  'track_link_7', edm_id:  params[:edm_id])) : 0
+                      - else
+                        = @track_links_for_7.to_i  >= 1 ? (link_to "#{@track_links_for_7}",admin_event_track_link_users_path(event_id:  @event.id, track_link_no:  'track_link_7')) : 0
+                .row.pv5.AddmoreCard{style:  "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted=  @consent_link_8 ? 'Consent Question 8' : 'Total clicks on defined Action 8'
+                    %h2.fs30.mt5.mbn
+                      - if params[:edm_id].present?
+                        = @track_links_for_8.to_i  >= 1 ? (link_to "#{@track_links_for_8}",admin_event_track_link_users_path(event_id:  @event.id, track_link_no:  'track_link_8', edm_id:  params[:edm_id])) : 0
+                      - else
+                        = @track_links_for_8.to_i  >= 1 ? (link_to "#{@track_links_for_8}",admin_event_track_link_users_path(event_id:  @event.id, track_link_no:  'track_link_8')) : 0
+                .row.pv5.AddmoreCard{style:  "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted=  @consent_link_9 ? 'Consent Question 9' : 'Total clicks on defined Action 9'
+                    %h2.fs30.mt5.mbn
+                      - if params[:edm_id].present?
+                        = @track_links_for_9.to_i  >= 1 ? (link_to "#{@track_links_for_9}",admin_event_track_link_users_path(event_id:  @event.id, track_link_no:  'track_link_9', edm_id:  params[:edm_id])) : 0
+                      - else
+                        = @track_links_for_9.to_i  >= 1 ? (link_to "#{@track_links_for_9}",admin_event_track_link_users_path(event_id:  @event.id, track_link_no:  'track_link_9')) : 0
+                .row.pv5.AddmoreCard{style:  "margin-bottom : 0px" }
+
+          .col-sm-3.col-xl-3
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph10
+                    = image_tag("coloured_icons/client.png")
+                  .col-xs-7.pl5
+                    %h6.text-muted=  @consent_link_10 ? 'Consent Question 10' : 'Total clicks on defined Action 10'
+                    %h2.fs30.mt5.mbn
+                      - if params[:edm_id].present?
+                        = @track_links_for_10.to_i  >= 1 ? (link_to "#{@track_links_for_10}",admin_event_track_link_users_path(event_id:  @event.id, track_link_no:  'track_link_10', edm_id:  params[:edm_id])) : 0
+                      - else
+                        = @track_links_for_10.to_i  >= 1 ? (link_to "#{@track_links_for_10}",admin_event_track_link_users_path(event_id:  @event.id, track_link_no:  'track_link_10')) : 0
+                .row.pv5.AddmoreCard{style:  "margin-bottom : 0px" }

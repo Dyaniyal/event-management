@@ -1,0 +1,110 @@
+.save_button.mdl-card
+  = form_for [:admin, @event, @sponsor], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp.p-b-25
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information
+          / %a{:href => '/whats_this/sponsor/general_information/sponsor_generalInfo.jpg', :class =>'helpTag testhelp fancybox'}
+          /   what's this?
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+        .form-group
+          %label.col-lg-4.control-label.ml-color--shades-white
+            Category *
+          .col-lg-7  
+            - default_sponsor_type = Sponsor.where(:event_id => params[:event_id]).pluck(:sponsor_type).uniq#['Gold','Silver','Platinum','Diamond']
+            - default_sponsor_type << 'New Category'
+            %i.arrow.single
+            = f.select("sponsor", "sponsor_type", default_sponsor_type, {:selected => f.object.sponsor_type,:prompt => "#{(f.object.sponsor_type.present?) ? f.object.sponsor_type : "Sponsor Category" }"}, {include_blank: 'None',:class=> 'select2-single form-control'})
+            .field_with_errors
+              .span{:class => "errorMessage"}
+                = f.object.errors.messages[:sponsor_type].join("") rescue nil 
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+        - @show_new_category = (f.object.errors.present? and f.object.sponsor_type == 'New Category') ? true : false
+        #new_category{:style => (f.object.errors.present? and f.object.sponsor_type == 'New Category') ? 'display:block' : ''}
+          = f.custom_text_field :new_category, "New Category *","background" => "false", :col => '12'
+      = f.custom_text_field :name, "name *","background" => "false"
+      = f.new_custom_file_browser_field :logo, "Logo (300x300px) (png/jpg) only*", :id => "uploadBtn", :value => f.object.logo_file_name, :action => params[:action], "background" => "false"
+      / = f.fields_for :images do |image_field|
+      /   = image_field.new_custom_file_browser_field :image, "Logo *", :id => "uploadBtn", :value => image_field.object.image_file_name, :action => params[:action]
+      /   .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.errorm-t-2
+      /     .form-group
+      /       %label.col-lg-4.control-label  
+      /       .col-lg-7.field_with_errors
+      /         .span{:class => "errorMessage"}
+      /           = f.object.errors.messages[:image].join("") rescue nil
+      = f.custom_text_field :website_url, "Website","background" => "false"
+      = f.custom_text_field :contact_person_name, "Contact person name","background" => "false"
+      = f.custom_text_field :email, "Email address","background" => "false"
+      = f.custom_text_field :mobile, "Contact number","background" => "false"
+      = f.custom_text_area_field :highlighted_text,"Highlighted text", "background" => "false"
+      = f.custom_text_area_field :description,"description", "background" => "false"
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.form-group{:style=>"width:32%;"}
+          .md-checkbox
+            %label
+              = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Sponsor Rating
+          .col-lg-3.p-h-12   
+            = f.custom_radio_button :rating_status, "active","Active", :id => "option-1"
+            = f.custom_radio_button :rating_status, "deactive", "Deactive", :id => "option-2"
+          .col-lg-1.agenda_help
+            = #link_to "?" ,"/whats_this/agenda/general_information/Help_agenda_sessionRating.jpg", rel: "agenda_image", title: "Session Rating", :class =>'fancybox whatsImg appwhatsthis'  
+      = hidden_field_tag "from","#{params[:from]}" if params[:from].present? 
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Display Wayfinding (Meridian)
+          .col-lg-3.p-h-12   
+            = f.custom_radio_button :way_location, "yes","Yes", :id => "option-w-1"
+            = f.custom_radio_button :way_location, "no", "No", :id => "option-w-2"
+          .col-lg-1.agenda_help
+      = f.custom_text_field :location, "Meridian Placemark *", "background" => "false"
+
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+
+- if @show_new_category.present? and @show_new_category == true
+  :javascript
+    $("#new_category").show();    
+- else
+  :javascript
+    $("#new_category").hide();
+- if @sponsor.way_location == "yes"
+  :javascript
+    $('[name="sponsor[location]"]').parents().eq(3).show();
+- else
+  :javascript
+    $('[name="sponsor[location]"]').parents().eq(3).hide();
+:javascript
+  $(window).load(function(){
+    $('.gui-file').change(function(){
+      filename = $(this)[0].files[0].name;
+      $(".gui-input").val(filename);
+    });
+  })
+
+  $("#sponsor_sponsor_type").click(function(){
+    value = $("#sponsor_sponsor_type").val();
+    if (value == "New Category"){
+      $("#new_category").show();
+    }else{
+      $("#new_category").hide();
+    }
+  }); 
+
+  $("#option-w-1").click(function(){
+    $('[name="sponsor[location]"]').parents().eq(3).show();
+  });
+
+  $("#option-w-2").click(function(){
+    $('[name="sponsor[location]"]').val("");
+    $('[name="sponsor[location]"]').parents().eq(3).hide();
+  });

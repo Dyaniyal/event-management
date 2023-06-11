@@ -1,0 +1,95 @@
+- event_features_array = @event.event_features.where('name IN (?)', ["feedbacks", "polls", "quizzes", "e_kits", "qnas", "qr_code", "conversations", "favourites"]).pluck(:name)
+- @event_feature_names = @event.event_features.pluck(:name)
+- arr = [0]
+- @detailed_analytics_counts[1]['user_engagements'].map{|q| arr += q[:data]} if @detailed_analytics_counts[1]['user_engagements'].present?
+- if arr.all? {|el| el.to_i == 0}
+  :javascript
+    displayText = "No data available."
+- else
+  :javascript
+    displayText = ""
+- if @date_filter_error.blank?
+  - max_val = arr.compact.max
+  :javascript
+    var INTERVALYAXIS = #{(max_val.present? and max_val > 100) ? (max_val / 100) : 5}
+    var LINECATEGORY = #{@detailed_analytics_counts[1]['xaxis_interval_labels_and_interval'][0]}
+    var OVERALL_ENGAGEMENT = #{@detailed_analytics_counts[1]['user_engagements'].to_json}
+    var DONUTCHART1ARRAY = #{[['ios', 20], ['and', 40]]}
+    var DONUTCHART2ARRAY = #{[['ios', 20], ['and', 40]]}
+    var INTERVALXAXIS = #{@detailed_analytics_counts[1]['xaxis_interval_labels_and_interval'][1]}
+
+  = stylesheet_link_tag 'c3'
+  = javascript_include_tag 'jquery-ui.min-dash', 'highcharts', 'd3.min', 'c3.min', 'circles', 'jquery.jvectormap.min', 'jquery-jvectormap-us-lcc-en', 'utility', 'demo-dash', 'main', 'dash-widgets', 'dash-widgets_sidebar', 'dashboard'
+  - @breadcrum_image = MobileApplication::CARD_IMAGES
+.row
+  .col-lg-6
+    %a.legend-item.btn.btn-sm.btn{:type => 'button', :href => admin_client_event_path(:client_id => @event.client_id, :id => @event.id, :analytics => true), :class => params[:detailed_analytics].present? ? 'btn-deactive' : 'mdl-color--light-blue-900'} Live
+    %a.legend-item.btn.btn-sm.btn{:type => 'button', :href => admin_client_event_path(:client_id => @event.client_id, :id => @event.id, :detailed_analytics => true), :class => params[:analytics].present? ? 'btn-deactive' : 'mdl-color--light-blue-900'} Detailed
+  .col-lg-6
+    .mobileventSearch.text-right
+      = form_tag "/admin/clients/#{params[:client_id]}/events/#{params[:id]}?analytics=true", :class => 'form-group HideDateEvent', :method => :get do |f|
+        = hidden_field_tag :detailed_analytics, true
+        = hidden_field_tag :filter_date, 'date range'
+        .col-lg-5.startdatePadding
+          %input.form-control{:col => "12", :name => "start_date", :type => "text", :value => params[:start_date].present? ? params[:start_date].to_date.strftime('%d/%m/%Y') : "", :id => "date-start", :placeholder => "Start Date"}
+        .col-lg-5
+          %input.form-control{:col => "12", :name => "end_date", :type => "text", :value => params[:end_date].present? ? params[:end_date].to_date.strftime('%d/%m/%Y') : "", :id => "date-end", :placeholder => "End Date"}
+        .col-lg-2.mdl-color--light-blue-900.borderradius
+          %span.publishBtn
+            = submit_tag 'Filter'
+      %a.legend-item.btn.btn-sm.btn{:type => 'button', :href => admin_event_analytics_path(:event_id => @event.id, :print_preview => true, :detailed_analytics => params[:detailed_analytics], :analytics => params[:analytics], :start_date => params[:start_date], :end_date => params[:end_date], :token => @event.token ), :class => params[:detailed_analytics].present? ? 'btn-deactive' : 'mdl-color--light-blue-900', :target => '_blank'} Print Preview
+- if @date_filter_error.blank?
+  .allcp-panels.fade-onload.clear.smallCard
+    - @detailed_analytics_counts[0].each do |feature|
+      = render :partial => 'admin/layouts/card_event', :locals => {:image_path => "coloured_icons/#{MobileApplication::CARD_IMAGES[feature[0]]}", :page_title => feature[0], :feature_count => feature[1]}
+    .row
+      .col-md-12.allcp-grid
+        #pchart6.panel
+          .panel-heading
+            %span.panel-title.text-info.fw600
+              %i.fa.fa-pencil.hidden
+              Overall engagement 
+          .panel-menu.br3.mt20
+            - color_array = ['#4FD8B0', '#67D3E0', '#C3D62D', '#FF7022', '#F5393D', '#AEBF25', '#5A5386', '#2A2F43', '#FFBC0B', '#993333', '#660066']
+            .chart-legend.hightChartClick{"data-chart-id" => "#high-line3"}
+              - @detailed_analytics_counts[1]['user_engagements'].map{|f| f[:name]}.each_with_index do |feature, index|
+                %a.legend-item.btn.btn-sm{:style => "background:#{color_array[index]}", "data-chart-id" => index, :type => "button"}
+                  = feature
+          .panel-body.pn
+            #high-line3{"data-highcharts-chart" => "6", :style => "width: 100%; height: 300px; margin: 0 auto"}/
+  .row.box
+    - [{'top_pages' => 'Top Page Views', 'top_fav_agendas' => 'Top Favorited Sessions', 'top_rated_agendas' => 'Top Rated Sessions', 'top_rated_speakers' => 'Top Rated Speakers', 'top_fav_speakers' => 'Top Favorited Speakers', 'top_question_speakers' => 'Speakers with most nbr. of Questions', 'top_commented_conversations' => 'Top Commented Conversations', 'top_liked_conversations' => 'Top Liked Conversations'}, {'top_viewed_ekits' => 'Top Documents Viewed', 'top_answered_quizzes' => 'Top Answered Quizzes', 'top_answered_polls' => 'Top Polls', 'top_fav_invitees' => 'Top Favorited Invitees', 'top_fav_sponsors' => 'Top Favorited Sponsors', 'top_viewed_sponsors' => 'Top Viewed Sponsors', 'top_fav_exhibitors' => 'Top Favorited Exhibitors', 'top_viewed_exhibitors' => 'Top Viewed Exhibitors', 'top_fav_leaderboard' => 'Top 10 Leaders'}].each_with_index do |analytic_features, index|
+      - index = index + 2
+      / .col-md-6
+      - analytic_features.each_with_index do |feature, index2|
+        - index2 = index2 + 3
+        = render :partial => 'top_action_list_view', :locals => {:index => (index * index2), :feature => feature}
+
+- if true#params[:filter_date].present? and params[:filter_date] == 'date range'
+  :javascript  
+    $(".HideDateEvent").css('display', 'inline-block');
+:javascript
+  $(window).load(function(){
+    $(".select2-single").change(function(){
+      $(this).find("option:selected").each(function(){
+      if($(this).val() == 'date range'){
+        $(".HideDateEvent").css('display', 'inline-block');
+        $(".FilterTab").css('display', 'inline-block');
+      }
+      else{
+        $("#FirstFilterTab").submit();
+
+      }
+
+    }).change();
+    });
+  });  
+  $('#date-end').bootstrapMaterialDatePicker({
+    weekStart: 0, 
+    format: 'DD/MM/YYYY',
+    time: false,
+    maxDate : "#{Date.today.strftime("%d/%m/%Y") rescue nil}"
+  });   
+
+
+

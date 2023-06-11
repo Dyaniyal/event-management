@@ -1,0 +1,14 @@
+= render :partial => 'admin/layouts/index_header', :locals => {:objs => @data} 
+.callBckAlertPopup
+  = render :partial => "layouts/callback_box"
+
+
+:javascript
+  setInterval(function(){
+    $.ajax({
+      url: "/admin/events/#{@event.id}/telecaller_dashboards/new",
+      type: 'get',
+      data: {'user_id' : "#{current_user.id}", 'event_id' : "#{@event.id}"},
+      dataType: 'script',
+    });
+  }, 30000);

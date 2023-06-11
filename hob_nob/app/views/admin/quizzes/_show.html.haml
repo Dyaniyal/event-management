@@ -1,0 +1,41 @@
+.save_button.mdl-card.mdl-shadow--1dp.agendaheight.p-b-10 
+  %form.ng-pristine.ng-valid{:action => "#"}
+    .mdl-grid
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          = show_field_newQuestion(" ", obj.question)
+      = show_field_new_for_quiz("#{obj.option1} :", "option1",obj) if obj.option1.present?
+      = show_field_new_for_quiz("#{obj.option2} :", "option2",obj) if obj.option2.present?
+      = show_field_new_for_quiz("#{obj.option3} :", "option3",obj) if obj.option3.present?
+      = show_field_new_for_quiz("#{obj.option4} :", "option4",obj) if obj.option4.present?
+      = show_field_new_for_quiz("#{obj.option5} :", "option5",obj) if obj.option5.present?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-if false
+  %form.ng-pristine.ng-valid{:action => "#"}
+    .mdl-grid
+      = show_field("Question :", obj.question)
+      = show_field("Option1:", obj.option1)
+      = show_field("Option2 :", obj.option2)
+      = show_field("Option3 :", obj.option3)
+      = show_field("Option4 :", obj.option4)
+      = show_field("Option5 :", obj.option5)
+      / = show_field("Option6 :", obj.option6)
+    .m-l-18
+      .mdl-cell--12-col.mdl-cell--12-col-tablet
+        = back_button_detailed_page(:back)  
+  = render :partial => 'polls_answers', :locals => {:obj => obj}

@@ -1,0 +1,49 @@
+%section#content
+  / start container
+  .container
+    %section#tab_part
+      .adminHeading
+        %h1 Manage Events
+        .rightBtn
+          = link_to "ADD EVENT", new_event_path, {:class => "waves-effect waves-light btn" }
+      .page-header
+      = render :partial => 'event_search'
+      = render :partial => 'upcomming_and_last_event_search'
+      
+      .table-responsive.eventTable{"data-pattern" => "priority-columns"}
+        %table#tech-companies-1.table.table-small-font.table-bordered.table-striped{:cellspacing => "0"}
+          %thead
+            %tr
+              %th{"data-priority" => "1"} Client Name
+              %th{"data-priority" => "1"} Event Code
+              %th{"data-priority" => "1"} Event Name
+              %th{"data-priority" => "1"} City
+              %th{"data-priority" => "1"} Venues
+              %th{"data-priority" => "1"} Description
+              %th{"data-priority" => "3"} Pax
+              %th{"data-priority" => "3"} Start to End Date
+          %tbody
+            - i = 0
+            - if @events.present?
+              - @events.each do |event|
+                %tr.white
+                  %td= event.client.name.capitalize rescue nil
+                  %td= event.event_code rescue nil
+                  %td= event.event_name.capitalize rescue nil
+                  %td= event.cities.capitalize rescue nil
+                  %td= event.venues.capitalize rescue nil
+                  %td= event.description.capitalize rescue nil
+                  %td= event.pax rescue nil
+                  %td
+                    - if event.start_event_date.present? and event.end_event_date.present? 
+                      = admin_event_color(event)
+                  %td
+                    = link_to edit_event_path(event.id),:class =>"waves-effect waves-light btn" do
+                      %i.material-icons.center 
+                        edit
+                    = link_to event_path(event.id),:class =>"waves-effect waves-light btn" do
+                      %i.material-icons.center{:title => "show"} visibility      
+                    = link_to event_path(event.id),method: :delete,:class =>"waves-effect waves-light btn" do
+                      %i.material-icons.center  
+                        delete
+                       

@@ -1,0 +1,38 @@
+@media screen and (max-width: 1930px){
+
+}
+@media screen and (max-width:1600px){
+
+}
+
+@media screen and (max-width:1500px){
+
+}
+@media screen and (max-width:1367px){
+
+}
+
+@media screen and (max-width:1155px){
+
+
+}
+@media screen and (max-width:1023px){
+	
+}
+@media screen and (max-width: 767px){
+	.mob-p-l-0 {padding-left: 0px;}
+	.mob-p-r-0 {padding-right: 0px;}
+	.fixed-activon-btn-new .btnsubmit input{padding: 9px 12px;}
+	.cancelBg .btn {padding: 8px 12px;}
+	.mob-p-20{padding: 20px;}
+}
+
+@media screen and (max-width: 479px){
+	}
+
+@media screen and (max-width: 376px){
+	}
+
+@media screen and (max-width: 359px){
+
+}

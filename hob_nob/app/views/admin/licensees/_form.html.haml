@@ -1,0 +1,111 @@
+.save_button.mdl-card.agendaheight  
+  = form_for [:admin, @licensee],:url => params[:action] == "new" || params[:action] == "create" ? admin_licensees_path : admin_licensee_path, :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp.p-b-25
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          General Information
+          / %a{:href => 'javascript:void(0);', :class =>'helpTag testhelp'}
+          /   what's this?
+      = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "licensee_generalInfo.jpg", :section_id => "licensee_general_section"}
+      = f.custom_text_field :first_name, "first Name *"
+      = f.custom_text_field :last_name, "Last Name *"
+      = f.custom_text_field :company, "Company Name *"
+      - if params[:action] == "edit"
+        = f.custom_text_field :email, "Email id *", :value => f.object.email.present? ? f.object.email : '',:readonly => true
+      -else 
+        = f.custom_text_field :email, "Email id *", :value => f.object.email.present? ? f.object.email : ''
+      - if f.object.new_record?
+        = f.custom_text_field :password, "Password *"
+      = f.new_custom_file_browser_field :licensee_logo, "Licensee logo (250x50) png only ", :id => "uploadBtn", :value => f.object.licensee_logo_file_name, :action=> params[:action],"background"=>"false"
+      .field_with_errors{:style => "margin-left:35%;margin-top:-2%;"}
+        .span{:class => "errorMessage"}
+          = f.object.errors.messages[:licensee_logo_content_type].join("") rescue nil
+      = f.hidden_field :license , :value => true
+      = f.custom_text_field :no_of_event, "Nbr. of events", :value => f.object.no_of_event.present? ? f.object.no_of_event : ''
+      = f.custom_text_field :licensee_start_date, "Licensee Start Date", :id => "date-start", :value => f.object.licensee_start_date.present? ? f.object.licensee_start_date.strftime('%d/%m/%Y') : ''  
+      = f.custom_text_field :licensee_end_date, "Licensee End Date", :id => "date-end",:value => f.object.licensee_end_date.present? ? f.object.licensee_end_date.strftime('%d/%m/%Y') : ''
+    
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-b-10
+        .mdl-grid.p-v-5
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Activate Mobile Apps / Hub Space *
+          .col-lg-3.p-h-12.m-8
+            = f.custom_radio_button_menu :activate_mobile_app, "yes","Yes", :id => "option-1_activate_mobile_app",:default_checked => (f.object.activate_mobile_app.present? and f.object.activate_mobile_app == "yes") ? 'checked' : ''
+            = f.custom_radio_button_menu :activate_mobile_app, "no", "No", :id => "option-2_activate_mobile_app",:default_checked => (f.object.activate_mobile_app.present? and f.object.activate_mobile_app == "no") ? 'checked' : ''
+            .field_with_errors
+              .span{:class => "errorMessage"}
+                = f.object.errors.messages[:activate_mobile_app].join("") rescue nil 
+      
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-b-10
+        .mdl-grid.p-v-5
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Activate EMS *
+          .col-lg-3.p-h-12.m-8
+            = f.custom_radio_button_menu :activate_ems, "yes","Yes", :id => "option-1_activate_ems",:default_checked => (f.object.activate_ems.present? and f.object.activate_ems == "yes") ? 'checked' : ''
+            = f.custom_radio_button_menu :activate_ems, "no", "No", :id => "option-2_activate_ems",:default_checked => (f.object.activate_ems.present? and f.object.activate_ems == "no") ? 'checked' : ''
+            .field_with_errors
+              .span{:class => "errorMessage"}
+                = f.object.errors.messages[:activate_ems].join("") rescue nil    
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+:javascript
+  $(window).load(function(){
+    $('.gui-file').change(function(){
+      filename = $(this)[0].files[0].name;
+      $(".gui-input").val(filename);
+    });
+  })     
+
+
+
+- if false
+  .save_button.mdl-card.agendaheight  
+  = form_for [:admin, @licensee],:url => params[:action] == "new" || params[:action] == "create" ? admin_licensees_path : admin_licensee_path, :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp.p-b-25
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          General Information
+          / %a{:href => 'javascript:void(0);', :class =>'helpTag testhelp'}
+          /   what's this?
+      = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "licensee_generalInfo.jpg", :section_id => "licensee_general_section"}
+      = f.custom_text_field :first_name, "Full Name *"
+      = f.custom_text_field :company, "Company Name *"
+      - if params[:action] == "edit" 
+        = f.custom_text_field :email, "Email id *", :value => f.object.email.present? ? f.object.email : '',:readonly => true
+      -else 
+        = f.custom_text_field :email, "Email id *", :value => f.object.email.present? ? f.object.email : ''
+      - if f.object.new_record?
+        = f.custom_text_field :password, "Password *"
+      = f.new_custom_file_browser_field :licensee_logo, "Licensee logo (250x50) png only ", :id => "uploadBtn", :value => f.object.licensee_logo_file_name, :action=> params[:action]
+      = f.hidden_field :license , :value => true
+      = f.custom_text_field :no_of_event, "Nbr. Of Events Limit", :value => f.object.no_of_event.present? ? f.object.no_of_event : ''
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .bs-component
+          .form-group
+            %label.col-lg-4.control-label{:for => "Licensee Start Date"} Start date 
+            = f.custom_text_field_date :licensee_start_date, "Licensee Start Date", :id => "date-start", :value => f.object.licensee_start_date.present? ? f.object.licensee_start_date.strftime('%d/%m/%Y') : ''
+            / .col-lg-3.timeDropdown
+            /   .timeTab
+            /     = f.custom_text_field_date :start_time_hour, " ", :class => "hours inputs is-focused", :placeholder => 'HH ', :value => "#{f.object.licensee_start_date.strftime('%l').strip.rjust(2, '0') rescue nil}", :col => '2',:maxlength => "2"
+                
+            /     = f.custom_text_field_date :start_time_minute, " ", :class => "minutes inputs is-focused", :placeholder => 'MM ', :value => "#{f.object.licensee_start_date.strftime('%M').strip.rjust(2, '0') rescue nil}", :col => '2',:maxlength => "2"
+            /     = f.custom_text_field_date :start_time_am, " ", :class => "ampm inputs is-focused", :placeholder => 'AM/PM', :value => "#{f.object.licensee_start_date.strftime('%p') rescue nil}", :col => '3',:maxlength => "2"
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .bs-component
+          .form-group
+            %label.col-lg-4.control-label{:for => "Licensee End Date"} End Date 
+            = f.custom_text_field_date :licensee_end_date, "Licensee End Date", :id => "date-end", :value => f.object.licensee_end_date.present? ? f.object.licensee_end_date.strftime('%d/%m/%Y') : ''
+            / .col-lg-3.timeDropdown
+            /   .timeTab  
+            /     = f.custom_text_field_date :end_time_hour, " ", :class => "hours inputs", :placeholder => 'HH ', :value => "#{f.object.licensee_end_date.strftime('%l').strip.rjust(2, '0') rescue nil}", :col => '2',:maxlength => "2"
+            /     = f.custom_text_field_date :end_time_minute, " ", :class => "minutes inputs", :placeholder => 'MM ', :value => "#{f.object.licensee_end_date.strftime('%M').strip.rjust(2, '0') rescue nil}", :col => '2',:maxlength => "2"
+            /     = f.custom_text_field_date :end_time_am, " ", :class => "ampm inputs", :placeholder => 'AM/PM', :value => "#{f.object.licensee_end_date.strftime('%p') rescue nil}", :col => '3',:maxlength => "2"          
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+ 

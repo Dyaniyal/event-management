@@ -1,0 +1,94 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section.menus
+    .relative.clear
+      %header#topbar.alt
+        .topbar-left
+          %ol.breadcrumb  
+            %li.breadcrumb-icon
+              = image_tag("coloured_icons/speakers.png")
+        .displayInlineBlock
+          %h3.mdl-color-text--red.m-t-20
+            = 'Edit Database'
+            %a.editLink.rededitLink{:href => edit_admin_event_invitee_structure_path(:event_id => @event.id, :id => @event.invitee_structures.first.id)}
+              %i.material-icons edit  
+  .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.m-t-75
+    .p-40
+      .save_button.mdl-card.mdl-shadow--1dp.agendaheight.p-b-10
+        .mdl-tabs.mdl-js-tabs.ProfileTabLeft
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            %h4.heading-border.p-t-10.m-b-15
+              = @speaker.speaker_name.capitalize rescue nil
+        / .mdl-tabs__tab-bar
+        /   %a.mdl-tabs__tab.is-active{:href => "#starks-panel"} Speakers Information
+        /   %a.mdl-tabs__tab{:href => "#Rating-panel"} Rating
+        /   %a.mdl-tabs__tab{:href => "#feedback-panel"} feedback
+        #starks-panel.mdl-tabs__panel.is-active
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+            .ml-card-holder
+              %div
+                %form.ng-pristine.ng-valid{:action => "#"}
+                  .mdl-grid
+                    = show_field_new("Event Name : ", @speaker.event.event_name.capitalize)
+                    = show_field_new("Designation : ", @speaker.designation.capitalize)
+                    = show_field_new("Email id : ", @speaker.email_address)
+                    = show_field_new("Phone No : ", @speaker.phone_no)
+                    = show_field_new("Address : ", @speaker.address)
+                    = show_field_new("Rating Status : ", @speaker.rating_status)
+                    = show_field_new("Info : ", @speaker.speaker_info)
+                    .mdl-cell--4-col.mdl-cell--4-col-tablet.m-8
+                      %p.no-m-b
+                        %strong Profile Picture:
+                        %span
+                          - if @speaker.profile_pic_url != "/profile_pics/large/missing.png"
+                            = image_tag(@speaker.profile_pic_url(:thumb), :alt=> "profile pic" )
+                          - else
+                            %strong No attachment available!  
+                                              
+        #Rating-panel.mdl-tabs__panel.m-8
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+            .col
+              .box.box-blue.box-example-movie
+                %h4.heading-border.p-t-10.m-b-15 
+                  Rating Information
+                .box-body
+                  .br-wrapper.br-theme-bars-movie
+                    %select#example-movie{:name => "rating", :style => "display: none;"}
+                      %option{:value => "1"} 1
+                      %option{:value => "2"} 2
+                      %option{:selected => "selected", :value => "3"} 3
+                      %option{:value => "4"} 4
+                    .mdl-grid.mdl-cell--12-col.no-p-l.no-p-b
+                      .br-widget.mdl-cell--6-col.mdl-cell--6-col-tablet.m-h-5
+                        - avg_rate = calculate_rating(@speaker,"speaker")
+                        - (1..5).each do |rate|
+                          - if rate < avg_rate
+                            %a.mdl-color-text--red-400{"data-rating-value" => "1", :href => "#"}
+                              %i.large.material-icons.active star_rate
+                          - else
+                            %a.mdl-color-text--grey-400{"data-rating-value" => "1", :href => "#"}
+                              %i.large.material-icons.active star_rate
+                      .br-current-rating.mdl-cell--5-col.mdl-cell--5-col-tablet.m-h-5
+                        %span.ratingInfo
+                        = @speaker.ratings.count 
+                        views 
+        #feedback-panel.mdl-tabs__panel.m-8
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.feed
+            %h4.heading-border.p-t-10.m-b-15 
+              Feedback Information
+              %a{:href => 'javascript:void(0);', :class =>'helpTag FeedBackHide'}
+                show
+          #starks-panel.FeedBackComment
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+              .ml-card-holder
+                %div
+                  %form.ng-pristine.ng-valid{:action => "#"}
+                    .mdl-grid       
+                      - if @speaker.ratings.present?
+                        - @speaker.ratings.each do |rating|
+                          = show_field_new("Comment : ", rating.comments)
+                          = show_field_new("date : ", rating.created_at.in_time_zone(@speaker.event_timezone).strftime("%d %b %Y %l:%M %p"))
+                          = show_field_new("Name : ", rating.get_user_name)
+                          
+                      - else
+                        .p-20
+                          %p= "No Feedback"

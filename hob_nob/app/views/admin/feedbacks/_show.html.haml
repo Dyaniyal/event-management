@@ -1,0 +1,50 @@
+.save_button.mdl-card.mdl-shadow--1dp.agendaheight.p-b-10 
+  %form.ng-pristine.ng-valid{:action => "#"}
+    .mdl-grid
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          = show_field_newQuestion(" ", obj.question)
+          = show_field("total number of Response ", obj.user_feedbacks.count) rescue nil
+          / %span.editThemelinks.feedbackLink
+          /   = link_to "edit", edit_admin_event_feedback_path(:event_id => @event.id,:id => @feedback.id)
+      #starks-panel.mdl-tabs__panel.is-active.mdl-cell--12-col
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+          .ml-card-holder
+            %div
+              %form.ng-pristine.ng-valid{:action => "#"}
+                .mdl-grid
+                  = show_field_new("#{obj.option1} :", "option1",obj,true) if obj.option1.present?
+                  = show_field_new("#{obj.option2} :", "option2",obj,true) if obj.option2.present?
+                  = show_field_new("#{obj.option3} :", "option3",obj,true) if obj.option3.present?
+                  = show_field_new("#{obj.option4} :", "option4",obj,true) if obj.option4.present?
+                  = show_field_new("#{obj.option5} :", "option5",obj,true) if obj.option5.present?
+                  = show_field_new("#{obj.option6} :", "option6",obj,true) if obj.option6.present?
+                  = show_field_new("#{obj.option7} :", "option7",obj,true) if obj.option7.present?
+                  = show_field_new("#{obj.option8} :", "option8",obj,true) if obj.option8.present?
+                  = show_field_new("#{obj.option9} :", "option9",obj,true) if obj.option9.present?
+                  = show_field_new("#{obj.option10} :", "option10",obj,true) if obj.option10.present?
+    - if false
+      #feedback-panel
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.feed
+          %h4.heading-border.p-t-10
+            User Answer Information
+            %a{:href => 'javascript:void(0);', :class =>'helpTag FeedBackHide'}
+              show 
+        #starks-panel.FeedBackComment
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+            .ml-card-holder
+              %div
+                %form.ng-pristine.ng-valid{:action => "#"}
+                  .mdl-grid
+                    - if obj.user_feedbacks.present?
+                      - obj.user_feedbacks.each do |description|
+                        - user = User.get_user_by_id(description.user_id) rescue nil
+                        .m-8.mdl-cell--12-col
+                          = show_field_newQuestion("Answer : ", description.description) rescue nil
+                        = show_field("Name : ", user.first_name) rescue nil
+                        / = show_field("Company : ", user.company_name) rescue nil
+                        = show_field("Date : ", description.created_at.strftime('%d-%m-%Y %H:%M')) rescue nil
+                        .feedbackBorder  
+                    - else
+                      .p-20
+                        %p= "No Comments"

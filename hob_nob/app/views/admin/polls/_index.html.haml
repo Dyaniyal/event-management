@@ -1,0 +1,87 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "polls", :url => "/admin/events/#{params[:event_id]}/polls/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("polls")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.sequenceInputWidht{"template-pagination" => "custom/pager"}
+    %tr
+      - if @event.is_parent?
+        %th Sequence
+      %th Question 
+      %th Session name
+      %th Sponsor name
+      %th Status
+      %th On Wall
+      - if (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+        %th Result Status
+      %th
+    - objs.each_with_index do |poll,index|
+      %tr
+        - if @event.is_parent?
+          %td.sortable
+            .sort-indicator.frstsequence
+              =# poll.sequence.to_i rescue nil
+            .orderseq
+              - if index != 0
+                %span= link_to "",admin_event_sequence_path(:event_id => poll.event_id, :id => poll.id, :seq_type => "up", :feature_type => "polls"),:class => "uparrow", :method => "put", :remote => true
+              - if poll.sequence.to_i != 0 and (@polls.length - 1) != index
+                %span= link_to "",admin_event_sequence_path(:event_id => poll.event_id, :id => poll.id, :type => "down", :feature_type => "polls"),:class => "downarrow", :method => "put", :remote => true
+        - if (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])) #!(current_user.has_role? :db_manager)
+          %td.description_adjust.font16= show_link(params, poll.id, poll.question) rescue nil
+        - else
+          %td.font16= poll.question
+        %td.font16
+          = Agenda.get_title(poll.select_session) if (poll.show_poll_at.present? and poll.show_poll_at == "session_level") 
+        %td.font16
+          = poll.sponsor.name if (poll.sponsor.present? and poll.show_poll_at.present? and poll.show_poll_at == "sponsor_level") 
+        %td.font16
+          = poll.status.capitalize rescue nil
+        %td.font16
+          - if poll.on_wall == "yes" and poll.status != "rejected" 
+            = "Pushed on #{poll.wall_type}"
+          - else 
+            = "" 
+        - if (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))
+          %td.font16
+            .result_statusdiv
+              - if poll.option_visible == 'yes'
+                = link_to admin_event_poll_path(:id => poll.id, :option_visible => "no"), :method => "patch", :data => { confirm: 'Are you sure, you want to hide result.'} do
+                  .onoffswitch
+                    %input#myonoffswitch.onoffswitch-checkbox{:checked => "checked", :name => "onoffswitch", :type => "checkbox"}/
+                    %label.onoffswitch-label{:for => "myonoffswitch"}
+                      %span.onoffswitch-inner
+                      %span.onoffswitch-switch
+              - else
+                = link_to admin_event_poll_path(:id => poll.id, :option_visible => "yes"), :method => "patch", :data => { confirm: 'Are you sure, you want to display result.'} do
+                  .onoffswitch
+                    %input#myonoffswitch.onoffswitch-checkbox{:checked => false, :name => "onoffswitch", :type => "checkbox"}/
+                    %label.onoffswitch-label{:for => "myonoffswitch"}
+                      %span.onoffswitch-inner
+                      %span.onoffswitch-switch
+
+
+        %td.IconDrp
+          - if (!current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))#!(current_user.has_role? :db_manager)
+            = more_vert_button(poll.id)
+            %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{poll.id}"}
+              = edit_link(params, poll.id)
+              - if @event.is_parent?
+                = delete_link(params, poll.id)
+                - if poll.on_wall == "yes" 
+                  = link_to "Remove From Wall",{:action=>"update", :controller=>"admin/polls", :id => poll.id, :on_wall => "no",:page => params[:page]}, :method => "patch", :data => { confirm: 'Are you sure, you want Remove From Wall.'},:class => "mdl-menu__item" 
+                - elsif ((poll.on_wall == "no" or poll.on_wall == nil ) and (objs.pluck(:on_wall).count("yes") <= 4 ))#poll.event.polls.pluck(:on_wall).exclude?("yes"))
+                  - if poll.status != "deactivate"
+                    / = link_to "Push To Wall",{:action=>"update", :controller=>"admin/polls", :id => poll.id, :on_wall => "yes",:page => params[:page]}, :method => "patch", :data => { confirm: 'Are you sure, you want Push To Wall.'},:class => "mdl-menu__item", :remote => true
+                    = link_to "Push To Wall", admin_event_poll_path(:id => poll.id, option: "partial") , :class => "mdl-menu__item pushWallForm", :remote => true
+                - poll.aasm.events.each do |eve|
+                  = link_to "#{eve.name.to_s.titlecase}".html_safe,{:action=>"update", :controller=>"admin/polls", :id => poll.id, :status => eve.name.to_s, :page => params[:page]}, :method => "put", :data => { confirm: 'Are you sure, you want to change the status.'},:class => "mdl-menu__item"
+
+  =# will_paginate objs   
+.render_partial
+:javascript
+
+  $('input[readonly]').dblclick(function() {
+    $(this).removeAttr('readonly');
+  });  

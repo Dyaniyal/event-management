@@ -1,0 +1,52 @@
+.save_button.mdl.agendaheight{:style => "display: flex;flex-direction: column;font-size: 14px;font-weight: 400;position: relative;"} 
+  = form_for [:admin, @event, @mobile_application, @mobile_consent_question], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-shadow--1dp.p-b-35
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          General Information
+      = f.custom_text_field :question, "Question *","background" => "false"
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Mandate Question
+          .col-lg-3.p-h-12   
+            = f.custom_radio_button :mandate_question, true,"Yes", :id => "w-option-1"
+            = f.custom_radio_button :mandate_question, false, "No", :id => "w-option-2"
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8{:style => "margin-top:10px;"}
+        .form-group
+          %label.col-lg-4.control-label
+            Answer type *
+          .col-lg-7
+            - answer_types = [["Single Check Box", "single_check_box"],["Radio Buttons","radio_button"],["Check Box", "check_box"]]
+            %i.arrow.single
+            = f.select("mobile_consent_question", "answer_type", answer_types, {:selected => f.object.answer_type,:prompt => "#{(f.object.answer_type.present? and f.object.answer_type != "select Answer Type") ? f.object.answer_type : "Select Answer Type" }"}, {include_blank: 'None',:class=> 'select2-single form-control', :id => "answer_type_options"})
+            .field_with_errors
+              .span{:class => "errorMessage"}
+                = f.object.errors.messages[:answer_type].join("") rescue nil
+      .options.mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        = f.custom_text_field :option_1, "Option 1 *","background" => "false", :style => "margin-top:10px;"
+        = f.custom_text_field :option_2, "Option 2 *","background" => "false", :style => "margin-top:10px;"
+        = f.custom_text_field :option_3, "Option 3","background" => "false", :style => "margin-top:10px;"
+        = f.custom_text_field :option_4, "Option 4","background" => "false", :style => "margin-top:10px;"
+        = f.custom_text_field :option_5, "Option 5","background" => "false", :style => "margin-top:10px;"
+        = f.custom_text_field :option_6, "Option 6","background" => "false", :style => "margin-top:10px;"
+        = f.custom_text_field :option_7, "Option 7 ","background" => "false", :style => "margin-top:10px;"
+        = f.custom_text_field :option_8, "Option 8 ","background" => "false", :style => "margin-top:10px;"
+        = f.custom_text_field :option_9, "Option 9","background" => "false", :style => "margin-top:10px;"
+        = f.custom_text_field :option_10, "Option 10","background" => "false", :style => "margin-top:10px;"   
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+:javascript
+  $(window).load(function(){
+    $("#answer_type_options").change(function(){
+      selected_value = $(this).val();
+      if (selected_value == "single_check_box"){
+        $(".options").hide();
+      }else{
+        $(".options").show();
+      }  
+    });
+  });

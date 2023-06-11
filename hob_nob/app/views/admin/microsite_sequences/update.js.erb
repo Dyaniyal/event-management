@@ -1,0 +1,9 @@
+<% if @redirect_feature == "microsite_features" %>
+  $(".sequence_update").html('<%= escape_javascript(render :partial => "admin/microsite_menus/index", :locals => {:objs => @features}) %>');
+<% elsif @redirect_feature == "images" %>
+  $(".sequence_update").html('<%= escape_javascript(render :partial => "admin/images/index", :locals => {:objs => @features}) %>');
+<% elsif @redirect_feature == "agenda_tracks" %>
+  $(".agenda_index_container").html('<%= escape_javascript(render :partial => "/admin/agendas/index_agenda", :locals => {:objs => @features}) %>');
+<% else %>
+  $(".sequence_update").html('<%= escape_javascript(render :partial => "admin/#{@redirect_feature}/index", :locals => {:objs => @features}) %>');
+<% end %>

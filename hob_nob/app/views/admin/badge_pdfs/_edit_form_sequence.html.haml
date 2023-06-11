@@ -1,0 +1,71 @@
+.mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.panel-default
+  .form-group
+    %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+      Map field1 with registration
+    .col-lg-7
+      %i.arrow.single
+      = f.select("badge_pdf", "reg_match_name_field",(@badge_pdf.reg_match_name_field.present? ? ["Please select"] + @regi_fields : @regi_fields), {:selected => @badge_pdf.reg_match_name_field, prompt: "Please Select"}, {include_blank: 'None',:class=> 'select2-single form-control' })
+
+.mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.m-b-5
+  .mdl-grid.p-v-5
+    .col-lg-4.mdl-typography--text-right
+      %p.displayInlineBlock.multicitytxt Field1 font style
+    .col-lg-7
+      %i.arrow.single
+      = select_tag "badge_pdf[field1_parameters][font_style]", options_for_select([["Bold", "bold"],["Italic", "italic"]], selected:  f.object.field1_parameters[:font_style]) , prompt: "Please Select", class: 'select2-single form-control' 
+  .mdl-grid.p-v-5.form-group
+    = custom_text_field_tag_user "badge_pdf[field1_parameters][font_size]", "Field 1 font size", f.object.field1_parameters[:font_size] 
+
+.mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.panel-default
+  .form-group
+    %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+      Map field2 with registration
+    .col-lg-7
+      %i.arrow.single
+      = f.select("badge_pdf", "last_name_match_field",(@badge_pdf.last_name_match_field.present? ? ["Please select"] + @regi_fields : @regi_fields), {:selected => @badge_pdf.last_name_match_field, prompt: "Please Select"}, {include_blank: 'None',:class=> 'select2-single form-control' })
+
+.mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.m-b-5
+  .mdl-grid.p-v-5
+    .col-lg-4.mdl-typography--text-right
+      %p.displayInlineBlock.multicitytxt Field2 font style
+    .col-lg-7
+      %i.arrow.single
+      = select_tag "badge_pdf[field2_parameters][font_style]", options_for_select([["Bold", "bold"],["Italic", "italic"]], selected:  f.object.field2_parameters[:font_style]) , prompt: "Please Select", class: 'select2-single form-control' 
+  .mdl-grid.p-v-5.form-group
+    = custom_text_field_tag_user "badge_pdf[field2_parameters][font_size]", "Field 2 font size", f.object.field2_parameters[:font_size]
+
+.mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.panel-default
+  .form-group
+    %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+      Map field3 with registration
+    .col-lg-7
+      %i.arrow.single
+      = f.select("badge_pdf", "reg_match_company_field",(@badge_pdf.reg_match_company_field.present? ? ["Please select"] + @regi_fields : @regi_fields), {:selected => @badge_pdf.reg_match_company_field, prompt: "Please Select"}, {include_blank: 'None',:class=> 'select2-single form-control' })
+
+.mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.m-b-5
+  .mdl-grid.p-v-5
+    .col-lg-4.mdl-typography--text-right
+      %p.displayInlineBlock.multicitytxt Field3 font style
+    .col-lg-7
+      %i.arrow.single
+      = select_tag "badge_pdf[field3_parameters][font_style]", options_for_select([["Bold", "bold"],["Italic", "italic"]], selected:  f.object.field3_parameters[:font_style]) , prompt: "Please Select", class: 'select2-single form-control' 
+  .mdl-grid.p-v-5.form-group
+    = custom_text_field_tag_user "badge_pdf[field3_parameters][font_size]", "Field 3 font size", f.object.field3_parameters[:font_size]
+
+.mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.panel-default
+  .form-group
+    %label.col-lg-4.control-label.ml-color--shades-white.manage_fields
+      Map field4 with registration
+    .col-lg-7
+      %i.arrow.single
+      = f.select("badge_pdf", "reg_match_designation_field",(@badge_pdf.reg_match_designation_field.present? ? ["Please select"] + @regi_fields : @regi_fields), {:selected => @badge_pdf.reg_match_designation_field, prompt: "Please Select"}, {include_blank: 'None',:class=> 'select2-single form-control' })
+
+.mdl-cell--12-col.mdl-cell--12-col-tablet.m-8.m-b-5
+  .mdl-grid.p-v-5
+    .col-lg-4.mdl-typography--text-right
+      %p.displayInlineBlock.multicitytxt Field4 font style
+    .col-lg-7
+      %i.arrow.single
+      = select_tag "badge_pdf[field4_parameters][font_style]", options_for_select([["Bold", "bold"],["Italic", "italic"]], selected:  f.object.field4_parameters[:font_style]) , prompt: "Please Select", class: 'select2-single form-control' 
+  .mdl-grid.p-v-5.form-group
+    = custom_text_field_tag_user "badge_pdf[field4_parameters][font_size]", "Field 4 font size", f.object.field4_parameters[:font_size]

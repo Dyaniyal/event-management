@@ -1,0 +1,48 @@
+- if params[:client_id].present?
+  = render :partial => "layouts/show_header", :locals => {:obj => @mobile_application, :title => @mobile_application.name}
+- else
+  = stylesheet_link_tag 'new-card'
+  %main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+    %section.menus
+      .relative.clear
+        - page =  @mobile_application.name rescue nil
+        = render :partial => "/admin/dashboards/breadcumb_links",:locals => {:name => params[:controller],:page => page}
+      %section
+        %section#content.table-layout.animated.fadeIn
+          .chute.chute-center
+            - if ["show_content","show_engagement"].exclude?(params[:type])
+              / - if !(current_user.has_role? :moderator)
+              - if (!current_user.has_role_for_event?("moderator", params[:event_id],session[:current_user_role]))
+                = render :partial => 'mobile_card_show'
+            - else
+              / - if !(current_user.has_role? :moderator)
+              - if (!current_user.has_role_for_event?("moderator", params[:event_id],session[:current_user_role]))
+                = render :partial => 'mobile_card_show'
+              =# render :partial => 'mobile_application_constant_features'
+              - if params[:type] == "show_content"
+                .enable_card
+                  = render :partial => 'admin/events/mobile_application_dashboard'
+              - elsif params[:type] == "show_engagement"
+                .enable_card_eng
+                  = render :partial => 'admin/events/mobile_application_engagementcard'
+              / - if !(current_user.has_role? :moderator)
+              - if (!current_user.has_role_for_event?("moderator", params[:event_id],session[:current_user_role]))  
+                - if params[:type] == "show_content"
+                  .disable_card
+                    = render :partial => 'admin/events/mobile_application_dashboard_except_selected_event_features'
+              - if params[:type] == "show_engagement"
+                .disable_card_eng
+                  = render :partial => 'admin/events/mobile_application_engagement_unselected_feature'
+                
+                - if false#params[:type] != "show_engagement"
+                  .fixed_card
+                    .content
+                      .row
+                        = render :partial => 'admin/layouts/card_event', :locals => {:image_path => "coloured_icons/chat.png", :page_title => "Chat", :feature_count => "" }
+
+                        = render :partial => 'admin/layouts/card_event', :locals => {:image_path => "black_&_white_icons/mobile-app.png", :page_title => "Exhibition Guide", :feature_count => "" }
+            - if params[:type] == "show_content"
+              = render :partial => 'admin/layouts/more_links'
+
+            - if false#params[:analytics].present?
+              = render :partial => 'mobile_app_analytics'

@@ -1,0 +1,4 @@
+- if params[:email_count] != "true" and (params[:edm_id].present? or params[:event_id].present?)
+  = render :partial => 'admin/layouts/index_header', :locals => {:objs => @track_link_users}
+- elsif params[:email_count] == "true" and (params[:edm_id].present? or params[:event_id].present?)
+  = render :partial => 'admin/layouts/index_header', :locals => {:objs => @all_track_link_users }

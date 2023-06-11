@@ -1,0 +1,40 @@
+!!!
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %title Feed
+    %meta{:charset => "utf-8"}/
+    %meta{:content => " ", :name => "keywords"}/
+    %meta{:content => " ", :name => "description"}/
+    %meta{:content => "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0", :name => "viewport"}/
+    //   %link{:href => "/assets/css/activity_feed.css", :rel => "stylesheet", :type => "text/css"}/
+    //   %link{:href => "/assets/css/fonts.css", :rel => "stylesheet", :type => "text/css"}/
+    = stylesheet_link_tag "activity_feed.css", "fonts.css"
+  - if @background_image.present?
+    - style = "background-image: url(#{@background_image});background-size:cover;background-repeat: no-repeat; background-attachment:fixed;"
+  - else
+    - style = "background:##{@background_color};"
+  %body{:style=>style} 
+    .container
+      .wrapper
+        %h1
+        - if params[:social].blank?
+          #analytics
+            = render :partial =>"activity_feed", :locals => {:analytics => @event_analytics}
+          .centerAlign#loadingText_activity
+        -elsif params[:social].present?
+          #eventAnalytics
+            Coming Soon
+          .centerAlign#loadingText_activity
+        = link_to '', store_url_for(params.merge(:page => params[:page].to_i + 1)), :class => 'load-more-posts colorFFF', :remote => true, :id => "load-more-posts"   
+            
+:javascript
+  $(document).ready(function(){
+    $('.tabs li').click(function(){
+      var tab_id = $(this).attr('data-tab');
+      $('.tabs li').removeClass('current');
+      $('.tab-content').removeClass('current');
+      $(this).addClass('current');
+      $('#'+ tab_id).addClass('current');
+    });
+  });

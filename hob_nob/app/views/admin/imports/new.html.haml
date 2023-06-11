@@ -1,0 +1,13 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section.menus
+    .eventDetailSection.relative.clear
+      - if params[:importable_type].present? 
+        - page = "Import #{params[:importable_type].capitalize}"
+      - else
+        - page = "Import #{params[:import][:importable_type].capitalize}"
+      = render :partial => "/admin/dashboards/breadcumb_links",:locals => {:name => params[:controller],:page => page}
+      .mdl-cell--13-col.mdl-cell--13-col-tablet.mdl-cell--13-col-phone
+        .p-40.ml-card-holder
+          .mdl-card.mdl-color--grey-100
+            .p-b-40.p-r-40.p-l-40
+              = render :partial => 'form', :locals => {:importable_type => params[:importable_type], :event_id => params[:event_id]}

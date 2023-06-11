@@ -1,0 +1,245 @@
+- event_features_array = @event.event_features.where('name IN (?)', ["feedbacks", "polls", "quizzes", "e_kits", "qnas", "qr_code", "conversations", "favourites", "leaderboard", 'invitees']).pluck(:name)
+- arr = [0]
+- @live_analytics['user_engagements'].map{|q| arr += q[:data]} if @live_analytics.present? and @live_analytics['user_engagements'].present?
+- if arr.all? {|el| el.to_i == 0}
+  :javascript
+    displayText = "No data available."
+- else
+  :javascript
+    displayText = ""
+- if @date_filter_error.blank?
+  - max_val = arr.compact.max
+  :javascript
+    var INTERVALYAXIS = #{(max_val.present? and max_val > 100) ? (max_val / 100) : 5}
+    var LINECATEGORY = #{@live_analytics['xaxis_interval_labels_and_interval'][0]}
+    var OVERALL_ENGAGEMENT = #{@live_analytics['user_engagements'].to_json}
+    var DONUTCHART1ARRAY = #{@live_analytics['unique_users'][0]}
+    var DONUTCHART2ARRAY = #{@live_analytics['active_users'][0]}
+    var INTERVALXAXIS = #{@live_analytics['xaxis_interval_labels_and_interval'][1]}
+
+  = stylesheet_link_tag 'c3'
+  = javascript_include_tag 'jquery-ui.min-dash', 'highcharts', 'd3.min', 'c3.min', 'circles', 'jquery.jvectormap.min', 'jquery-jvectormap-us-lcc-en', 'utility', 'demo-dash', 'main', 'dash-widgets', 'dash-widgets_sidebar', 'dashboard'
+  - breadcrum_image = MobileApplication::CARD_IMAGES
+.row
+  .col-lg-6
+    %a.legend-item.btn.btn-sm.btn{:type => 'button', :href => admin_client_event_path(:client_id => @event.client_id, :id => @event.id, :analytics => true), :class => params[:detailed_analytics].present? ? 'btn-deactive' : 'mdl-color--light-blue-900'} Live
+    %a.legend-item.btn.btn-sm.btn{:type => 'button', :href => admin_client_event_path(:client_id => @event.client_id, :id => @event.id, :detailed_analytics => true), :class => params[:analytics].present? ? 'btn-deactive' : 'mdl-color--light-blue-900'} Detailed
+  .col-lg-6
+    .mobileventSearch.text-right
+      = form_tag "/admin/clients/#{params[:client_id]}/events/#{params[:id]}?analytics=true", :class => 'form-group HideDateEvent', :method => :get do |f|
+        = hidden_field_tag :analytics, true
+        = hidden_field_tag :filter_date, 'date range'
+        .col-lg-5.startdatePadding
+          %input.form-control{:col => "12", :name => "start_date", :type => "text", :value => params[:start_date].present? ? params[:start_date].to_date.strftime('%d/%m/%Y') : "", :id => "date-start", :placeholder => "Start Date"}
+        .col-lg-5
+          %input.form-control{:col => "12", :name => "end_date", :type => "text", :value => params[:end_date].present? ? params[:end_date].to_date.strftime('%d/%m/%Y') : "", :id => "date-end", :placeholder => "End Date"}
+        .col-lg-2.mdl-color--light-blue-900.borderradius
+          %span.publishBtn
+            = submit_tag 'Filter'
+        - if @date_filter_error.present?
+          .field_with_errors
+            %span.errorMessage
+              = "Date range can't be more than 1 month"
+      = form_tag "/admin/clients/#{params[:client_id]}/events/#{params[:id]}?analytics=true", :class => 'form-group FilterTab', :id => 'FirstFilterTab', :method => :get do |f|
+        .col-lg-12
+          %i.arrow.single
+          = hidden_field_tag :analytics, true
+          = select_tag 'filter_date', options_for_select([['Today', ''], ['Last 7 Days', "last 7 days"], ['Pick a Date Range', "date range"]], :selected => params[:filter_date].present? ? params[:filter_date] : ''), :class => 'select2-single form-control'
+
+- if @date_filter_error.blank?
+  .allcp-panels.fade-onload
+    .row
+      .col-md-12.allcp-grid
+        #pchart6.panel
+          .panel-heading
+            %span.panel-title.text-info.fw600
+              %i.fa.fa-pencil.hidden
+              Overall engagement 
+          .panel-menu.br3.mt20
+            .chart-legend.hightChartClick{"data-chart-id" => "#high-line3"}
+              - color_array = ['#4FD8B0', '#67D3E0', '#C3D62D', '#FF7022', '#F5393D', '#AEBF25', '#5A5386', '#2A2F43', '#FFBC0B', '#993333', '#660066']
+              - @live_analytics['user_engagements'].map{|f| f[:name]}.each_with_index do |feature, index|
+                %a.legend-item.btn.btn-sm{:style => "background:#{color_array[index]}", "data-chart-id" => index, :type => "button"}
+                  = feature
+          .panel-body.pn
+            #high-line3{"data-highcharts-chart" => "6", :style => "width: 100%; height: 300px; margin: 0 auto"}/
+    = render :partial => 'admin/layouts/card_event', :locals => {:image_path => "coloured_icons/page-view_icon.png", :page_title => "Page views", :feature_count => @live_analytics['feature_count']['page_count'] }  
+    - if @live_analytics['feature_count']['conversations_count'].present?
+      = render :partial => 'admin/layouts/card_event', :locals => {:image_path => "coloured_icons/conversations.png", :page_title => "Conversations", :feature_count => @live_analytics['feature_count']['conversations_count'] }
+    - if @live_analytics['feature_count']['qnas_count'].present?
+      = render :partial => 'admin/layouts/card_event', :locals => {:image_path => "coloured_icons/Q&A.png", :page_title => "Questions asked", :feature_count => @live_analytics['feature_count']['qnas_count'] }
+    = render :partial => 'admin/layouts/card_event', :locals => {:image_path => "coloured_icons/notification.png", :page_title => "Notifications sent", :feature_count => @live_analytics['feature_count']['notifications_count'] }
+  .row
+    .col-md-6
+      #tab1.panel
+        .panel-heading
+          %span.panel-title 
+            Unique users
+          %span.panel-titlem
+            = "- #{@live_analytics['unique_users'][1][0]} (Total - #{@live_analytics['unique_users'][1][1]} )"
+         
+        .panel-body.p20.br-a.br6
+          - if @live_analytics['unique_users'][0][0][1] == 0 and @live_analytics['unique_users'][0][1][1] == 0
+            = 'No data available'
+          - else
+            #donut-chart2{:style => "height: 350px; width: 100%;"}
+        
+     
+      #tab2.panel
+        .panel-heading
+          %span.panel-title Top 3 Actions
+        .panel-body.scroller-sm
+          %table.table.mbn.tc-icon-bold.br-t
+            %thead
+              %tr.hidden
+                %th #
+                %th First Name
+            %tbody
+              - if @live_analytics['actions'].present? and @live_analytics['actions'][1].present?
+                - @live_analytics['actions'][1].each do |action|
+                  %tr
+                    %td
+                      %span
+                      = Analytic::ACTION_TO_VIEWABLE_TYPE[action[0]]
+                    %td
+                      = action[1]
+                      =# "#{((action[1] / @actions[0].to_f) * 100).to_i} %" rescue "0 %"
+              - else
+                = 'No data available'
+            
+    
+      - if event_features_array.include? 'leaderboard'
+        #tab3.panel
+          .panel-heading
+            %span.panel-titlem
+              Top 3 Leaders
+          .panel-body.scroller-sm
+            %table.table.mbn.tc-icon-bold.br-t
+              %thead
+                %tr.hidden
+                  %th #
+                  %th First Name
+              %tbody
+                - if @live_analytics['leaderboards'].present? and event_features_array.include? 'invitees'
+                  - @live_analytics['leaderboards'].each do |invitee_id|
+                    %tr
+                      - invitee = Invitee.get_invitee_by_id(invitee_id[0])
+                      %td
+                        %span.va-t.mr10.TopspeakerImg
+                          - if invitee.profile_pic.present?
+                            = image_tag(invitee.profile_pic.url(:thumb))
+                          - else
+                            = image_tag('/profile_pics/thumb/missing.png')
+                        = invitee.name_of_the_invitee
+                      %td
+                        = invitee.points rescue 0
+                - else
+                  = 'No data available'
+
+      - if event_features_array.include? 'speakers'
+        #tab3.panel
+          .panel-heading
+            %span.panel-titlem
+              Top 3 Speakers (By average rating)
+          .panel-body.scroller-sm
+            %table.table.mbn.tc-icon-bold.br-t
+              %thead
+                %tr.hidden
+                  %th #
+                  %th First Name
+              %tbody
+                - if @live_analytics['speaker_ids'].present?
+                  - @live_analytics['speaker_ids'].each do |speaker_id|
+                    %tr
+                      - speaker = Speaker.get_speaker(speaker_id[0])
+                      %td
+                        %span.va-t.mr10.TopspeakerImg
+                          - if speaker.profile_pic.present?
+                            = image_tag(speaker.profile_pic.url(:thumb))
+                          - else
+                            = image_tag('coloured_icons/licensee.png')
+                        = speaker.speaker_name
+                      %td
+                        = calculate_rating(speaker,'speaker').round rescue 0
+                - else
+                  = 'No data available'
+      
+    .col-md-6
+      #tab4.panel
+        .panel-heading
+          %span.panel-title Active users
+          %span.panel-titlem
+            = "- #{@live_analytics['active_users'][1][0]} (Total - #{@live_analytics['active_users'][1][1]} )"
+        .panel-body.p20.br-a.br6
+          - if @live_analytics['active_users'][0][0][1] == 0 and @live_analytics['active_users'][0][1][1] == 0
+            = 'No data available'
+          - else
+            #donut-chart1{:style => "height: 350px; width: 100%;"}
+      #tab5.panel
+        .panel-heading
+          %span.panel-title 
+            Engagement gauge
+        .panel-body.pn
+          - if @live_analytics['event_features'][1].present? and !(@live_analytics['event_features'][1].map{|a| a[1]}.all? {|el| el.to_i == 0})
+            - @live_analytics['event_features'][1].sort_by{|a| a[1]}.reverse.each do |feature|
+              - percentage = "#{(feature[1] / ((@live_analytics['event_features'][0] == 0) ? 1 : @live_analytics['event_features'][0].to_f) * 100).round}"
+              - if percentage.to_i > 0
+                .progress.progress-bar-xl.br4.mdl-color--grey-500
+                  .progress-bar.progress-bar-system{"aria-valuemax" => "100", "aria-valuemin" => "0", "aria-valuenow" =>"#{percentage}", :role => "progressbar", :style => "width: #{percentage}%;"}
+                    .pull-left.ph10.gauge
+                      = feature[0].titleize
+                      - if true#((feature[1] / @event_features[0].to_
+                        %span.pull-right.ph10.gaugevalue
+                          = "#{((feature[1] / @live_analytics['event_features'][0].to_f) * 100).round} %" rescue "0 %" 
+          - else
+            = 'No data available'
+      #tab6.panel
+        .panel-heading
+          %span.panel-title Top 3 page views
+        .panel-body.scroller-sm
+          %table.table.mbn.tc-icon-bold.br-t
+            %thead
+              %tr.hidden
+                %th #
+                %th First Name
+            %tbody
+              - if @live_analytics['pages'].present? and @live_analytics['pages'][1].present?
+                - @live_analytics['pages'][1].each do |page|
+                  %tr
+                    %td
+                      %span.va-t.mr10.TopspeakerImg
+                        = image_tag("coloured_icons/#{breadcrum_image[page[0].pluralize.downcase]}")
+                      = page[0]
+                    %td
+                      = page[1]
+                      =# "#{((page[1] / @pages[0].to_f) * 100).to_i} %" rescue "0 %"
+              - else
+                = 'No data available'
+- if params[:filter_date].present? and params[:filter_date] == 'date range'
+  :javascript  
+    $(".HideDateEvent").css('display', 'inline-block');
+:javascript
+  $(window).load(function(){
+    $(".select2-single").change(function(){
+      $(this).find("option:selected").each(function(){
+      if($(this).val() == 'date range'){
+        $(".HideDateEvent").css('display', 'inline-block');
+        $(".FilterTab").css('display', 'inline-block');
+      }
+      else{
+        $("#FirstFilterTab").submit();
+
+      }
+
+    }).change();
+    });
+  });  
+  $('#date-end').bootstrapMaterialDatePicker({
+    weekStart: 0, 
+    format: 'DD/MM/YYYY',
+    time: false,
+    maxDate : "#{Date.today.strftime("%d/%m/%Y") rescue nil}"
+  })    
+
+
+

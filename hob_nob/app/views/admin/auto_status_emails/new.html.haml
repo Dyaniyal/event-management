@@ -1,0 +1,12 @@
+- if params[:import].present?
+  %main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+    %section.menus
+      .eventDetailSection.relative.clear
+        = render :partial => "/admin/dashboards/breadcumb_links",:locals => {:name => params[:controller],:page => params[:registration_type]== "auto_approve" ? "Import auto approve" :  "Import auto reject"}
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone.p-t-75
+          .p-40.ml-card-holder
+            .mdl-card.mdl-color--grey-100
+              .p-b-40.p-r-40.p-l-40
+                = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+- else
+  =# render :partial => 'form'

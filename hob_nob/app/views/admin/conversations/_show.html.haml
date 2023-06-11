@@ -1,0 +1,61 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope
+  %section.menus
+    .mdl-color--light-blue-800.relative.clear
+      .p-20
+        .displayInlineBlock
+          %h3.mdl-color-text--white.m-t-20.m-b-5.headingInfo 
+  .mdl-cell--13-col.mdl-cell--13-col-tablet.mdl-cell--13-col-phone
+    %div
+      .mdl-tabs.mdl-js-tabs.ProfileTabLeft
+        .mdl-tabs__tab-bar
+          %a.mdl-tabs__tab.is-active{:href => "#starks-panel"} Conversation Information
+          %a.mdl-tabs__tab{:href => "#feedback-panel"} Comment
+        #starks-panel.mdl-tabs__panel.is-active.ml-color--shades-white.p-v-20.m-20
+          .mdl-cell--13-col.mdl-cell--13-col-tablet.mdl-cell--13-col-phone
+            .ml-card-holder
+              %div
+                %form.ng-pristine.ng-valid{:action => "#"}
+                  .mdl-grid
+                    = show_field("Email :", obj.user.email) rescue ''
+                    = show_field("User Name :", obj.user.name_of_the_invitee)  rescue ''
+                    = show_field("Designation :", obj.user.designation) rescue ''
+                    = show_field("Company Name :", obj.user.company_name) rescue ''
+                    = show_field("Comment Count :", obj.comments.count)
+                    = show_field("Like Count :", obj.likes.count) rescue 0
+                    = show_field("Description :", obj.description)
+                    .mdl-cell--5-col.mdl-cell--4-col-tablet.m-8
+                      %p.no-m-b
+                        %strong Profile Picture:
+                        %span
+                          - if obj.image.url != "/image/original/missing.png"
+                            = image_tag(obj.image.url(:thumb), :alt=> "Image Missing" )
+                          - else
+                            = image_tag "default.png"
+                  .m-l-18
+                    .mdl-cell--12-col.mdl-cell--12-col-tablet
+                      = back_button_detailed_page(:back) 
+        #feedback-panel.mdl-tabs__panel
+          .ml-card.mdl-color--white.mdl-shadow--0dp.m-20
+            .ml-card--content
+              - if obj.comments.present?
+                %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.pollstab{"template-pagination" => "custom/pager"}
+                  %tr
+                    %th Comment
+                    %th Name
+                    %th Company
+                    %th Date
+                  - obj.comments.each do |comment|
+                    - user = comment.user
+                    %tr
+                      %td.description_adjust.font12{:width => "300px;"}
+                        = comment.description rescue nil
+                      %td.description_adjust.font12{:width => "300px;"}
+                        = user.name_of_the_invitee rescue nil
+                      %td.description_adjust.font12{:width => "300px;"}
+                        = user.company_name rescue nil
+                      %td.font16
+                        =# comment.created_at rescue nil
+                        = formatted_time(comment.created_at_with_event_timezone, "%Y-%m-%d %H:%M")
+              - else
+                .p-20
+                  %p= "No Comments"

@@ -1,0 +1,42 @@
+class AddParentIdsToRemainingModels < ActiveRecord::Migration
+  def change
+  	add_column :agendas, :parent_id, :integer
+  	add_column :agenda_tracks, :parent_id, :integer
+  	add_column :awards, :parent_id, :integer
+  	add_column :attendees, :parent_id, :integer
+  	#add_column :campaigns, :parent_id, :integer
+  	add_column :contacts, :parent_id, :integer
+  	add_column :custom_page1s, :parent_id, :integer
+  	add_column :custom_page2s, :parent_id, :integer
+  	add_column :custom_page3s, :parent_id, :integer
+  	add_column :custom_page4s, :parent_id, :integer
+  	add_column :custom_page5s, :parent_id, :integer
+  	add_column :custom_page6s, :parent_id, :integer
+  	add_column :custom_page7s, :parent_id, :integer
+  	add_column :custom_page8s, :parent_id, :integer
+  	add_column :custom_page9s, :parent_id, :integer
+  	add_column :custom_page10s, :parent_id, :integer
+  	add_column :edms, :parent_id, :integer
+  	add_column :events, :parent_id, :integer
+  	add_column :event_features, :parent_id, :integer
+  	add_column :emergency_exits, :parent_id, :integer
+    add_column :exhibitors, :parent_id, :integer
+    add_column :faqs, :parent_id, :integer
+  	add_column :feedbacks, :parent_id, :integer
+    add_column :images, :parent_id, :integer
+  	add_column :invitees, :parent_id, :integer
+  	add_column :invitee_groups, :parent_id, :integer
+  	add_column :invitee_structures, :parent_id, :integer
+  	add_column :mobile_applications, :parent_id, :integer
+  	add_column :my_travels, :parent_id, :integer
+  	add_column :qna_settings, :parent_id, :integer
+  	add_column :registrations, :parent_id, :integer
+  	add_column :registration_look_and_feels, :parent_id, :integer
+  	add_column :registration_settings, :parent_id, :integer
+  	add_column :speakers, :parent_id, :integer
+  	add_column :sponsors, :parent_id, :integer
+  	add_column :themes, :parent_id, :integer
+  	add_column :user_registrations, :parent_id, :integer
+  	add_column :winners, :parent_id, :integer
+  end
+end

@@ -1,0 +1,46 @@
+.save_button.mdl-card
+  = form_for [:admin, @event, @manage_invitee_field], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp.p-b-25.invitee_tell
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          General Information
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          .col-lg-12.p-h-12
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone 
+              .col-lg-8.p-h-16
+                %span.top6.p-h-2.telehead Field Name 
+              .col-lg-4.p-h-12.textright
+                %span.top6.p-h-5.telehead Visible to Invitees
+        
+        - display_name_hsh = @manage_invitee_field.get_column_names
+        - display_name_hsh.each do |key, value|
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+            .mdl-grid.p-v-5.form-group.mobiappstype
+              .col-lg-12.p-h-12
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.md-checkbox.m-v-8
+                  .col-lg-8.p-h-12
+                    %span.top6
+                    = display_name_hsh[key]#.humanize.titleize if key != 'name_of_the_invitee'
+                  .col-lg-3.p-h-12.chekboxtell
+                    %label.help-tip{:for => "manage_invitee_field_#{key}_1"}
+                      / - er = f.object.errors.messages[:enabled_attr].join(',') rescue nil
+                      / - f.object.errors.messages[:field_attr].clear if f.object.errors.messages[:enabled_attr].present?
+                      = check_box "manage_invitee_field", "#{key}", {:id => "manage_invitee_field_#{key}_1"}, "true", "false"
+                      %span.checkbox
+                      / .field_with_errors
+                      /   .span{:class => "errorMessage"}
+                      /     = er
+                      .fixed-activon-btn-new  
+    - if @event.present? and @event.parent_id.present?
+      .mdl-grid.p-v-5.form-group.col-md-4
+        .md-checkbox
+          %label
+            = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+            %span.checkbox 
+            Is language updated
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)

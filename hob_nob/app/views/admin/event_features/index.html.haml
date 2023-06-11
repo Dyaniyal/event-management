@@ -1,0 +1,94 @@
+%main.mdl-layout__content.mdl-color--grey-100.page.ng-scope               
+  %section.tables-data
+    .ml-header.relative.clear.mdl-color--light-blue-800
+      .mdl-grid.mdl-grid--no-spacing
+        .mdl-cell.mdl-cell--6-col.mdl-cell--12-col-tablet
+          %h3.mdl-color-text--white.m-t-15.p-l-40.p-v-20 Manage Event Menu
+        =# render :partial => 'event_search'
+    .mdl-grid.HideSearchBlog
+      .p-h-25.ml-card-holder
+        =# render :partial => 'event_advance_search'
+    .mdl-grid.mdl-grid--no-spacing
+      .mdl-cell.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--12-col-phone
+        .p-35.ml-card-holder.ml-card-holder-first.HeaderHeight
+          .mdl-card.mdl-shadow--1dp.m-b-30.clients
+            .mdl-card__title.mdl-color--light-blue-600.mdl-typography--text-right.displayBlock
+              %h2.mdl-card__title-text.mdl-color-text--white.displayBlock.mdl-typography--text-right.displayBlock.mdl-typography--text-right
+                = @event.event_features.count rescue nil
+                Event Menu
+            - if !@event.event_features.present? and !params[:admin_search].present?
+              .mdl-typography--text-center.BlnkTxt
+                = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => 'event_features', :url => "/admin/events/#{params[:event_id]}/event_features/new", :msg => 'test'} 
+            - else
+              = form_for [:admin, @event] ,:url => admin_event_event_features_path(:event_id => @event.id), :method => "post" do |f|
+                %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16{"template-pagination" => "custom/pager"}
+                  %tr
+                    %th
+                      Name
+                    %th
+                      Page Title
+                    %th 
+                      Sequence  
+                    %th
+                      Drawer Icons(72x72px) png only
+                    %th
+                      Menu Icons(288x288px) png only
+                    %th 
+                      Status
+                    %th 
+                      Message  
+                    %th  
+                  - count = 0    
+                  = f.fields_for :event_features do |builder| 
+                    %tr
+                      %td.fond15
+                        = Client.display_hsh[builder.object.name] rescue nil
+                      %td
+                        .mdl-cell--6-col.mdl-cell--6-col-tablet
+                          .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                            = builder.text_field :page_title, :class => 'mdl-textfield__input'
+                            %label.mdl-textfield__label{:for => "sample5"} Page Title 
+                      %td 
+                        .mdl-cell--6-col.mdl-cell--6-col-tablet
+                          .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                            = builder.text_field :sequence, :class => 'mdl-textfield__input',:id => "samplesequence"
+                            %label.mdl-textfield__label{:for => "sample5"} Sequence  
+                        
+                      %td
+                        .mdl-grid.mdl-grid--no-spacing
+                          .mdl-cell--4-col.mdl-cell--4-col-tablet
+                            .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.disableinput
+                              = image_tag(builder.object.menu_icon_url(:thumb), :alt =>"")
+                          .mdl-cell--2-col.mdl-cell--2-col-tablet.fileUpload.event-imgupload
+                            = builder.file_field :menu_icon, :class =>'upload'
+                          .mdl-cell--5-col.mdl-cell--5-col-tablet
+                            %label.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label{:class => "event_event_features_attributes_#{count}_menu_icon"}= builder.object.menu_icon_file_name
+                      %td
+                        .mdl-grid.mdl-grid--no-spacing
+                          .mdl-cell--4-col.mdl-cell--4-col-tablet
+                            .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label.disableinput
+                              = image_tag(builder.object.main_icon_url(:thumb), :alt =>"")
+                          .mdl-cell--2-col.mdl-cell--2-col-tablet.fileUpload.event-imgupload
+                            = builder.file_field :main_icon, :class =>'upload'
+                          .mdl-cell--5-col.mdl-cell--5-col-tablet
+                            %label.mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label{:class => "event_event_features_attributes_#{count}_main_icon"}= builder.object.main_icon_file_name
+                      %td.fond15
+                        .menustatusnew
+                          = builder.object.status
+                      %td 
+                        .mdl-textfield.mdl-js-textfield.mdl-textfield--floating-label
+                          - if builder.object.status == "deactive"   
+                            = builder.text_field :description, :class => 'mdl-textfield__input'
+                            %label.mdl-textfield__label{:for => "sample5"} Message
+                      %td
+                        .mdl-cell--1-col.mdl-cell--1-col-tablet  
+                          = more_vert_button(builder.object.id)
+                          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{builder.object.id}"}
+                            - builder.object.aasm.events.each do |eve|
+                              = link_to "#{eve.name.to_s.titlecase}".html_safe,{:action=>"update", :controller=>"admin/event_features", :id => builder.object.id, :status => eve.name.to_s, :page => params[:page]}, :method => "put", :data => { confirm: 'Are you sure, you want to change the status.'},:class => "mdl-menu__item"
+                            = link_to admin_event_event_feature_path(:event_id =>f.object.id, :id => builder.object.id),method: :delete,:class => "mdl-menu__item" do
+                              Remove
+                          - count = count + 1      
+                      = hidden_field_tag :edit_feature, "true"  
+                .mdl-button.mdl-js-button.mdl-button--raised.mdl-color--light-blue-800.mdl-js-ripple-effect.btnsubmit.m-l-18.m-t-10
+                  = f.submit "SAVE"

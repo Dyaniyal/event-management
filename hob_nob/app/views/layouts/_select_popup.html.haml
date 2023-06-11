@@ -1,0 +1,57 @@
+.popup-overlay
+.ClientPopup
+#register-form.col.s12.ClientPopup-info
+  %p.txtcenter.m-b-30
+    - if prompt_message == 'Select Event'
+      Please select an event to continue
+    - else
+      Please select a client to continue
+  %span 
+    - if false
+      = link_to request.referer, :class => 'closeclick' do 
+        X
+    = link_to back_path, :class => 'closeclick' do 
+      X  
+  = form_tag  url, :class => "caret",:method => :get do
+    %i.arrow.single                        
+    - if prompt_message == 'Select Event'
+      - if params[:role] == "moderator" and params[:wall] == "true"
+        - new_event_not_having_mob_appli = []
+        - objs.each do |event|
+          - new_event_not_having_mob_appli << event if event.mobile_application.present?
+        - objs = new_event_not_having_mob_appli
+      = select_tag :event_id, options_for_select(objs.map{|c| [c.event_name,c.id]}), :prompt => "#{prompt_message}"
+    - else
+      = select_tag :client_id, options_for_select(objs.map{|c| [c.name,c.id]}), :prompt => "#{prompt_message}"
+      = hidden_field_tag :dashboard_client_level, params[:dashboard_client_level] if params[:dashboard_client_level].present?
+    = hidden_field_tag :feature, params[:feature]
+    = hidden_field_tag :redirect_page, params[:redirect_page] if params[:redirect_page].present?
+    = hidden_field_tag :role, params[:role]
+    - if params[:dashboard].present?
+      = hidden_field_tag :dashboard, params[:dashboard]
+    = hidden_field_tag :mobile_application_id, params[:mobile_application_id] if params[:feature] == 'mobile_application'
+    = hidden_field_tag :wall, params[:wall] if params[:wall] == "true"
+    = hidden_field_tag :type, params[:type] if params[:feature] == 'mobile_application' and params[:type].present? and params[:type] == 'remove'
+    = hidden_field_tag :type, params[:type] if params[:feature] == 'mobile_application' and params[:type].present? and params[:type] == 'remove'
+    = hidden_field_tag :telecaller, params[:telecaller] if params[:telecaller].present? and params[:telecaller] =='true'
+    .row.txtcenter.UserSubmit.m-t-40
+      = submit_tag "Submit", :class => "mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-js-ripple-effect mdl-color--light-blue-600 disbtn"
+    .row.txtcenter.m-t-20
+      %p
+        - if (!current_user.has_role? :moderator and !current_user.has_role? :event_admin) and params[:wall] != "true" and !(current_user.has_role? :telecaller)  and params[:feature] != "log_changes"
+          - if prompt_message == 'Select Event' 
+            Want to add a new event? 
+            - if params[:mobile_application_id].present? 
+              = link_to "Click here", new_admin_client_event_path(:client_id => params[:client_id], :mobile_application_id => params[:mobile_application_id])
+            - else  
+              = link_to "Click here", new_admin_client_event_path(:client_id => params[:client_id])  
+
+          - elsif current_user.has_role?("licensee_admin") #(!current_user.has_role? :moderator and !current_user.has_role? :event_admin)
+            Want to add a new client? 
+            = link_to "Click here",  new_admin_client_path
+
+      %p
+        - if (current_user.has_role? :licensee_admin or current_user.has_role? :client_admin) and params[:wall] != "true" and params[:feature] != "log_changes"
+          - if prompt_message == 'Select Event' and (params[:new_marketing_app].present? and params[:new_marketing_app] == "true")#(params[:feature].present? and  params[:feature] == "mobile_applications")
+            %b Want to add a new Hub Space? 
+            = link_to "Click here", new_admin_client_event_path(:client_id => params[:client_id],:marketing_app => true)  

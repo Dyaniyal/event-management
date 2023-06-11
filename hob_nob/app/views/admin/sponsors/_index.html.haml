@@ -1,0 +1,44 @@
+- if !objs.present? and !params[:admin_search].present? and params[:from] == "microsites"
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "sponsors", :url => "/admin/events/#{params[:event_id]}/sponsors/new?from=microsites", :msg => 'test'}
+- elsif !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => "sponsors", :url => "/admin/events/#{params[:event_id]}/sponsors/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("sponsors")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16.ng-scope.ng-table{"template-pagination" => "custom/pager"}
+    %tr
+      - if @event.is_parent?
+        %th Sequence
+      %th Category
+      %th Sponsor Name
+      %th Sponsor Logo
+      %th Email id
+      %th Contact Person Name
+      %th Contact No.
+      %th 
+    - objs.each_with_index do |sponsor, index|
+      %tr
+        - if @event.is_parent?
+          %td.sortable
+            .orderseq
+              - if index != 0
+                %span= link_to "",admin_event_sequence_path(:event_id => sponsor.event_id, :id => sponsor.id, :seq_type => "up", :feature_type => "sponsors"),:class => "uparrow", :method => "put", :remote => true
+              - if sponsor.sequence.to_i != 0 and (@sponsors.length - 1) != index
+                %span= link_to "",admin_event_sequence_path(:event_id => sponsor.event_id, :id => sponsor.id, :type => "down", :feature_type => "sponsors"),:class => "downarrow", :method => "put", :remote => true
+        %td.font16= show_link(params, sponsor.id, sponsor.sponsor_type) rescue nil
+        %td.font16= show_link(params, sponsor.id, sponsor.name) rescue nil
+        %td.font16
+          - if sponsor.logo.present?
+            = image_tag(sponsor.image_url(:thumb), :width => 60, :heigth => 60 ) rescue nil  
+        %td.font16= sponsor.email
+        %td.font16= sponsor.contact_person_name
+        %td.font16= sponsor.mobile
+        %td.IconDrp
+          = more_vert_button(sponsor.id)
+          %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{sponsor.id}"}
+            = edit_link(params, sponsor.id)
+            - if @event.is_parent?
+              = delete_link(params, sponsor.id)

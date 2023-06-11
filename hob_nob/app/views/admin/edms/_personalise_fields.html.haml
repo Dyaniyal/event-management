@@ -1,0 +1,25 @@
+- if columns.present?
+  %div
+    %table.personalize_table{:align => "center", :width => "80%", :border=>"1"}
+
+      %tr
+        %th Database value
+        %th Database field
+      - columns.each do |col|
+        %tr
+          %td= col[1]
+          %td= col[0]
+  - if false
+    .personalize-popup-container
+      .personalize-popup-content
+        .personalize-popup-box50.bold-text
+          Database value
+        .personalize-popup-box50.bold-text
+          Database field
+        - @columns.each do |f|
+          .personalize-popup-box50
+            = f[1]
+          .personalize-popup-box50
+            = f[0]
+:css
+  .personalize_table{margin-top: 1%;}

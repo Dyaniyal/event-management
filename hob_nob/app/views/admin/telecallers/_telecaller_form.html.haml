@@ -1,0 +1,91 @@
+- if @telecaller.new_record?
+  = form_for [:admin, @telecaller],:url => admin_event_telecallers_path(:event_id => params[:event_id]), :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp.p-b-35
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information
+      = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "licensee_generalInfo.jpg", :section_id => "licensee_general_section"}
+      = f.custom_text_field :first_name, "first Name *"
+      = f.custom_text_field :last_name, "Last Name *"
+      = f.custom_text_field :email, "Email id *", :value => f.object.email.present? ? f.object.email : ''
+      - if f.object.new_record?
+        = f.custom_text_field :password, "Password *"
+        = f.custom_text_field :password_confirmation, "Confirm Password *"
+      = f.hidden_field :telecaller, :value => true
+      = f.hidden_field_tag :get_role, params[:get_role] if params[:get_role].present?
+      = f.hidden_field_tag :telecaller_index, true if (params[:telecaller_index].present? or (Rails.application.routes.recognize_path(request.referrer)[:controller] == "admin/telecallers" and ["index","new","edit"].include?(Rails.application.routes.recognize_path(request.referrer)[:action])))
+      = f.hidden_field :licensee_id, :value => current_user.get_licensee
+      
+      = f.fields_for :telecaller_groups, f.object.telecaller_groups.present? ? (f.object.telecaller_groups.where('event_id =?', @event.id).present? ? f.object.telecaller_groups.select { |s| s.event_id == @event.id } : @telecaller_group) : @telecaller_group do |field|
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.m-t-15
+          .form-group
+          %label.col-lg-4.control-label.ml-color--shades-white
+            Assign Groups *
+          .col-lg-7.notification.notification-left-margin
+            - default_grouping = @event.groupings.reverse.collect{|p| [ p.name, p.id ]}
+            - er = field.object.errors.messages[:assign_grouping].join(',') if field.object.errors.messages[:assign_grouping].present?
+            - default_grouping.each_with_index do |group, index|
+              .md-checkbox.customCheckboxClick
+                %label
+                  - field.object.errors.messages[:assign_grouping].clear if field.object.errors.messages[:assign_grouping].present?
+                  = field.check_box :assign_grouping, {multiple: true, checked: field.object.assign_grouping.include?(group[1].to_s)}, group[1]
+                  %span.checkbox
+                  = group[0]
+          %br
+          .field_with_errors.col-md-2.custome-md-offset-4
+            .span{:class => "errorMessage"}
+              = er
+              =# field.object.errors.messages[:assign_grouping].join("") rescue nil
+        = field.custom_text_field :target_assigned, "Calling target *"
+        = field.custom_text_field :registration_target, "Target Registrations *"
+        = field.hidden_field :event_id, :value => params[:event_id]
+    .fixed-activon-btn-new
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+- else
+  = form_for [:admin, @telecaller],:url => admin_event_telecaller_path(:event_id => params[:event_id],:id=>@telecaller.id), :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp.p-b-35
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information
+      = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "licensee_generalInfo.jpg", :section_id => "licensee_general_section"}
+      = f.custom_text_field :first_name, "first Name *"
+      = f.custom_text_field :last_name, "Last Name *"
+      = f.custom_text_field :email, "Email id *", :value => f.object.email.present? ? f.object.email : ''
+      - if f.object.new_record?
+        = f.custom_text_field :password, "Password *"
+        = f.custom_text_field :password_confirmation, "Confirm Password *"
+      = f.hidden_field :telecaller, :value => true
+      = f.hidden_field_tag :get_role, params[:get_role] if params[:get_role].present?
+      = f.hidden_field_tag :from_users, true if (Rails.application.routes.recognize_path(request.referrer)[:controller] == "admin/users") or params[:from_users].present?
+      = f.hidden_field_tag :telecaller_index, true if (params[:telecaller_index].present? or (Rails.application.routes.recognize_path(request.referrer)[:controller] == "admin/telecallers" and ["index","new","edit"].include?(Rails.application.routes.recognize_path(request.referrer)[:action])))
+      = f.hidden_field :licensee_id, :value => current_user.get_licensee
+      = f.fields_for :telecaller_groups, f.object.telecaller_groups.last do |field|
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.m-t-15
+          .form-group
+          %label.col-lg-4.control-label.ml-color--shades-white
+            Assign Groups *
+          .col-lg-7.notification.notification-left-margin
+            - default_grouping = @event.groupings.reverse.collect{|p| [ p.name, p.id ]}
+            - er = field.object.errors.messages[:assign_grouping].join(',') rescue nil
+            - default_grouping.each_with_index do |group, index|
+              .md-checkbox.customCheckboxClick
+                %label
+                  - field.object.errors.messages[:assign_grouping].clear if field.object.errors.messages[:assign_grouping].present?
+                  = field.check_box :assign_grouping, {multiple: true, checked: field.object.assign_grouping.include?(group[1].to_s)}, group[1]
+                  %span.checkbox
+                  = group[0]
+          %br
+          .field_with_errors.col-md-2.custome-md-offset-4
+            .span{:class => "errorMessage"}
+              = er #field.object.errors.messages[:assign_grouping].join("") rescue nil
+        = field.custom_text_field :target_assigned, "Calling target *"
+        = field.custom_text_field :registration_target, "Target Registrations *"
+        = field.hidden_field :event_id, :value => params[:event_id]
+    .fixed-activon-btn-new
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)                

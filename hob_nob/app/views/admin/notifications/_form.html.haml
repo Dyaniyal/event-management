@@ -1,0 +1,247 @@
+= stylesheet_link_tag "css/telecaller_show"
+.overlayBg
+  / %img{:src => "/assets/loader.gif", :class =>"loader-img"}/
+  .spinner
+    .rect1
+    .rect2
+    .rect3
+    .rect4
+    .rect5
+  
+.save_button
+  = form_for [:admin, @event, @notification], :html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information
+      = f.custom_text_field :description, "Text (max 200 characters) *","background" => "false"
+      / = f.new_custom_file_browser_field :image, "Image (less than 100 KB)", :id => "uploadBtn", :value => f.object.image_file_name, :action=> params[:action], "background" => "false"
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8
+        .bs-component
+          .form-group
+            .span.col-lg-4
+              = f.label "Image (less than 100 KB)",:class =>"control-label", style: "float: right;"
+            .col-lg-7
+              %label.field.file
+                %span.button.btn-primary
+                  Choose File 
+                = f.file_field :image,:id => "uploadBtn", :class=>"gui-file"
+                = text_field_tag("text_file_name","", id: "1uploadBtn", class: "gui-input", :value => "#{f.object.image_file_name.nil? ? "there is no Attachment Available !" : f.object.image_file_name}")
+            .span.col-lg-1
+              = link_to("?" ,"/whats_this/notification/general_information/image_notification.png", rel: "login_background_popup", title: "Image", :class =>"fancybox whatsImg") 
+      / .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+      /   .mdl-grid.p-v-5.form-group.mobiappstype
+      /     .col-lg-4.mdl-typography--text-right 
+      /       %p.displayInlineBlock.multicitytxt  Send to *
+      /     .col-lg-7.p-h-12.notific 
+      /       = f.custom_radio_button :notification_type, "all", "All", :id => "option1"
+      /       = f.custom_radio_button :notification_type, "group", "Group", :id => "option2"
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Send to *
+          .col-lg-3.p-h-12   
+            - er = f.object.errors.messages[:notification_type].join(',') rescue nil
+            - f.object.errors.messages[:notification_type].clear if f.object.errors.messages[:notification_type].present?
+            = f.custom_radio_button :notification_type, "all", "All", :id => "option1"
+            = f.custom_radio_button :notification_type, "group", "Group", :id => "option2"
+            .field_with_errors
+              .span{:class => "errorMessage"}
+                = er
+          .col-lg-1.agenda_help
+            = link_to "?" ,"/whats_this/notification/general_information/send_push_notifications.png", rel: "agenda_image", title: "Send Push Notification", :class =>'fancybox whatsImg appwhatsthis'
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8{:style => ((f.object.notification_type == 'all' or f.object.notification_type.blank?)? 'margin-top:30px;display:none;' : 'margin-top:30px'), :id => 'group_check_boxes'}
+        .form-group
+          %label.col-lg-4.control-label.ml-color--shades-white
+            Select Groups
+            %br
+            %a{:href => admin_event_invitee_groups_path(:event_id => @event.id), :class =>'', :title => "Invitee Groups", :target => '_blank'}
+              (View Available Groups)
+          .col-lg-7.notification
+            -# default_group_list = [['No Polls taken', 'No Polls taken'], ['No Feedback given', 'No Feedback given'], ['No Quiz taken', 'No Quiz taken'], ['No Q&A', 'No Q&A'], ['NO QR code scanned', 'NO QR code scanned'], ['No Chat', 'No Chat']]
+            - default_group_list = @default_groups.collect{|group| [ group.name, group.id ]}
+            - default_group_list.each_with_index do |group, index|
+              - if index == 0
+                .usersep
+                  Default Groups
+              .md-checkbox
+                %label
+                  = check_box_tag "notification[group_ids][]", group[1], (f.object.group_ids.include?(group[1].to_s)), :class => "", :id => "event_user_ids_#{group[0]}"
+                  %span.checkbox 
+                  = group[0]
+            - default_group_list = @other_groups.collect{|group| [ group.name, group.id ]}
+            - default_group_list.each_with_index do |group, index|
+              - if index == 0
+                .usersep
+                  Groups created by you
+              .md-checkbox
+                %label
+                  = check_box_tag "notification[group_ids][]", group[1], (f.object.group_ids.include?(group[1].to_s)), :class => "", :id => "event_user_ids_#{group[0]}"
+                  %span.checkbox 
+                  = group[0]
+            =# f.select("notification", "group_ids", default_group_list,{:selected => f.object.group_ids},{include_blank: 'None', :multiple => true})
+        .form-group
+          %label.col-lg-4
+          .field_with_errors.col-lg-7
+            .span{:class => "errorMessage"}
+              = f.object.errors.messages[:group_ids].join("") rescue nil
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+        .form-group
+          %label.col-lg-4.control-label.ml-color--shades-white
+            Destination
+          .col-lg-7
+            %i.arrow.single
+            - grouped_options = get_notification_type_group_array(@event)
+            - grouped_options = grouped_options.insert(0, ['Home Page','Home Page'])
+            = select_tag "notification[action]", options_for_select(grouped_options, :selected => f.object.action), :prompt => 'Select Destination Page', :class =>"select2-single form-control"
+          .span.col-lg-1
+            = link_to("?" ,"/whats_this/notification/general_information/select_root_destination.png", rel: "selecte_template", title: "Destination", :class =>"fancybox whatsImg")
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8#notification_action_change
+        - if f.object.actionable_id.present? and ["edit","update"].include?(params[:action]) and ["Agenda","Speaker","Poll","Quiz","Feedback"].include?(f.object.action)
+          .form-group
+            %label.col-lg-4.control-label.ml-color--shades-white
+              Select Screen
+            .col-lg-7 
+              - @data = @data.collect{|p| [ p.title, p.id ]} if f.object.action == "Agenda"
+              - @data = @data.collect{|p| [ p.speaker_name, p.id ]} if f.object.action == "Speaker"
+              - @data = @data.collect{|p| [ p.question, p.id ]} if f.object.action == "Poll"
+              - @data = @data.collect{|p| [ p.question, p.id ]} if f.object.action == "Quiz"
+              - @data = @data.collect{|p| [ p.name, p.id ]} if f.object.action == "E-Kit"
+              - @data = @data.collect{|p| [ p.title, p.id ]} if f.object.action == "Feedback"
+              %i.arrow.single
+              = select_tag "notification[actionable_id]", options_for_select(@data,:selected => f.object.actionable_id), :prompt => 'Select Screen', :class =>"select2-single form-control"
+    .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40.p-b-15
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          Notification Type 
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+        .mdl-grid.p-v-5.form-group.mobiappstype
+          .col-lg-4.mdl-typography--text-right 
+            %p.displayInlineBlock.multicitytxt Send as Push Message
+          .col-lg-7.p-h-12 
+            = f.custom_radio_button_menu :push, true,"Yes", :id => 'push_true', :default_checked => (f.object.push == true or f.object.push.blank?) ? 'checked' : ''
+            = f.custom_radio_button_menu :push, false,"No", :id => 'push_false', :default_checked => (f.object.push == false) ? 'checked' : ''
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+        .mdl-grid.p-v-5.form-group.mobiappstype
+          .col-lg-4.mdl-typography--text-right 
+            %p.displayInlineBlock.multicitytxt  Show on Notification Screen
+          .col-lg-7.p-h-12 
+            = f.custom_radio_button_menu :show_on_notification_screen, true,"Yes", :id => 'show_on_notification_screen_true', :default_checked => (f.object.show_on_notification_screen == true or f.object.show_on_notification_screen.blank?) ? 'checked' : ''
+            = f.custom_radio_button_menu :show_on_notification_screen, false,"No", :id => 'show_on_notification_screen_false', :default_checked => (f.object.show_on_notification_screen == false) ? 'checked' : ''
+      
+      / .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.image_for_notification
+      /   .bs-component
+      /     .form-group
+      /       .span.col-lg-4
+      /         = f.label "Notification Image (200x200px)",:class =>"control-label", style: "float: right;"
+      /       .col-lg-7
+      /         %label.field.file
+      /           %span.button.btn-primary
+      /             Choose File 
+      /           = f.file_field :image_for_show_notification,:id => "uploadBtn_image_for_show_notification", :class=>"gui-file"
+      /           = text_field_tag("text_file_name","", id: "1uploadBtn_image_for_show_notification", class: "gui-input", :value => "#{f.object.image_for_show_notification_file_name.nil? ? "there is no Attachment Available !" : f.object.image_for_show_notification_file_name}")
+      - if @event.event_features.pluck(:name).include? "activity_feeds"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess.show_on_activity
+          .mdl-grid.p-v-5.form-group.mobiappstype
+            .col-lg-4.mdl-typography--text-right 
+              %p.displayInlineBlock.multicitytxt Show on Activity Feed
+            .col-lg-7.p-h-12 
+              = f.custom_radio_button_menu :show_on_activity, true,"Yes", :id => 'show_on_activity_true', :default_checked => (f.object.show_on_activity == true) ? 'checked' : ''
+              = f.custom_radio_button_menu :show_on_activity, false,"No", :id => 'show_on_activity_false', :default_checked => (f.object.show_on_activity == false) ? 'checked' : ''
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.m-b-5.errorMess
+        .mdl-grid.p-v-5.form-group.mobiappstype
+          .col-lg-4.mdl-typography--text-right 
+            %p.displayInlineBlock.multicitytxt  Push Time *
+          .col-lg-7.p-h-12 
+            = f.custom_radio_button_menu :push_timing, "now","Now", :id => 'option3', :default_checked => (f.object.push_timing == 'now' or f.object.push_timing.blank?) ? 'checked' : ''
+            = f.custom_radio_button_menu :push_timing, "later","Set Time", :id => 'option4', :default_checked => (f.object.push_timing == 'later') ? 'checked' : ''
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8{:style => ((f.object.push_timing == 'now' or f.object.push_timing.blank?)? 'margin-top:30px;display:none;' : 'margin-top:30px')}
+        .bs-component
+          .form-group
+            %label.col-lg-4.control-label{:for => "Push Time"} Set Time
+            = f.custom_text_field_date :push_datetime, "Push Time", :id => "date-start", :value => f.object.push_datetime.present? ? f.object.push_datetime.strftime('%d/%m/%Y') : '' 
+            .col-lg-3.timeDropdown
+              .timeTab
+                = f.custom_text_field_date :push_time_hour, " ", :class => "hours inputs is-focused", :placeholder => 'HH ', :value => "#{get_hour_minute_second_ampm(f.object.push_datetime, 'hour')}", :col => '2'
+                = f.custom_text_field_date :push_time_minute, " ", :class => "minutes inputs is-focused", :placeholder => 'MM ', :value => "#{get_hour_minute_second_ampm(f.object.push_datetime, 'minute')}", :col => '2'
+                = f.custom_text_field_date :push_time_am, " ", :class => "ampm inputs is-focused", :placeholder => 'AM/PM', :value => "#{get_hour_minute_second_ampm(f.object.push_datetime, 'ampm')}", :col => '3'
+      = hidden_field_tag "type","#{params[:type]}" if params[:type].present?
+      - if @event.present? and @event.parent_id.present?
+        .mdl-grid.p-v-5.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.col-md-7
+          .md-checkbox
+            %label
+              = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+              %span.checkbox 
+              Is language updated
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SEND", :class => "send-notification-btn"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+      - if (current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role]))#(current_user.has_role? :db_manager)
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg  
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = link_to "New Group", new_admin_event_invitee_group_path(:event_id => @event.id),:class => "waves-effect waves-light btn"    
+
+- if @notification.show_on_notification_screen == false
+  :javascript
+    $(".image_for_notification").hide();
+- if @notification.notification_type.present? and @notification.notification_type == "group" 
+  :javascript
+    $(".show_on_activity").hide();
+
+
+:javascript
+  $(window).load(function(){
+    flightTime();
+    minutes();
+    times();  
+    $("#notification_notify_type").change(function(){
+      selected_value = $("#notification_notify_type").val();
+      if (selected_value == "Group"){
+        $("#notification_notify_to").parent().parent().parent().show();
+      }else{
+        $("#notification_notify_to").parent().parent().parent().hide();
+      }  
+    });
+  })
+  $("#option1").click(function(){
+    $("#group_check_boxes").hide();
+    $(".show_on_activity").show();
+  });
+  $("#option2").click(function(){
+    $("#group_check_boxes").show();
+    $(".show_on_activity").hide();
+  });
+  $("#option3").click(function(){
+    $("#date-start").parent().parent().parent().parent().hide();
+  });
+  $("#option4").click(function(){
+    $("#date-start").parent().parent().parent().parent().show();
+  });
+  $(".send-notification-btn").click(function(){
+    $(".overlayBg").show();
+  });
+  $("#show_on_notification_screen_false").click(function(){
+    $(".image_for_notification").hide();
+  });
+  $("#show_on_notification_screen_true").click(function(){
+    $(".image_for_notification").show();
+  })
+  $(document).ready(function(){
+    $('#notification_action').on('change', function() {
+      data = $('#notification_action :selected').text();
+      event_id = #{params[:event_id]}
+      $.ajax({
+        url: '/admin/notification_action_changes',
+        type: 'get',
+        data: {'feature_name' : data, 'event_id' : event_id},
+        dataType: 'script',
+        success: function(data){
+      }
+        });
+      });
+  });

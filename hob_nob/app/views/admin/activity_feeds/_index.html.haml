@@ -1,0 +1,5 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = index_nodata_message("activity_feeds")
+- else
+  - event = @events.first

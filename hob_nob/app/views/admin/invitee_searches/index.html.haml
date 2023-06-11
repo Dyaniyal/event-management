@@ -1,0 +1,104 @@
+!!!
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %title QR Code Scanner
+    %meta{:charset => "utf-8"}/
+    %meta{:content => "IE=edge", "http-equiv" => "X-UA-Compatible"}/
+    %meta{:content => "width=device-width, initial-scale=1.0", :name => "viewport"}/
+    %link{:href => "https://fonts.googleapis.com/css?family=Roboto", :rel => "stylesheet"}/
+    = stylesheet_link_tag "css/invitee_search"
+    = javascript_include_tag "js/invitee_search", "webqr", "llqrcode"
+  %body
+    .container
+      %header
+        .logo
+          %p
+            %a{:href => "javasscript:void(0);"}
+              / %img{:src => "assets/hewlett-logo.png"}/
+        .logout
+      .wrapper
+        .bagde_pdf_link{:style=>"float:right;padding-right: 16px;"}
+          = link_to "Registrations",admin_event_user_registrations_path(:event_id => @event.id,:from_onsite=>"true") ,:class=> "",:target=>"_blank"
+        %ul.tabs
+          - if params[:page].present? and params[:page] == "manual_search"
+            %li.tab-link#score_card.current{"data-tab" => "tab-2"} Manual search
+          - elsif params[:search].present? and params[:search] == "manual"
+            %li.tab-link#score_card.current{"data-tab" => "tab-2"} Manual search
+          - elsif params[:page].present? and params[:page]=="scanning"
+            %li.tab-link#score_card{"data-tab" => "tab-2"} Manual search
+          - elsif params[:page].present? and params[:page]=="walkin"
+            %li.tab-link#score_card{"data-tab" => "tab-2"} Manual search
+          - else
+            %li.tab-link#score_card.current{"data-tab" => "tab-2"} Manual search
+          - if false #params[:page].present? and params[:page]=="scanning"
+            %li.tab-link.attendee#attendee.current{"data-tab" => "tab-3",:onclick=>"window.open(location.pathname+ '?page=scanning')" } QR scan
+          - elsif false
+            %li.tab-link.attendee#attendee{"data-tab" => "tab-3",:onclick=>"window.open(location.pathname+ '?page=scanning')" } QR scan
+          - if @event.registrations.present? and @event.registration_settings.present? and @event.registration_settings.first.registration == "hobnob"
+            - if params[:page].present? and params[:page] == "manual_search"
+              %li.tab-link#registration_tab{"data-tab" => "tab-4",:onclick=>"window.open(location.pathname+ '?page=walkin')" } Walkin Registration
+            - elsif params[:page].present? and params[:page].present? and params[:page]=="scanning"
+              %li.tab-link#registration_tab{"data-tab" => "tab-4",:onclick=>"window.open(location.pathname+ '?page=walkin')" } Walkin Registration
+            - elsif params[:search].present? and params[:search] == "manual"
+              %li.tab-link#registration_tab{"data-tab" => "tab-4",:onclick=>"window.open(location.pathname+ '?page=walkin')" } Walkin Registration
+            - elsif params[:page].present? and params[:page] == "walkin"
+              %li.tab-link#registration_tab.current{"data-tab" => "tab-2",:onclick=>"window.open(location.pathname+ '?page=walkin')" } Walkin Registration
+            - else
+              %li.tab-link#registration_tab{"data-tab" => "tab-2",:onclick=>"window.open(location.pathname+ '?page=walkin')" } Walkin Registration
+          
+          
+          / %li.tab-link#qr_scaner{"data-tab" => "tab-5"} QR Code Scanner
+
+        - if params[:page].present? and params[:page] == "manual_search" or params[:search] == "manual"
+          #tab-2.tab-content.current
+            #successMsg
+              #scorecard
+                = render :partial => "admin/qr_code_scanners/manual_search"
+        
+        - elsif params[:page]=="scanning"
+          #tab-2.tab-content
+            #successMsg
+              #scorecard
+                = render :partial => "admin/qr_code_scanners/manual_search"
+        - elsif params[:page].present? and params[:page]=="walkin"
+          #tab-2.tab-content
+            #successMsg
+              #scorecard
+                = render :partial => "admin/qr_code_scanners/manual_search"
+        - else
+          #tab-2.tab-content.current
+            #successMsg
+              #scorecard
+                = render :partial => "admin/qr_code_scanners/manual_search"
+
+        - if params[:page].present? and params[:page]=="walkin"
+          #tab-4.tab-content.current
+            - if @event.registrations.present? and @event.registration_settings.present? and @event.registration_settings.first.registration == "hobnob"
+              = render :partial =>"registration_form"
+        - elsif params[:page].blank?
+          #tab-4.tab-content
+            - if @event.registrations.present? and @event.registration_settings.present? and @event.registration_settings.first.registration == "hobnob"
+              = render :partial =>"registration_form"
+        - else
+          #tab-4.tab-content
+            - if @event.registrations.present? and @event.registration_settings.present? and @event.registration_settings.first.registration == "hobnob"
+              = render :partial =>"registration_form"
+
+      %footer
+        .footerLogo
+          %p POWERED BY
+          %p
+            = image_tag("footer-logo.jpg", border: 0)
+= render :partial => "admin/layouts/more_links"
+:javascript
+  $(document).ready(function(){
+    $('.newWindow').click(function(){
+      var invitee_id = $(this).attr('invitee_id')
+
+      var link = "#{APP_URL}/admin/events/#{@event.id}/qr_code_scanners?qr_code_preview=true&page=print_preview&invitee_id=" + invitee_id
+
+      window.open(link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,width=400,height=800");
+    })
+  })
+

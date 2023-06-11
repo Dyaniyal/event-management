@@ -1,0 +1,15 @@
+<% if @redirect_feature == "event_features" %>
+  $(".sequence_update").html('<%= escape_javascript(render :partial => "admin/menus/index", :locals => {:objs => @features}) %>');
+<% elsif @redirect_feature == "images" %>
+  <% if params[:folder_id].present? %>
+    $(".sequence_update").html('<%= escape_javascript(render :partial => "admin/folders/show", :locals => {:objs => @features}) %>');
+  <% else %>
+    $(".sequence_update").html('<%= escape_javascript(render :partial => "admin/images/index", :locals => {:objs => @features}) %>');
+  <% end %>
+<% elsif @redirect_feature == "folders" %>
+  $(".sequence_update").html('<%= escape_javascript(render :partial => "admin/folders/index", :locals => {:objs => @features}) %>');
+<% elsif @redirect_feature == "agenda_tracks" %>
+  $(".agenda_index_container").html('<%= escape_javascript(render :partial => "/admin/agendas/index_agenda", :locals => {:objs => @features}) %>');
+<% else %>
+  $(".sequence_update").html('<%= escape_javascript(render :partial => "admin/#{@redirect_feature}/index", :locals => {:objs => @features}) %>');
+<% end %>

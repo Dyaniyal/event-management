@@ -1,0 +1,29 @@
+.save_button.mdl-card
+  = form_for [:admin, @smtp_setting], :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp.p-b-15
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          General Information
+          / %a{:href => 'javascript:void(0);', :class =>'helpTag testhelp'}
+          /   what's this?
+      = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "smtp_settings.png", :section_id => "speaker_general_section"}
+      = f.hidden_field :user_id, :value => current_user.get_licensee if params["event_id"].blank?
+      = f.hidden_field :domain, :value => "beta.hobnobspace.com"
+      = f.custom_text_field :username, "User Name"
+      = f.custom_text_field :password, "Password"
+      = f.custom_text_field :address, "Address"
+      = f.custom_text_field :port, "Port"
+      = f.custom_text_field :from_email, "From Email"
+      = f.hidden_field :event_id, :value => params["event_id"] if params["event_id"].present?
+    - if @event.present? and @event.parent_id.present?
+      .mdl-grid.p-v-5.form-group{:style=>"width:32%;"}
+        .md-checkbox
+          %label
+            = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+            %span.checkbox 
+            Is language updated
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)

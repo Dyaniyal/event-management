@@ -1,0 +1,50 @@
+#openModal.modalDialog
+  %div
+    %a.close-popup{:href => "javascript:void(0)", :title => "Close", :id => 'closePopup'} OK
+    %h2.popup-head Please Note
+    %p.popup-body{:id => 'Errorspopupbody'} Invalid Username or Password.
+-#%span#toggle-login.button{:href => "#"} Log in
+.loginlogo
+  %img{:alt => "", :src => "/assets/updated_Login_page_min.jpg"}/
+#login.new_user
+  %p.login-logo
+    %img{:alt => "", :src => "/assets/tata_logo.png"}/
+  #triangle
+  / %h1 Log in
+  %p.login-inst Sign in with your TataWorld user ID and password 
+  = form_tag "/api/v1/tokens/get_key", :method => :post, :remote => true, :class => 'LogInFrm' do |f|
+    = hidden_field_tag :mobile_application_preview_code, params[:mobile_application_preview_code]
+    = hidden_field_tag :mobile_application_code, params[:mobile_application_code]
+    = hidden_field_tag :event_id, params[:event_id]
+    = email_field_tag :email, params[:email], {:autofocus => false, :placeholder => "Email ID"}
+    = password_field_tag :password, '', {:autocomplete => "off", :placeholder => "Password", :type => "password"}
+    %a.forgot-pass{:href => @registration_setting.forget_pass_url} Forgot password?
+    .clear
+
+    -# if @status.present? and @status != 'Valid User'
+    .errorMess
+      = @status if @status.present?
+    = submit_tag "Login", :class => 'logInSbmt'
+    %p.signup-inst
+      Not a member yet? Register at 
+      %a.blue-link{:href => @registration_setting.reg_url} TataWorld
+      today.
+    #links_left
+    #links_right
+      -#%a{:href => 'new_password_path(resource_name)'} Forgot your Password?
+
+:javascript
+  $(".logInSbmt").click(function(){
+    $("#closePopup").click(function(){
+      $("#openModal").hide();
+    });
+  });
+  $("#password").click(function(){
+    $("#login").css("margin-top", "-50px");
+  })
+  $(document).on('focusout', '.login-body', function(){
+
+  $('#login').css("margin-top", "0px");
+
+  })
+      

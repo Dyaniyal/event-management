@@ -1,0 +1,28 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => 'attendees', :url => "/admin/events/#{params[:event_id]}/attendees/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("attendees")
+- else 
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      %th Attendee Name 
+      %th Email id
+      %th Company Name
+      %th Designation
+      %th Phone No 
+      %th 
+        - objs.each do |attendee|
+          %tr
+            %td.font16= show_link(params, attendee.id, attendee.attendee_name.capitalize) rescue nil
+            %td.font16= attendee.email_address
+            %td.font16= attendee.company_name.capitalize rescue nil
+            %td.font16= attendee.designation.capitalize rescue nil
+            %td.font16= attendee.phone_number
+            %td.IconDrp
+              = more_vert_button(attendee.id)
+              %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{attendee.id}"}
+                = edit_link(params, attendee.id)
+                = delete_link(params, attendee.id)
+  = will_paginate objs               

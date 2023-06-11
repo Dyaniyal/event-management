@@ -1,0 +1,27 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = index_nodata_message("event_groups")
+    - if current_user.has_role? :licensee_admin or current_user.has_role? :client_admin
+      = link_to "add one now.",new_admin_client_event_group_path(:client_id => @client.id,:type=>"general"),:class => "centerAlign"
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("event_groups")
+- else  
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered.font16.ng-scope.ng-table{"template-pagination" => "custom/pager"}
+    %tr
+      %th Name
+      %th Remarks
+      %th
+      - if objs.present?
+        - objs.each do |event_group|
+          %tr
+            %td.font16= event_group.name.capitalize rescue nil
+            %td.font16= event_group.remarks rescue nil
+            %td.IconDrp
+              = more_vert_button(event_group.id)
+              %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{event_group.id}"}
+                = link_to edit_admin_client_event_group_path(event_group.client_id, event_group.id, :type => "general"),:class => "mdl-menu__item" do
+                  Edit
+                = link_to admin_client_event_group_path(event_group.client_id, event_group.id),:method => :delete,:class => "mdl-menu__item" do
+                  Delete
+               

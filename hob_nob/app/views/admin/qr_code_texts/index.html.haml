@@ -1,0 +1,50 @@
+!!!
+%html
+  %head
+    %title Hobnob
+    = favicon_link_tag 'fevicon.png'
+    %meta{:content => "IE=edge", "http-equiv" => "X-UA-Compatible"}
+    %meta{:content => "width=device-width, initial-scale=1", :name => "viewport"}/
+    = stylesheet_link_tag "scanner"
+    = javascript_include_tag "scanner"
+    = csrf_meta_tags
+
+  %body{class: "qr-scanner-page", style: "background-image:url(#{@badge_pdf.present? ?  @badge_pdf.scan_bg_image.url : ""});background-size: cover; background-attachment:fixed;"}
+    .container
+      .title
+      .description{ style: "color: ##{@badge_pdf.qr_code_page_color || ''}"}
+        %p.welcomeText
+          - if @scanned_user_name.present?
+            = @scanned_user_name
+          - else
+            %p.m-t-10{style: 'font-size: 45px;'}
+              = "Scan your QR code here"
+            %p.m-t-20
+              = text_field_tag "name", "", { style: "color: white;", id: "qr_code_text", autofocus: '', type: "text" }
+            .btnDiv
+              %a.linkBtn{:href => admin_event_qr_code_scanners_path(:event_id => @event.id, :page => 'manual_search', :qr_code_preview => params[:qr_code_preview])} Search Manually       
+
+:javascript
+  $(document).ready(function() {
+    if (window.location.href.split('?')[1]) {
+      redirectToScan();
+    }
+  });
+
+  function redirectToScan() {
+    setTimeout(function() {
+      window.location.href = "#{APP_URL}/admin/events/#{@event.id}/qr_code_scanners?page=scanning&qr_code_preview="
+    }, 5000);
+  }
+
+  $('#qr_code_text').on('input', function(){
+    var scan_arr = $(this).val().split(",")
+    if ((scan_arr.length - 1) == 2) {
+      var user_reg_id = scan_arr[1]
+      window.location.href = window.location.href.split('?')[0] + '?user_reg_id=' + user_reg_id
+    }
+    if ((scan_arr.length - 1) == 1) {
+      var invitee_id = scan_arr[1]
+      window.location.href = window.location.href.split('?')[0] + '?invitee_id=' + invitee_id
+    }
+  });

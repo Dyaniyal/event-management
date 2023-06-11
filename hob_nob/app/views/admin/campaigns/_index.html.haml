@@ -1,0 +1,21 @@
+- if !objs.present? and !params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = render :partial => 'admin/layouts/index_no_data_message', :locals => {:title => 'campaigns', :url => "/admin/events/#{params[:event_id]}/campaigns/new", :msg => 'test'}
+-elsif !objs.present? and params[:admin_search].present?
+  .mdl-typography--text-center.BlnkTxt.p-t-10
+    = get_search_data("campaigns")
+- else 
+  %table.table.mdl-data-table.fullwidth.ml-table-striped.ml-table-bordered{"template-pagination" => "custom/pager"}
+    %tr
+      %th Campaign Name 
+      %th 
+        - objs.each do |campaign|
+          %tr
+            %td.font16= link_to "#{campaign.campaign_name} ", admin_event_campaign_edms_path(campaign.event_id, campaign.id),:class => "collection-item" rescue nil
+            %td.IconDrp
+              = more_vert_button(campaign.id)
+              %ul.mdl-menu.mdl-menu--bottom-right.mdl-js-menu.mdl-js-ripple-effect{:for => "demo-menu-lower-right#{campaign.id}"}
+                = edit_link(params, campaign.id)
+                - if @event.is_parent?
+                  = delete_link(params, campaign.id)
+  = will_paginate objs               

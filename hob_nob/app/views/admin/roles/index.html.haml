@@ -1,0 +1,32 @@
+%section#content
+  / start container
+  .container
+    %section#tab_part
+      .adminHeading
+        %h1 Manage Roles
+        .rightBtn
+          %a.waves-effect.waves-light.btn{:href => new_admin_role_path} ADD Role
+          / %a.waves-effect.waves-light.btn{:href => roles_path} All CITY
+      .page-header
+      .table-responsive{"data-pattern" => "priority-columns"}
+        %table#tech-companies-1.table.table-small-font.table-bordered.table-striped{:cellspacing => "0"}
+          %thead
+            %tr
+              %th{"data-priority" => "1"} S.No.
+              %th{"data-priority" => "1"} Name
+              
+          %tbody
+            
+            - i = 0
+            - @roles.each_with_index do |f,i|
+              %tr.white
+                - i += 1
+                %td= i
+                %td= f.name.capitalize.gsub(/[^0-9A-Za-z]/, ' ')
+                %td
+                  = link_to edit_admin_role_path(f.id),:class =>"waves-effect waves-light btn" do
+                    %i.material-icons.center{:title => "edit"} edit  
+                  / = link_to role_path(f.id),:class =>"waves-effect waves-light btn" do
+                  /   %i.material-icons.center{:title => "show"} visibility    
+                  = link_to admin_role_path(f.id),method: :delete,:class =>"waves-effect waves-light btn" do
+                    %i.material-icons.center{:title => "delete"} delete  

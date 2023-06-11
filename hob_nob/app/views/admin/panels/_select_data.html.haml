@@ -1,0 +1,12 @@
+.mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+  .form-group
+    %label.col-lg-4.control-label.ml-color--shades-white
+      Select Speaker/Expert
+    .col-lg-7
+      - if true #(@event.qna_settings.present? and  @event.qna_settings.first.display_qna_on_app.present? and  @event.qna_settings.first.display_qna_on_app == "no")
+        - list_of_speakers = @speakers.collect{|p| [ p.speaker_name, p.id ]}
+        - list_of_speakers.unshift(["Add Speaker/Expert", 0])
+      -else
+        - list_of_speakers = [["Add Speaker/Expert", 0]]
+      %i.arrow.single
+      = f.select :panel_id, "", list_of_speakers, {:prompt => "select speaker/expert", :selected => "#{@panel.panel_id == 0 ? 0 : @panel.panel_id}"}, {:class=> 'select2-single form-control',:id => "selected_speaker"}

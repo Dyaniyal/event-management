@@ -1,0 +1,284 @@
+.save_button
+  = form_for [:admin, @event, @registration_setting], :html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+    .mdl-grid.mdl-card.pollInfo.mdl-shadow--1dp
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10.m-b-15
+          Registration
+      = render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "qna_generalInfo.jpg", :section_id => "qna_general_section"}
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5.m-b-20
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Registration Form
+          .col-lg-7.p-h-12
+            = f.custom_radio_button_menu_regis :registration, "hobnob","Create new", :id => params[:action] == "new" ? "option1_regi" : "option_1_registration", :default_checked => (f.object.registration == 'hobnob' or f.object.registration.blank?) ? 'checked' : ''
+            = f.custom_radio_button_menu_regis :registration, "external", "Use existing URL", :id => "option_2_registration", :default_checked => (f.object.registration == 'external') ? 'checked' : ''
+      = f.hidden_field :template, :value => "default"
+      = f.custom_text_field :external_reg_url, "Registration URL *", "background" => "false"
+
+      - if false
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+          / {:style => "display: #{(f.object.template == "Template 1" or f.object.template == "default" and f.object.registration != "external") ? '' : 'none'}"}
+          .form-group
+            %label.col-lg-4.control-label.ml-color--shades-white
+              Select template *
+              %br
+              %a{:href => '/whats_this/app_info/general_information/1.png', :class =>'fancybox', :title => "Splash Screen"}
+                (View Available Templates)
+            .col-lg-7  
+              %i.arrow.single
+              = f.select("registration_setting", "template_name", ['Template 1'], {:selected => f.object.template,:prompt => 'Select Option Type'},{:class=> 'select2-single form-control',:id=> "regi_setti_templ_select"})
+              .field_with_errors.clear
+                .span{:class => "errorMessage"}
+                  = f.object.errors.messages[:template_name].join("") rescue nil
+            .span.col-lg-1
+              = link_to("?" ,"/whats_this/app_info/general_information/1.png", rel: "selecte_template", title: "Selecte Template", :class =>"fancybox whatsImg")
+      = f.hidden_field :template_name, :value => "Template 1"
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5.m-b-20
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Show on Mobile App *
+          .col-lg-7.p-h-12
+            - er = f.object.errors.messages[:on_mobile_app].join(',') rescue nil
+            - f.object.errors.messages[:on_mobile_app].clear if f.object.errors.messages[:on_mobile_app].present?
+            = f.custom_radio_button_menu_regis :on_mobile_app, "yes","Yes", :id => "option_1_visible_on_mobile_app", :default_checked => "#{f.object.on_mobile_app == "yes" ? 'checked' : ''}"
+            = f.custom_radio_button_menu_regis :on_mobile_app, "no", "No", :id => "option_2_visible_on_mobile_app", :default_checked => "#{f.object.on_mobile_app == "no" ? 'checked' : ''}"
+            .field_with_errors.clear
+              .span{:class => "errorMessage"}
+                = er
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5.m-b-20
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Auto Approved *
+          .col-lg-7.p-h-12
+            - er = f.object.errors.messages[:auto_approved].join(',') rescue nil
+            - f.object.errors.messages[:auto_approved].clear if f.object.errors.messages[:auto_approved].present?
+            = f.custom_radio_button_menu_regis :auto_approved, "yes","Yes", :id => "option_1_visible_auto_approved", :default_checked => "#{f.object.auto_approved == "yes" ? 'checked' : ''}"
+            = f.custom_radio_button_menu_regis :auto_approved, "no", "No", :id => "option_2_visible_auto_approved", :default_checked => "#{(f.object.new_record? or f.object.auto_approved == "no") ? 'checked' : ''}"
+            .field_with_errors.clear
+              .span{:class => "errorMessage"}
+                = er
+      .approvedDomainName.m-b-3
+        = f.custom_text_area_field :auto_approved_domain_validation,"Domain names (comma separated & Add @ before domain name)", :value => "#{f.object.auto_approved_domain_validation.present? ? f.object.auto_approved_domain_validation : ""}", "background" => "false"#,:display => (f.object.auto_approved == "no")? "false" : "true"
+      %div.helperText.approvedDomainName
+        All registrations will be considered auto-approved if no domain names are mentioned. To approve specific email ID's use the option to import Auto Approve Email ID's from the main registration page
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        .mdl-grid.p-v-5.m-b-20
+          .col-lg-4.mdl-typography--text-right
+            %p.displayInlineBlock.multicitytxt Auto Rejected *
+          .col-lg-7.p-h-12
+            - er = f.object.errors.messages[:auto_rejected].join(',') rescue nil
+            - f.object.errors.messages[:auto_rejected].clear if f.object.errors.messages[:auto_rejected].present?
+            = f.custom_radio_button_menu_regis :auto_rejected, "yes","Yes", :id => "option_1_visible_auto_rejected", :default_checked => "#{f.object.auto_rejected == "yes" ? 'checked' : ''}"
+            = f.custom_radio_button_menu_regis :auto_rejected, "no", "No", :id => "option_2_visible_auto_rejected", :default_checked => "#{(f.object.new_record? or f.object.auto_rejected == "no") ? 'checked' : ''}"
+            .field_with_errors.clear
+              .span{:class => "errorMessage"}
+                = er
+      .rejectedDomainName.m-b-3
+        = f.custom_text_area_field :auto_rejected_domain_validation,"Domain names (comma separated & Add @ before domain name)", :value => "#{f.object.auto_rejected_domain_validation.present? ? f.object.auto_rejected_domain_validation : ""}", "background" => "false"#,:display => (f.object.auto_rejected == "no")? "false" : "true"
+      %div.helperText.rejectedDomainName
+        All registrations will be considered auto-rejected if no domain names are mentioned. To reject specific email ID's use the option to import Auto Reject Email ID's from the main registration page
+      = f.custom_text_field :target_registration, "Target Registration *",:value => f.object.target_registration,"background" => "false"
+      = f.custom_text_field :target_attendees, "Target Attendees *",:value => f.object.target_attendees,"background" => "false"
+
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.Regiserror.validationErr
+        .bs-component.m-b-30
+          .form-group
+            %label.col-lg-4.control-label{:for => "Start Regi_setting Date"} Start Registration Date/Time *
+            = f.custom_text_field_date :start_date_time, "Start Registration Date", :id => "date-start",:value => f.object.start_date.present? ? f.object.start_date.strftime('%d/%m/%Y') : ''
+            .col-lg-3.timeDropdown
+              .timeTab
+                = f.custom_text_field_date :start_time_hour, " ", :class => "hours inputs is-focused", :placeholder => 'HH ', :value => "#{get_hour_minute_second_ampm(f.object.start_date, 'hour')}", :col => '2',:maxlength => "2"
+                = f.custom_text_field_date :start_time_minute, " ", :class => "minutes inputs is-focused", :placeholder => 'MM ', :value => "#{get_hour_minute_second_ampm(f.object.start_date, 'minute')}", :col => '2',:maxlength => "2"
+                = f.custom_text_field_date :start_time_am, " ", :class => "ampm inputs is-focused", :placeholder => 'AM/PM', :value => "#{get_hour_minute_second_ampm(f.object.start_date, 'ampm')}", :col => '3',:maxlength => "2"
+            .field_with_errors
+              .span{:class => "errorMessage"}
+                = f.object.errors.messages[:start_date].join("") rescue nil
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.Regiserror.validationErr
+        .bs-component.m-b-30
+          .form-group
+            %label.col-lg-4.control-label{:for => "End Regi_setting Date"} End Registration Date/Time *
+            = f.custom_text_field_date :end_date_time, "End Registration Date", :id => "date-end",:value => f.object.end_date.present? ? f.object.end_date.strftime('%d/%m/%Y') : ''
+            .col-lg-3.timeDropdown.timeHeight
+              .timeTab
+                = f.custom_text_field_date :end_time_hour, " ", :class => "hours inputs", :placeholder => 'HH ', :value => "#{get_hour_minute_second_ampm(f.object.end_date, 'hour')}", :col => '2',:maxlength => "2"
+                = f.custom_text_field_date :end_time_minute, " ", :class => "minutes inputs", :placeholder => 'MM ', :value => "#{get_hour_minute_second_ampm(f.object.end_date, 'minute')}", :col => '2',:maxlength => "2"
+                = f.custom_text_field_date :end_time_am, " ", :class => "ampm inputs", :placeholder => 'AM/PM', :value => "#{get_hour_minute_second_ampm(f.object.end_date, 'ampm')}", :col => '3',:maxlength => "2"
+            .field_with_errors
+              .span{:class => "errorMessage"}
+                = f.object.errors.messages[:end_date].join("") rescue nil
+        - if @event.present? and @event.parent_id.present?
+          .mdl-grid.p-v-5.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.col-md-5
+            .md-checkbox
+              %label
+                = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+                %span.checkbox 
+                Is language updated               
+    -if false
+      .mdl-grid.mdl-card.pollInfo.mdl-shadow--1dp.m-t-40
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            Login
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Login?
+            .col-lg-3.p-h-12
+              = f.custom_radio_button_menu :login, "hobnob","HobNob", :id => params[:action] == "new" ? "option1_logi" : "option1_login", :default_checked => (f.object.login == 'hobnob' or f.object.login.blank?) ? 'checked' : ''
+              = f.custom_radio_button :login, "external", "External", :id => "option_2_login", :default_checked => (f.object.login == 'external') ? 'checked' : ''
+        = f.custom_text_area_field :login_url, "Login URL",:message_display => ((f.object.registration == 'hobnob' and params[:action] != "create") or (!f.object.new_record? and params[:action]!= "update" and f.object.registration != 'external')) ? "" : "none",:readonly => true
+        = f.custom_text_area_field :external_login_url, "Login URL *",:message_display => (f.object.login == 'external') ? "" : "none"
+        = f.custom_text_area_field :external_login_surl, "Login Success URL ",:message_display => (f.object.login == 'external') ? "" : "none"
+        = f.custom_text_area_field :forget_pass_url, "Forgot password URL"
+        =# f.custom_text_area_field :forget_pass_surl, "Forgot password Success URL"
+    .fixed-activon-btn-new  
+      = f.custom_submit_button "SAVE"
+      .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+          = back_button(:back)
+- if @registration_setting.new_record? or (@registration_setting.auto_approved.present? and @registration_setting.auto_approved == "no")
+  :javascript
+    $(".approvedDomainName").hide();
+- else
+  :javascript
+    $(".approvedDomainName").show();
+
+- if @registration_setting.new_record? or (@registration_setting.auto_rejected.present? and @registration_setting.auto_rejected == "no")
+  :javascript
+    $(".rejectedDomainName").hide();
+- else
+  :javascript
+    $(".rejectedDomainName").show();
+
+- if (@registration_setting.registration.present? and @registration_setting.registration == "external")
+  :javascript
+    $("#registration_setting_external_reg_url").parent().parent().parent().parent().show();
+    $("#registration_setting_submit_msg_div").hide();
+- else
+  :javascript
+    $("#registration_setting_submit_msg_div").show();
+    $("#registration_setting_external_reg_url").parent().parent().parent().parent().hide();
+
+:javascript
+  $(window).load(function(){
+    flightTime();
+    minutes();
+    times();  
+  })
+
+
+:javascript
+  $("#option_1_registration").click(function(){
+    value = $("#option_1_registration").val();
+    if (value == "hobnob"){
+      $("#registration_setting_submit_msg_div").show();
+      $("#option_1_template").parent().parent().parent().parent().show();
+      $("#option_2_custom").parent().parent().parent().parent().show();
+      $("#reg_url_sample5").parent().parent().parent().parent().show();
+      $("#reg_surl_sample5").parent().parent().parent().parent().show();
+      $("#external_reg_url_sample5").parent().parent().parent().parent().hide();
+      $("#external_reg_surl_sample5").parent().parent().parent().parent().hide();
+      $("#registration_setting_external_reg_url").parent().parent().parent().parent().hide();
+    }
+  }); 
+
+  $("#option1_regi").click(function(){
+    value = $("#option1_regi").val();
+    if (value == "hobnob"){
+      $("#registration_setting_submit_msg_div").show();
+      $("#reg_url_sample5").parent().parent().parent().parent().hide();
+      $("#reg_surl_sample5").parent().parent().parent().parent().hide();
+      $("#option_1_template").parent().parent().parent().parent().show();
+      $("#option_2_custom").parent().parent().parent().parent().show();
+      $("#external_reg_url_sample5").parent().parent().parent().parent().hide();
+      $("#external_reg_surl_sample5").parent().parent().parent().parent().hide();
+      $("#registration_setting_external_reg_url").parent().parent().parent().parent().hide();
+    }
+  }); 
+
+  $("#option_2_registration").click(function(){
+    value = $("#option_2_registration").val();
+    if (value == "external"){
+      $("#registration_setting_submit_msg_div").hide();
+      $("#reg_url_sample5").parent().parent().parent().parent().hide();
+      $("#reg_surl_sample5").parent().parent().parent().parent().hide();
+      $("#option_1_template").parent().parent().parent().parent().hide();
+      $("#option_2_custom").parent().parent().parent().parent().hide();
+      $("#regi_setti_templ_select").parent().parent().parent().hide();
+      $("#external_reg_url_sample5").parent().parent().parent().parent().show();
+      $("#external_reg_surl_sample5").parent().parent().parent().parent().show();
+      $("#registration_setting_external_reg_url").parent().parent().parent().parent().show();
+    }
+  }); 
+
+  $("#option1_login").click(function(){
+    value = $("#option1_login").val();
+    if (value == "hobnob"){
+      $("#login_url_sample5").parent().parent().parent().parent().show();
+      $("#login_surl_sample5").parent().parent().parent().parent().show();
+      $("#external_login_url_sample5").parent().parent().parent().parent().hide();
+      $("#external_login_surl_sample5").parent().parent().parent().parent().hide();
+    }
+  }); 
+
+  $("#option1_logi").click(function(){
+    value = $("#option1_logi").val();
+    if (value == "hobnob"){
+      $("#login_url_sample5").parent().parent().parent().parent().hide();
+      $("#login_surl_sample5").parent().parent().parent().parent().hide();
+      $("#external_login_url_sample5").parent().parent().parent().parent().hide();
+      $("#external_login_surl_sample5").parent().parent().parent().parent().hide();
+    }
+  }); 
+  $("#option_2_login").click(function(){
+    value = $("#option_2_login").val();
+    if (value == "external"){
+      $("#login_url_sample5").parent().parent().parent().parent().hide();
+      $("#login_surl_sample5").parent().parent().parent().parent().hide();
+      $("#external_login_url_sample5").parent().parent().parent().parent().show();
+      $("#external_login_surl_sample5").parent().parent().parent().parent().show();
+    }
+  });
+
+  $("#option1_login").click(function(){
+    value = $("#option1_login").val();
+    if (value == "hobnob"){
+      $("#login_url_sample5").parent().parent().parent().show();
+      $("#login_surl_sample5").parent().parent().parent().show();
+    }
+  }); 
+  $("#option_2_login").click(function(){
+    value = $("#option_2_login").val();
+    if (value == "external"){
+      $("#login_url_sample5").parent().parent().parent().show();
+      $("#login_surl_sample5").parent().parent().parent().show();
+    }
+  });
+  $("#option_1_template").click(function(){
+    value = $("#option_1_template").val();
+    if (value == "default"){
+      $("#regi_setti_templ_select").parent().parent().parent().show();
+    }
+  });
+  $("#option_2_custom").click(function(){
+    value = $("#option_2_custom").val();
+    if (value == "custom"){
+      $("#regi_setti_templ_select").parent().parent().parent().hide();
+    }
+  });
+
+  $("#option_2_visible_auto_approved").click(function(){
+    $('.approvedDomainName').hide();
+  });
+
+  $("#option_1_visible_auto_approved").click(function(){
+    $('.approvedDomainName').show();
+  });
+
+  $("#option_1_visible_auto_rejected").click(function(){
+    $(".rejectedDomainName").show();
+  });
+  
+  $("#option_2_visible_auto_rejected").click(function(){
+    $(".rejectedDomainName").hide();
+  });

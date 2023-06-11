@@ -1,0 +1,95 @@
+- if params[:import].present?
+  = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+- else
+  .save_button.mdl-card.quizCheckbox.feedbackFormPage 
+    = form_for [:admin, @event, @quiz], :html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+      .mdl-grid.mdl-shadow--1dp
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            Visibility Settings
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            .mdl-grid.p-v-5
+              .col-lg-4.mdl-typography--text-right
+                %p.displayInlineBlock.multicitytxt Show this data element to:
+              .col-lg-3.p-h-12  
+                = f.custom_radio_button_menu :show_quiz_feature, "all","All", :id => "feature_option_1#{f.object.id}", :default_checked => "#{f.object.show_quiz_feature =="all" || f.object.show_quiz_feature.blank? ? "checked" : ""}",:class => "show_quiz_feature"
+                = f.custom_radio_button_menu :show_quiz_feature, "group", "Group", :id => "feature_option_2#{f.object.id}", :default_checked => "#{f.object.show_quiz_feature == "group" ? "checked" : ""}",:class => "show_quiz_feature"
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8{:style => ((f.object.show_quiz_feature == 'all' or f.object.show_quiz_feature.blank?)? 'margin-top:30px;display:none;' : 'margin-top:30px'), :id => 'group_check_boxes'}
+              .form-group
+                %label.col-lg-4.control-label.ml-color--shades-white
+                  Select Groups *
+                  %br 
+                  / %a{:href => admin_event_invitee_groups_path(:event_id => @event.id), :class =>'', :title => "Invitee Groups", :target => '_blank'}
+                  /   (View Available Groups)
+                - er = f.object.errors.messages[:group_ids].join(',') rescue nil
+                .col-lg-7.notification
+                  - default_group_list = [['No Polls taken', 'No Polls taken'], ['No Feedback given', 'No Feedback given'], ['No Quiz taken', 'No Quiz taken'], ['No Q&A', 'No Q&A'], ['NO QR code scanned', 'NO QR code scanned'], ['No Chat', 'No Chat']]
+                  - default_group_list = @default_groups.collect{|group| [ group.name, group.id ]}
+                  - default_group_list.each_with_index do |group, index|
+                    - if index == 0
+                      .usersep
+                        Default Groups
+                    .md-checkbox
+                      %label
+                        %span.checkbox 
+                        = group[0]
+                  - default_group_list = @other_groups.collect{|group| [ group.name, group.id ]}
+                  - default_group_list.each_with_index do |group, index|
+                    - if index == 0
+                      .usersep
+                        Groups created by you
+                    .md-checkbox
+                      %label
+                        = f.check_box :group_ids, {:multiple => true, :class => "myclass", :style => "mystyle", include_hidden: false}, group[1].to_s
+                        %span.checkbox 
+                        = group[0] 
+                .clear
+                .field_with_errors.marginErrMgs
+                  .span{:class => "errorMessage"}
+                    = er 
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10
+            General Information
+            / %a{:href => '/whats_this/quiz/general_information/quiz_generalInfo.jpg', :class =>'helpTag testhelp fancybox'}
+            /   what's this?
+        = #render :partial => "admin/layouts/whats_this_popup", :locals => {:image_name => "quiz_generalInfo.jpg", :section_id => "quizze_general_section"}
+        = f.custom_text_field_quiz_question :question, "Question *","background" => "false"
+        = f.custom_text_field_quiz :option1, "Option1 *", f.object.correct_answer.first.present? ? f.object.attributes.key(f.object.correct_answer.first.to_s) : "","background" => "false"
+        .field_with_errors.quizErrors
+          .span{:class => "errorMessage"}
+            = f.object.errors.messages[:correct_answer].join("") rescue nil
+        = f.custom_text_field_quiz :option2, "Option2 *", f.object.correct_answer.first.present? ? f.object.attributes.key(f.object.correct_answer.first.to_s) : "","background" => "false"
+        = f.custom_text_field_quiz :option3, "Option3", f.object.correct_answer.first.present? ? f.object.attributes.key(f.object.correct_answer.first.to_s) : "","background" => "false"
+        = f.custom_text_field_quiz :option4, "Option4", f.object.correct_answer.first.present? ? f.object.attributes.key(f.object.correct_answer.first.to_s) : "","background" => "false"
+        = f.custom_text_field_quiz :option5, "Option5", f.object.correct_answer.first.present? ? f.object.attributes.key(f.object.correct_answer.first.to_s) : "","background" => "false"
+        = hidden_field_tag "type","#{params[:type]}" if params[:type].present?
+        - if @event.present? and @event.parent_id.present?
+          .mdl-grid.p-v-5.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.col-md-7
+            .md-checkbox
+              %label
+                = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+                %span.checkbox 
+                Is language updated
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)
+:javascript
+  $(window).load(function(){
+    flightTime();
+    minutes();
+    times();  
+  })
+:javascript
+  $(window).load(function(){
+    $(".show_quiz_feature").change(function(){
+      selected_value = $(this).val();
+      if (selected_value == "group"){
+        $("#group_check_boxes").show();
+      }else{
+        $("#group_check_boxes").hide();
+      }  
+    });
+  })  

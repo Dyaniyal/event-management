@@ -1,0 +1,12 @@
+.save_button.mdl-card
+  = form_for [:admin, @client, @event], :builder => CustomFormBuilder do |f|
+    .mdl-grid
+      = f.custom_text_area_field :about,"About", :value => "#{@event.description.present? ? @event.description : ""}"
+      = hidden_field_tag :update_about, true
+    = f.custom_submit_button "SAVE"
+    .mdl-button.mdl-js-button.mdl-button--raised.mdl-color--light-blue-600.mdl-js-ripple-effect.btnsubmit.m-l-18
+      .mdl-cell--12-col.mdl-cell--12-col-tablet
+        = back_button(:back)
+  
+  
+  

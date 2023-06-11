@@ -1,0 +1,309 @@
+- if params[:import].present?
+  = render :partial => 'admin/imports/form', :locals => {:@event => @event}
+- else
+  .save_button.mdl-card.feedbackFormPage
+    = form_for [:admin, @event, @feedback],:html => {:class =>'form-horizontal'}, :builder => CustomFormBuilder do |f|
+      = fields_for :feedback_form do |ff|
+        - if params[:action] == "new" and params[:feedback_form_id].blank?
+          .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+              %h4.heading-border.p-t-10.m-b-15
+                Visibility Settings
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+              .mdl-grid.p-v-5
+                .col-lg-4.mdl-typography--text-right
+                  %p.displayInlineBlock.multicitytxt Show this data element to:
+                .col-lg-3.p-h-12 
+                  = f.custom_radio_button_menu :show_feedback_feature, "all","All", :id => "feature_option_1#{f.object.id}", :default_checked => "#{f.object.show_feedback_feature =="all" || f.object.show_feedback_feature.blank? ? "checked" : ""}", :class => "show_feedback_feature"
+                  = f.custom_radio_button_menu :show_feedback_feature, "group", "Group", :id => "feature_option_2#{f.object.id}", :default_checked => "#{f.object.show_feedback_feature == "group" ? "checked" : ""}",:class => "show_feedback_feature"
+                  = ff.hidden_field :event_id,:value=>params[:event_id] 
+                  = ff.hidden_field :show_feedback_feature,:value => 'all', :id => "feedback_form_show_feature"
+              .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8{:style => ((f.object.show_feedback_feature == 'all' or f.object.show_feedback_feature.blank?)? 'margin-top:30px;display:none;' : 'margin-top:30px'), :id => 'group_check_boxes'}
+                .form-group
+                  %label.col-lg-4.control-label.ml-color--shades-white
+                    Select Groups *
+                    %br
+                  - er = ff.object.errors.messages[:group_ids].join(',') rescue nil
+                  .col-lg-7.notification
+                    - default_group_list = [['No Polls taken', 'No Polls taken'], ['No Feedback given', 'No Feedback given'], ['No Quiz taken', 'No Quiz taken'], ['No Q&A', 'No Q&A'], ['NO QR code scanned', 'NO QR code scanned'], ['No Chat', 'No Chat']]
+                    - default_group_list = @default_groups.collect{|group| [ group.name, group.id ]}
+                    - default_group_list.each_with_index do |group, index|
+                      - if index == 0
+                        .usersep
+                          Default Groups
+                      .md-checkbox
+                        %label
+                          %span.checkbox 
+                          = group[0]
+                    - default_group_list = @other_groups.collect{|group| [ group.name, group.id ]}
+                    - default_group_list.each_with_index do |group, index|
+                      - if index == 0
+                        .usersep
+                          Groups created by you
+                      .md-checkbox
+                        %label
+                          = ff.check_box :group_ids, {:multiple => true, :class => "myclass", :style => "mystyle", include_hidden: false}, group[1].to_s
+                          %span.checkbox 
+                          = group[0]
+                  .clear
+                  .field_with_errors.marginErrMgs
+                    .span{:class => "errorMessage"}
+                      = er    
+        .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            %h4.heading-border.p-t-10
+              Title
+          - if params[:action] == "edit" or params[:action] == "update" 
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8 
+              .bs-component
+                .form-group
+                  = ff.label :title, "Title *", class: "col-lg-4 control-label"
+                  .col-lg-7
+                    = ff.text_field :title,:value=>@feedback.feedback_form.title,:readonly => true,class: "form-control"
+                    = ff.hidden_field :event_id,:value=>params[:event_id]
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8 
+              .bs-component
+                .form-group
+                  = ff.label :submission_msg, "Submission Message ", class: "col-lg-4 control-label"
+                  .col-lg-7
+                    = ff.text_field :submission_msg,:value=>@feedback.feedback_form.submission_msg,:readonly => true,class: "form-control"                    
+          - elsif (params[:feedback_form_id].present? or( params[:feedback_form].present? and params[:feedback_form][:feedback_form_id].present? ))
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8 
+              .bs-component
+                .form-group
+                  = ff.label :title, "Title *", class: "col-lg-4 control-label"
+                  .col-lg-7
+                    - feedback_form_id = (params[:feedback_form_id].present?) ? params[:feedback_form_id] : params[:feedback_form][:feedback_form_id]
+                    - @form_data = FeedbackForm.find_by_id(feedback_form_id)
+                    = ff.text_field :title,:value=>@form_data.title,:readonly => true, class: "form-control"
+                    = ff.hidden_field :event_id,:value=>params[:event_id]
+                    = ff.hidden_field :feedback_form_id,:value=>feedback_form_id
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8 
+              .bs-component
+                .form-group
+                  = ff.label :submission_msg, "Submission Message ", class: "col-lg-4 control-label"
+                  .col-lg-7
+                    = ff.text_field :submission_msg,:value=> @form_data.present? ? @form_data.submission_msg : "",:readonly => true,class: "form-control" 
+          -else
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8 
+              .bs-component
+                .form-group
+                  = ff.label :title, "Title *", class: "col-lg-4 control-label"
+                  .col-lg-7
+                    = ff.text_field :title, class: "form-control"
+                    = ff.hidden_field :event_id,:value=>params[:event_id]
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8 
+              .bs-component
+                .form-group
+                  = ff.label :submission_msg, "Submission Message ", class: "col-lg-4 control-label"
+                  .col-lg-7
+                    = ff.text_field :submission_msg,class: "form-control"       
+      .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+          %h4.heading-border.p-t-10.m-b-15
+            General Information
+        = f.custom_text_field :question, "Question *","background" => "false"
+        - if false#session[:feed_que_error].present?
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+            .bs-component{:style => "display: "}
+              .form-group{:style => "margin-top:-7px;"}
+                %label#question_label.col-lg-4.control-label{:for => "_Question *"}
+                .col-lg-7
+                  .field_with_errors
+                    %span.errorMessage{:for => "feedback_question"}
+                      = session[:feed_que_error].join('')
+                      = session[:feed_que_error] = nil
+                %span.col-lg-1
+
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-b-10
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Mandatory Question *
+            .col-lg-7.p-h-12.m-8
+              - er = f.object.errors.messages[:mandat_question].join(',') rescue nil
+              - f.object.errors.messages[:mandat_question].clear if f.object.errors.messages[:mandat_question].present?
+              = f.custom_radio_button_menu :mandat_question, "yes","Yes", :id => "option-1_mandat_question",:default_checked => (f.object.mandat_question.present? and f.object.mandat_question == "yes") ? 'checked' : ''
+              = f.custom_radio_button_menu :mandat_question, "no", "No", :id => "option-2_mandat_question",:default_checked => (f.object.mandat_question.present? and f.object.mandat_question == "no") ? 'checked' : ''
+              - if false#session[:mandat_question].present?
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+                  .bs-component{:style => "display:block"}
+                    .form-group{:style => "margin-top:7px;"}
+                      .col-lg-7
+                        .field_with_errors
+                          %span.errorMessage{:for => "mandat_question"}
+                            = session[:mandat_question].join('')
+                            = session[:mandat_question] = nil
+              .field_with_errors
+                .span{:class => "errorMessage"}
+                  = er
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.m-8
+          .form-group
+            %label.col-lg-4.control-label.ml-color--shades-white
+              Select Option Type*
+            .col-lg-7
+              %i.arrow.single
+              = f.select("feedback", "option_type", [["Radio buttons (for single choice)","Radio"], ["Checkboxes (for multiple choice)","Checkbox"], ["Textbox","Textbox"]], {:selected => f.object.option_type, :prompt => 'Select Option Type'}, {include_blank: 'None', :class=> 'select2-single form-control'})
+              - if false#session[:feed_type_error].present?
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+                  .bs-component{:style => "display: "}
+                    .form-group{:style => "margin-top:7px;"}
+                      .col-lg-7
+                        .field_with_errors
+                          %span.errorMessage{:for => "feedback_option_type"}
+                            = session[:feed_type_error].join('')
+                            = session[:feed_type_error] = nil
+                      %span.col-lg-1              
+              - if @feedback.present? and @feedback.errors.present? and @feedback.errors.messages.include? :option_type
+                .field_with_errors{:style => 'color:red'}
+                  %span{:for => "feedback_option2", :class => "errorMessage"} 
+                  = "This field is required."
+        - @show_options = (f.object.option_type == "Radio" or f.object.option_type == "Checkbox") ? true : false
+        = f.custom_text_field :option1, "Option 1 *","background" => "false", class: "feedback_hide_field"
+        = f.custom_text_field :option2, "Option 2 *","background" => "false", class: "feedback_hide_field"
+        = f.custom_text_field :option3, "Option 3","background" => "false", class: "feedback_hide_field"
+        = f.custom_text_field :option4, "Option 4","background" => "false", class: "feedback_hide_field"
+        = f.custom_text_field :option5, "Option 5","background" => "false", class: "feedback_hide_field"
+        = f.custom_text_field :option6, "Option 6","background" => "false", class: "feedback_hide_field"
+        = f.custom_text_field :option7, "Option 7","background" => "false", class: "feedback_hide_field"
+        = f.custom_text_field :option8, "Option 8","background" => "false", class: "feedback_hide_field"
+        = f.custom_text_field :option9, "Option 9","background" => "false", class: "feedback_hide_field"
+        = f.custom_text_field :option10, "Option 10","background" => "false", class: "feedback_hide_field"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8.p-b-5
+          .mdl-grid.p-v-5.form-group.feedback_hide_field1
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Text box to be shown after options?
+            .col-lg-7.p-h-12  
+              = f.custom_radio_button :description, true, "Yes", :id => "option-1"
+              = f.custom_radio_button :description, false, "No", :id => "option-2"
+        .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-b-10.mandate_respose_section#mandate_res_section{:style=>"display:none;"}
+          .mdl-grid.p-v-5
+            .col-lg-4.mdl-typography--text-right
+              %p.displayInlineBlock.multicitytxt Response mandatory for Textbox? *
+            .col-lg-7.p-h-12.m-8
+              = f.custom_radio_button_menu :mandat_response, "yes","Yes", :id => "option-1_mandat_response",:default_checked => (f.object.mandat_response.present? and f.object.mandat_response == "yes") ? 'checked' : ''
+              = f.custom_radio_button_menu :mandat_response, "no", "No", :id => "option-2_mandat_response",:default_checked => (f.object.mandat_response.present? and f.object.mandat_response == "no") ? 'checked' : ''
+              - if false#session[:mandat_response].present?
+                .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+                  .bs-component{:style => "display:block"}
+                    .form-group{:style => "margin-top:7px;"}
+                      .col-lg-7
+                        .field_with_errors
+                          %span.errorMessage{:for => "mandat_response"}
+                            = session[:mandat_response].join('')
+                            = session[:mandat_response] = nil
+        = hidden_field_tag "type","#{params[:type]}" if params[:type].present?
+        - if @event.present? and @event.parent_id.present?
+          .mdl-grid.p-v-5.mdl-cell--12-col.mdl-cell--12-col-tablet.mdl-cell--1-col-phone.m-v-8.col-md-7
+            .md-checkbox
+              %label
+                = f.check_box :language_updated, {:class => "", :style => "mystyle"},"true","false"
+                %span.checkbox 
+                Is language updated
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+          .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+            = back_button(:back)
+
+- if params[:action] == "new" and @show_options == true
+  :javascript
+    $('.feedback_hide_field').parent().parent().show()
+    $(".feedback_hide_field1").show();    
+- elsif @show_options == false
+  :javascript
+    $('input.feedback_hide_field').parent().parent().hide();
+    $(".feedback_hide_field1").hide();
+
+:javascript
+  $('input.col-lg-7.p-h-12').parent().parent().hide();
+  $('#feedback_option_type').on('change', function() {
+    val = $(this).val();
+    if(val == "Checkbox" || val == "Radio"){
+      $('.feedback_hide_field').parent().parent().show()
+      $(".feedback_hide_field1").show();
+    }
+    if(val == "Textbox"){
+      $('input.feedback_hide_field').parent().parent().hide();
+      $(".feedback_hide_field1").hide();
+    }
+  });
+
+  if ("#{params[:action]}" == "edit")
+    $(window).load(function(){
+      if ("#{@feedback.option_type}" == "Textbox"){
+        $('input.feedback_hide_field').parent().parent().hide();
+        $(".feedback_hide_field1").hide();
+      } 
+    }) 
+:javascript
+  $(window).load(function(){
+    $(".show_feedback_feature").change(function(){
+      selected_value = $(this).val();
+      if (selected_value == "group"){
+        $("#group_check_boxes").show();
+      }else{
+        $("#group_check_boxes").hide();
+      }  
+    });
+  })  
+
+  $('input.col-lg-7.p-h-12').parent().parent().hide();
+  $('#feedback_option_type').on('change', function() {
+    val = $(this).val();
+    if(val == "Checkbox" || val == "Radio"){
+      $('.mandate_respose_section').parent().parent().show()
+      $(".mandate_respose_section").show();
+    }
+    if(val == "Textbox"){
+      $('input.mandate_respose_section').parent().parent().hide();
+      $(".mandate_respose_section").hide();
+    }
+  });
+
+  if ("#{params[:action]}" == "edit")
+    $(window).load(function(){
+      if ("#{@feedback.option_type}" == "Textbox"){
+        $('input.mandate_respose_section').parent().parent().hide();
+        $(".mandate_respose_section").hide();
+      } 
+    }) 
+
+      
+  $(document).ready(function(){
+    $("#option-1").click(function(){
+      if ($('#option-1_mandat_question').is(':checked'))
+        $(".mandate_respose_section").show();
+    });
+    $("#option-2").click(function(){
+      $(".mandate_respose_section").hide();
+      $("#option-2_mandat_response").trigger('click');
+    });
+    $("#option-1_mandat_question").click(function(){
+      if ($("#feedback_option_type").val() != "Textbox")
+        $(".mandate_respose_section").show();
+    });
+    $("#option-2_mandat_question").click(function(){
+      $(".mandate_respose_section").hide();
+      $("#option-2_mandat_response").trigger('click');
+    });
+  });
+
+- if (@feedback.description == true and @feedback.mandat_question == "yes"      )
+  :javascript
+    $(".mandate_respose_section").show();
+- else
+  :javascript
+    $(".mandate_respose_section").hide(); 
+    $("#option-2_mandat_response").trigger('click');
+:javascript
+  $(window).load(function(){
+    $(".show_feedback_feature").change(function(){
+      selected_value = $(this).val();
+      $("#feedback_form_show_feature").val(selected_value);
+      if (selected_value == "group"){
+        $("#group_check_boxes").show();
+      }else{
+        $("#group_check_boxes").hide();
+      }  
+    });
+  }) 

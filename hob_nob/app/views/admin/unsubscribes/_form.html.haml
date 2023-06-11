@@ -1,0 +1,3 @@
+- if params[:import].present?
+  - @event = Event.find(params[:event_id])
+  = render :partial => 'admin/imports/form', :locals => {:@event => @event}

@@ -1,0 +1,10 @@
+%form.ng-pristine.ng-valid{:action => "#"}
+  .mdl-grid
+    = show_field("Attendee Name :", obj.attendee_name.capitalize)
+    = show_field("Email id :", obj.email_address)
+    = show_field("Company Name :", obj.company_name.capitalize)
+    = show_field("Designation :", obj.designation.capitalize)
+    = show_field("Phone Number :", obj.phone_number.capitalize)
+  .m-l-18   
+    .mdl-cell--12-col.mdl-cell--12-col-tablet
+      = back_button_detailed_page(:back)

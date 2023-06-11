@@ -1,0 +1,34 @@
+%section.setting
+  / .mdl-cell--12-col.mdl-cell--12-col-tablet.m-b-20
+  .row
+    - constant_features = {"app_info" => "edit.png","look_and_feel"=>"themes.png","features" => "feature.png", "menus" => "menu.png","content" => 'content.png'}
+    - name = {"app_info" => "Microsite Info","look_and_feel" => "Look And Feel","features" => "Features", "menus" => "Menu", "content" => 'Content'}
+    - redirect_urls = { "app_info" => "#{edit_admin_event_microsite_path(@event.id, @microsite.id)}","look_and_feel" => "#{( true ? new_admin_event_microsite_microsite_look_and_feel_path(:event_id => @event.id, :microsite_id => @microsite.id, :type => "from_microsite") :  edit_admin_event_microsite_microsite_look_and_feel_path(:event_id => @event.id, :microsite_id => @microsite.id, :type => "from_microsite"))}", "features" => "#{new_admin_event_microsite_microsite_feature_path(:event_id => @event.id, :microsite_id => @microsite.id, :type => "from_microsite")}", "menus" => "#{admin_event_microsite_microsite_menus_path(:event_id => @event.id, :microsite_id => @microsite.id, :type => "from_microsite")}", "content" => "#{admin_event_microsite_path(:event_id => @event.id, :id => @event.microsite.id, :type => "show_content")}"}
+    - constant_features.each_with_index do |feature,index|
+      - if current_user.has_role_for_event?("db_manager", @event.id,session[:current_user_role])
+        - if (name[feature[0]] == "Content")
+          .col-sm-3.col-xl-3{:id => "active_card#{index}"}
+            %a{:href => "#{redirect_urls[feature[0]]}"}
+              .panel.panel-tile
+                .panel-body
+                  .row.pv5
+                    .col-xs-5.ph5
+                      = image_tag("coloured_icons/#{feature[1]}", :size => "60x60")
+                    .col-xs-7.pl5
+                      %h6.text-muted.truncate
+                        = "#{name[feature[0]]}"
+                        %h2.fs30.mt5.mbn
+                          = "#{@microsite.review_status(feature[0])}%"    
+      - else
+        .col-sm-3.col-xl-3{:id => "active_card#{index}"}
+          %a{:href => "#{redirect_urls[feature[0]]}"}
+            .panel.panel-tile
+              .panel-body
+                .row.pv5
+                  .col-xs-5.ph5
+                    = image_tag("coloured_icons/#{feature[1]}", :size => "60x60")
+                  .col-xs-7.pl5
+                    %h6.text-muted.truncate
+                      = "#{name[feature[0]]}"
+                      %h2.fs30.mt5.mbn
+                        = "#{@microsite.review_status(feature[0])}%"

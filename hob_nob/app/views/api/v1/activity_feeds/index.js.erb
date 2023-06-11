@@ -1,0 +1,4 @@
+$("#analytics").append('<%= escape_javascript(render :partial =>"activity_feed", :locals => {:analytics => @event_analytics}) %>')
+$("#loadingText_activity").hide();
+$("#dont-load-more-posts").attr("id", "load-more-posts")
+$(".load-more-posts").attr("href", "<%= escape_javascript(store_url_for(params.merge(:page => params[:page].to_i + 1))) %>")

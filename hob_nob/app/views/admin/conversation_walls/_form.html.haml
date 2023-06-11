@@ -1,0 +1,72 @@
+.save_button.mdl-card.editBadgeForm.back-transparent 
+  = form_for [:admin, @event, @conversation_wall], :builder => CustomFormBuilder, :html => { :multipart => true } do |f|
+    .mdl-grid.mdl-card.mdl-shadow--1dp
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          Logo
+          %span.editThemelinks  
+        = f.new_custom_file_browser_field "logo", "Conversation Wall logo (1280x300px) png only", :id => "uploadBtn", :value => f.object.logo_file_name, :action => params[:action], "background" => "false", :view_popup => {:image_path => "a.jpg", :rel=> "event_listing_logo", :title => "Event Listing Logo"}  
+        - if f.object.logo_file_name.present?  and ['edit','update'].include? params[:action] 
+          .col-lg-1
+            - if @conversation_wall.logo.present?
+              = link_to admin_event_conversation_wall_path(:event_id => @event.id, :id => @conversation_wall.id,:remove_logo_image => true), :class => "themeclose positionclose delete-wall-logo", :method => "put",data: { confirm: 'Are you sure?' } do
+                %span
+                  X  
+    .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40.p-b-35
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          Backgrounds
+          %span.editThemelinks  
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.allcp-form.m-8.m-b-15
+        .bs-component
+          .form-group
+            .span.col-lg-4
+              = f.label "Background Image (1600x900px) png only *",:class =>"control-label", style: "float: right;"
+            .col-lg-7.Closetheme
+              %label.field.file
+                %span.button.btn-primary
+                  Choose File 
+                = f.file_field :background_image,:id => "uploadBtn2", :class=>"gui-file"
+                = text_field_tag("text_file_name","", id: "1uploadBtn2", class: "gui-input", :value => "#{f.object.background_image_file_name.nil? ? "there is no Attachment Available !" : f.object.background_image_file_name}", :read_only => true)
+            - if f.object.background_image_file_name.present? and ['edit','update'].include? params[:action]
+              .col-lg-1
+                = link_to "?" ,"a.png", rel: "event_bg_image", title: "Event Background Image", :class =>'fancybox whatsImg'
+                - if @conversation_wall.background_image.present?
+                  = link_to admin_event_conversation_wall_path(:event_id => @event.id, :id => @conversation_wall.id,:remove_bg_image => true), :class => "themeclose positionclose", :method => "put",data: { confirm: 'Are you sure?' } do
+                    %span
+                      X
+
+      %p.OrTxt.or-vertical-text
+        or
+      = f.custom_text_field :background_color, "Background Color *", :value => @conversation_wall.background_color, :class => 'pick-a-color', :view_popup => {:image_path => "a.jpg", :rel=> "background_color", :title => "Background Color"}, :admin_theme => "#{(@conversation_wall.background_color.present?) ? "has-success" : ""}"
+    .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40.p-b-35
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          Font Colors
+          %span.editThemelinks  
+      %p.OrTxt
+      = f.custom_text_field :font_color, "Font color for username", :value => @conversation_wall.font_color, :class => 'pick-a-color', :view_popup => {:image_path => "a.jpg", :rel=> "background_color", :title => "Background Color"}, :admin_theme => "#{(@conversation_wall.font_color.present?) ? "has-success" : ""}"
+      %p.OrTxt
+      = f.custom_text_field :sub_text_color, "Font color for post", :value => @conversation_wall.sub_text_color, :class => 'pick-a-color', :view_popup => {:image_path => "a.jpg", :rel=> "background_color", :title => "Background Color"}, :admin_theme => "#{(@conversation_wall.sub_text_color.present?) ? "has-success" : ""}"      
+    .mdl-grid.mdl-card.mdl-shadow--1dp.m-t-40.p-b-35
+      .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+        %h4.heading-border.p-t-10
+          Box Color
+          %span.editThemelinks  
+      %p.OrTxt
+      = f.custom_text_field :box_color, "Box Color", :value => @conversation_wall.box_color, :class => 'pick-a-color', :view_popup => {:image_path => "a.jpg", :rel=> "background_color", :title => "Background Color"}, :admin_theme => "#{(@conversation_wall.box_color.present?) ? "has-success" : ""}"
+      = f.hidden_field :event_id,:value=>params[:event_id]                
+      .fixed-activon-btn-new  
+        = f.custom_submit_button "SAVE"
+        - if current_user.has_role? :super_admin
+          .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+              = back_button(:back)
+        - elsif @event.present? and @event.mobile_application.id.present?
+          .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.btnsubmit.m-l-18.cancelBg
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.cancelbtn
+              = link_to admin_event_mobile_application_path(:event_id => @event.id, :id => @event.mobile_application.id) do
+                %span.waves-effect.waves-light.btn
+                  CANCEL
+= javascript_include_tag "jquery-1.11.3.min", "pick-a-color-1.2.0.min", "tinycolor", "jquery.fancybox", "theme_color_pick"                   
+ 

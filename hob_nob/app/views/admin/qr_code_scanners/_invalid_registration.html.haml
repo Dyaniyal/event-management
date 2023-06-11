@@ -1,0 +1,19 @@
+%h2.fullscreenDiv
+  .center
+    Can't find yourself? Please contact helpdesk for more assistance. Thank you.
+    %p
+      = link_to "Back to QR scan", admin_event_qr_code_scanners_path(:event_id=>@event.id) 
+
+:css
+  .fullscreenDiv {
+      width: 100%;
+      height: auto;
+      bottom: 0px;
+      top: 0px;
+      position: absolute;
+  }
+  .center {
+      position: absolute;
+      top: 50%;
+      right:18%;
+  }

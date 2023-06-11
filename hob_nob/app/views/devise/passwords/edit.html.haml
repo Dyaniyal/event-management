@@ -1,0 +1,29 @@
+%section.loginwrap.loginwrap-newsign
+  .loginBlog
+    %center.BlnkTxt.p-t-10
+    .formInfo.z-depth-1
+      .LoginLogo
+        = image_tag("logo-new.png")
+      .row
+        .col.s12.loginFrom
+          = form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: 'form-horizontal' }) do |f|
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+              .bs-component
+                .form-group
+                  .col-lg-12
+                    = f.hidden_field :reset_password_token
+                    = f.password_field :password, autofocus: true, class: "form-control", autocomplete: "off", placeholder: "Enter New Password"
+            .mdl-cell--12-col.mdl-cell--12-col-tablet.ml-color--shades-white.m-8
+              .bs-component
+                .form-group
+                  .col-lg-12
+                    = f.password_field :password_confirmation, autocomplete: "off", class: "form-control", placeholder: "Confirm New Password"
+                    .field_with_errors
+                      .span{:class => "errorMessage"}
+                        - error_msg = resource.errors.messages
+                        - if error_msg.keys.present? and error_msg.keys.any? { |k| [:activate_mobilapp, :activate_ems].include? k}
+                          = 'Your account is deactive, Please contact admin.'
+                        - elsif error_msg.has_value?(["is invalid"])
+                          = controller.redirect_to new_user_session_path
+            .m-t-10.logbtn.m-8
+              %button.mdl-button.mdl-js-button.mdl-js-ripple-effect.newSignTxt{:name => "action", :type => "submit"} SIGN IN
